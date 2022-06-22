@@ -1,0 +1,9 @@
+{
+  "name": "js",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {
+    "events": "3.3.0",
+    "uuid": "^8.3.2"
+  }
+}
