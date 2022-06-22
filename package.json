@@ -1,9 +1,14 @@
 {
-  "name": "js",
-  "version": "0.0.0",
+  "name": "sandbox-poc",
+  "version": "0.0.1",
   "private": true,
+  "scripts": {
+    "start": "node index.js"
+  },
+  "type": "module",
   "dependencies": {
     "events": "3.3.0",
+    "node-fetch": "^3.2.6",
     "uuid": "^8.3.2"
   }
 }
