@@ -15,9 +15,13 @@ Sandbox.of([
   '/lib/ajax',
   '/lib/errors', 
   '/lib/events', 
+  '/lib/jainky-module',
   '/lib/repos/slideshows', 
-  '/lib/jainky-module'
   ],
+  /***
+   * @param {Object} sb - the application sandbox API; this is where the registered module functionality lives
+   * @param {Object} ctrl - the sandbox controller API; this is a control plane for managing modules only available to the application
+   */
   async function myApp(sb, ctrl) {
     const { fetch } = sb.get('ajax');
     const events = sb.get('events');
@@ -29,14 +33,15 @@ Sandbox.of([
     events.on('application.error', onApplicationError);
 
     /**
-     * 
-     * @param {String} module - a module that exceeded the error threshold, triggering a stop request
+     * Logic for handling the event the `GLOBAL_ERROR_THRESHOLD` value is exceeded for *any* running module
+     * @param {String} module - a module that exceeds the error threshold, triggering a stop request
      */
     function onGlobalModuleErrorThresholdExceeded(module) {
       events.emit('application.info.moduleStopped', module);
     }
 
     /**
+     * Logic for handling the event a module fires the `application.error` event
      * @param {AppEvent} appEvent - an instance of the {AppEvent} interface
      */
     function onApplicationError(appEvent) {
@@ -48,6 +53,12 @@ Sandbox.of([
       slideshow.create();
       slideshow.create();
       slideshow.create();
-    }, 50000)
+      try {
+      ctrl.restartModule('/lib/jainky-module', sb);
+      events.emit('application.info.moduleRestarted', '/lib/jainky-module')
+      } catch(e) {
+        console.error(e.message)
+      }
+    }, 30000)
   }
 );
