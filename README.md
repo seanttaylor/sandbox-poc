@@ -1,6 +1,22 @@
 # Sandbox Pattern
 
-## Overview
+## Purpose 
+To implement a design of application sanxboxes in order to learn where this pattern may be useful as well as what the limitations of this pattern may be and how to migitate them.
+
+## Local Development
+
+1. Do `npm start` to launch the application
+
+
+## Table of Contents
+
+* [Overview](#overview)
+* [Objective(s)](#objectives)
+* [Architectural Notes](#architectural-notes)
+* [References](#references)
+
+
+## Overview <a name="overview"></a>
 An first attempt at *an* implementation of Nicholas Zaka's Sandbox Pattern described in this [talk](https://www.youtube.com/watch?v=mKouqShWI4o). Slide deck available [here](https://www.slideshare.net/nzakas/scalable-javascript-application-architecture). 
 
 The key insight from this talk is that large application archictectures can embrace pluggable modules and communication via events in order to remain stable and extensible as conditions and requirements.
@@ -11,10 +27,7 @@ Events allow decoupling application modules from one another.
 
 Another key reference for this specific attempt comes directly from Stoyan Stefanov's *Javascript Design Patterns*. The Sandbox Pattern feature in this book is the direct inspiration for this version of the implementation of application sandboxes. 
 
-## Purpose 
-To implement a design of application sanxboxes in order to learn where this pattern may be useful as well as what the limitations of this pattern may be and how to migitate them.
-
-## Objective(s)
+## Objective(s) <a name="objectives"></a>
 Create an app that has the following key features:
 
 | **Feature**                                                                                                                                                         |
@@ -30,7 +43,10 @@ Create an app that has the following key features:
 |  Should be able to receive command messages to change application state via API                                                                                     |
 |  Should be able to add plugins that enhance functionality provided by existing modules                                                                              |
 
-## References
+## Architectural Notes <a name="architectural-notes"></a>
+[Architectural notes go here]
+
+## References <a name="references"></a>
 
 * *JavaScript Design Patterns* by Stoyan Stefanov
 * [Box Tech Talk: Scalable JavaScript Application Architecture by Nicholas Zakas](https://www.youtube.com/watch?v=mKouqShWI4o)
