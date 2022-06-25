@@ -1,43 +1,35 @@
 import Sandbox from './lib/sandbox/index.js';
-import AppEvents from './lib/events/index.js';
-import Ajax from './lib/ajax/index.js';
-import Errors from './lib/errors/index.js';
 import Slideshows from './lib/repos/slideshows/index.js';
 import JainkyModule from './lib/jainky-module/index.js';
 
-Sandbox.module('/lib/errors', Errors);
-Sandbox.module('/lib/events', AppEvents);
-Sandbox.module('/lib/ajax', Ajax);
+const GLOBAL_ERROR_THRESHOLD = 10;
+
 Sandbox.module('/lib/repos/slideshows', Slideshows);
 Sandbox.module('/lib/jainky-module', JainkyModule);
 
 Sandbox.of([
-  '/lib/ajax',
-  '/lib/errors', 
-  '/lib/events', 
   '/lib/jainky-module',
   '/lib/repos/slideshows', 
   ],
   /***
-   * @param {Object} sb - the application sandbox API; this is where the registered module functionality lives
-   * @param {Object} ctrl - the sandbox controller API; this is a control plane for managing modules only available to the application
+   * @param {Object} box - the application sandbox API; this is where the registered module functionality lives
    */
-  async function myApp(sb, ctrl) {
-    const { fetch } = sb.get('ajax');
-    const events = sb.get('events');
-    const slideshow = sb.get('slideshow');
+  async function myApp(box) {
+    const { fetch } = box.ajax;
+    const { ApplicationError } = box.errors;
     const data = await fetch({ url: 'https://httpbin.org/json' });
+    console.log(box);
     
-    events.emit('slideshow.downloaded', data);
+    box.events.notify('slideshow.downloaded', data);
 
-    events.on('application.error', onApplicationError);
+    box.events.on('application.error', onApplicationError);
 
     /**
      * Logic for handling the event the `GLOBAL_ERROR_THRESHOLD` value is exceeded for *any* running module
      * @param {String} module - a module that exceeds the error threshold, triggering a stop request
      */
     function onGlobalModuleErrorThresholdExceeded(module) {
-      events.emit('application.info.moduleStopped', module);
+      box.events.emit('application.info.moduleStopped', module);
     }
 
     /**
@@ -45,17 +37,14 @@ Sandbox.of([
      * @param {AppEvent} appEvent - an instance of the {AppEvent} interface
      */
     function onApplicationError(appEvent) {
-      ctrl.handleModuleError(appEvent, onGlobalModuleErrorThresholdExceeded);
+      console.error(appEvent.payload())
     }
 
-    
     setTimeout(()=> {
-      slideshow.create();
-      slideshow.create();
-      slideshow.create();
       try {
-      ctrl.restartModule('/lib/jainky-module', sb);
-      events.emit('application.info.moduleRestarted', '/lib/jainky-module')
+      box.my.jainkyModule.stop();
+      box.my.jainkyModule.start();
+      box.events.notify('application.info.moduleRestarted', '/lib/jainky-module')
       } catch(e) {
         console.error(e.message)
       }
