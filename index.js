@@ -1,4 +1,4 @@
-import Sandbox from './lib/sandbox/index.js';
+import Sandbox from './src/sandbox/index.js';
 import Slideshows from './lib/repos/slideshows/index.js';
 import JainkyModule from './lib/jainky-module/index.js';
 
@@ -18,7 +18,6 @@ Sandbox.of([
     const { fetch } = box.ajax;
     const { ApplicationError } = box.errors;
     const data = await fetch({ url: 'https://httpbin.org/json' });
-    console.log(box);
     
     box.events.notify('slideshow.downloaded', data);
 
@@ -42,8 +41,8 @@ Sandbox.of([
 
     setTimeout(()=> {
       try {
-      box.my.jainkyModule.stop();
-      box.my.jainkyModule.start();
+      box.moduleCtrl['/lib/jainky-module'].stop();
+      box.moduleCtrl['/lib/jainky-module'].start();
       box.events.notify('application.info.moduleRestarted', '/lib/jainky-module')
       } catch(e) {
         console.error(e.message)
