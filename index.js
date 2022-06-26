@@ -15,6 +15,7 @@ Sandbox.of([
    * @param {Object} box - the application sandbox API; this is where the registered module functionality lives
    */
   async function myApp(box) {
+    console.dir(box);
     const { fetch } = box.ajax;
     const { ApplicationError } = box.errors;
     const data = await fetch({ url: 'https://httpbin.org/json' });
@@ -39,11 +40,19 @@ Sandbox.of([
       console.error(appEvent.payload())
     }
 
+    /**
+     * Restarts a specified module
+     * @param {String} moduleName 
+     */
+    function restartModule(moduleName) {
+      box.moduleCtrl[`${moduleName}`].stop();
+      box.moduleCtrl[`${moduleName}`].start();
+      box.events.notify('application.info.moduleRestarted', moduleName);
+    }
+
     setTimeout(()=> {
       try {
-      box.moduleCtrl['/lib/jainky-module'].stop();
-      box.moduleCtrl['/lib/jainky-module'].start();
-      box.events.notify('application.info.moduleRestarted', '/lib/jainky-module')
+        restartModule('/lib/jainky-module');
       } catch(e) {
         console.error(e.message)
       }

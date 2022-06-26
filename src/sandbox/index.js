@@ -27,14 +27,14 @@ function deepFreeze(object) {
 }
 
 /**
- * Exposes the API for starting and stopping modules to the application sandbox; makes all APIs on the application sandbox immutable.
- * @param {Object} box
- * @param {Object} controller - an instance of the SandboxController interface
+ * Exposes the API for starting and stopping modules to the application core; makes all registered module APIs immutable.
+ * @param {Object} box - map APIs of registered modules
+ * @param {Object} sandboxController - an instance of the SandboxController interface
  * @returns {Object}
  */
-function sandboxWrapper(box, controller) {
+function applicationSandboxWrapper(box, sandboxController) {
   const wrappedSandbox = Object.assign(box, {
-    ...controller,
+    ...sandboxController,
     moduleCtrl : myModules,
   });
 
@@ -97,7 +97,7 @@ async function of(modulesList, callback) {
 
   // launch the application
   try {
-    await callback(sandboxWrapper(box, controller));
+    await callback(applicationSandboxWrapper(box, controller));
   } catch (e) {
     console.error(
       `Application.InternalError.UncaughtModuleError => ${e.message}`

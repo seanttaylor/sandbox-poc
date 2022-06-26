@@ -1,4 +1,5 @@
 import events from 'events';
+import { randomUUID } from 'crypto';
 
 const eventEmitter = new events.EventEmitter();
 
@@ -10,6 +11,7 @@ const eventEmitter = new events.EventEmitter();
 
 /**
  * @typedef AppEventHeader
+ * @property {String} id 
  * @property {String} timestamp 
  */
 
@@ -19,11 +21,17 @@ const eventEmitter = new events.EventEmitter();
  * @returns {Object}
  */
 function AppEvent(eventData) {
+  const header = { 
+    id: `/events/${randomUUID()}`,
+    timestamp: new Date().toISOString() 
+  };
+
   function payload() {
     return eventData;
   }
 
   return { 
+    header,
     payload 
   }
 }
