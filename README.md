@@ -1,7 +1,7 @@
 # Sandbox Pattern
 
 ## Purpose 
-To implement a design of application sanxboxes in order to learn where this pattern may be useful as well as what the limitations of this pattern may be and how to migitate them.
+To implement a design of application sandboxes in order to learn where this pattern may be useful as well as what the limitations of this pattern may be and how to migitate them.
 
 ## Local Development
 
@@ -25,7 +25,7 @@ Architectures that include components with too many direct connections among the
 
 Events allow decoupling application modules from one another.
 
-Another key reference for this specific attempt comes directly from Stoyan Stefanov's *Javascript Design Patterns*. The Sandbox Pattern feature in this book is the direct inspiration for this version of the implementation of application sandboxes. 
+Another key reference for this specific attempt comes directly from Stoyan Stefanov's *Javascript Design Patterns*. The Sandbox Pattern featured in this book is the direct inspiration for this version of the implementation of application sandboxes. 
 
 ## Objective(s) <a name="objectives"></a>
 Create an app that has the following key features:
@@ -34,12 +34,12 @@ Create an app that has the following key features:
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 |  Should be able to CRUD some basic resource(s)                                                                                                                      |
 |  Should be composed of modules that have no knowledge of the larger application or its objectives                                                                    |
-|  Should house modules that communicate with other modules or the core application either by emitted events or by exposing a limited API for peer modules to consume |
+|  Should house modules that communicate with other modules or the core application either by emitted events or by exposing a limited API to consume |
 |  Should be able to stop and restart modules that are experiencing errors                                                                                            |
 |  Should be able to recover/resume in-progress work on restarting a problem module                                                                                   |
 |  Should be able to continue operating if a module is stopped indefinitely                                                                                           |
 |  Should be able to inspect module metadata                                                                                                                          |
-|  Should be able to expose a HTTP API for accessing CRUD-able resources                                                                                              |
+|  Should be able to expose an HTTP API for accessing CRUD-able resources                                                                                              |
 |  Should be able to receive command messages to change application state via API                                                                                     |
 |  Should be able to add plugins that enhance functionality provided by existing modules                                                                              |
 
@@ -47,47 +47,61 @@ Create an app that has the following key features:
 
 ### Key Entities
 
-#### `Application`
-The core of our program. This is the only component of the system that knows the entirety of what is supposed to occur. This component can start and stop Modules (see below), catch and respond to errors propagated from modules as well as listen and respond to events emitted from modules. 
+#### `Application` (Application Core)
+The core of our program. This is the only component of the system that knows the entirety of of business objectives. This component can start and stop Modules ([see below](#modules)), catch and respond to errors propagated from modules, as well as listen and respond to events emitted from modules. 
 
-This component can also call any API methods modules choose to expose on the application sandbox. In the example below the `sandbox` parameter consumed by the callback function is where any modules expose functionality for our sandboxed application to use. Our application core *only* has access to the sandboxed module APIs and its own methods.
+This component can also call any API methods modules choose to expose to the application core. In the example below the `sandbox` parameter consumed by the callback function is where our modules expose functionality for the sandboxed application core to use. Our application core *only* has access to the sandboxed module APIs and its own methods.
+
+Application Core Example:
 
 ```
 Sandbox(['foo-module'], async function(sandbox) {
     // Welcome to the application core.
     // This is where all the magic happens (most of it anyway).
-    // Do consquential things here like fetch data from the internets
+    // Do consquential things here.
 
-    const kats = await sandbox.fetch('https://cool.data/api/v1/cats');
+    const kats = await sandbox.fetch('https://kitty.service/api/v1/kats');
     console.log(kats);
 });
 ```
 
 #### `ApplicationSandboxWrapper`
-An important associate of the application, this entity produces the `sandbox` parameter consumed by the application core in the example above. This `sandbox` is an immutable object revealing an API that consists of key utility methods for accessing the network, event handling and error propagation. This API also exposes methods modules use to expose their APIs to the application core. The methods on this API are available to all modules in addition to the application core. They are *guaranteed* to be available. 
+An important associate of the application core, this entity produces the `sandbox` parameter consumed by the application core in the example above. 
 
-The `ApplicationSandboxWrapper` takes the `SandboxController` interface (see below) and all registered module APIs to produce a new immutable API consumed *only* by the application core.
+This `sandbox` is an immutable object revealing an API that consists of key utility methods for accessing the network, event handling and error propagation. This API also provides methods modules may use to expose their APIs to the application core. 
+
+The methods on this API are available to all modules in addition to the application core. They are *guaranteed* to be present. 
+
+Under the hood the `ApplicationSandboxWrapper` takes the `SandboxController` interface [see below](#sandbox-controller) and all registered module APIs to produce a new immutable API consumed *only* by the application core.
+
+An overview of the key methods and namespaces available on this object are listed below.
+
+---
 
 ##### `ajax`
-Contains method for making network requests. This method wraps the `node-fetch` package with a similar API.
+Contains a method for making network requests. This method wraps the `node-fetch` package with a similar API.
 
 ##### `events`
-Contains methods for registering and broadcasting events; wraps the  NodeJs `EventEmitter` object.
+Contains methods for registering and broadcasting events; wraps the  NodeJs `EventEmitter` API.
 
 ##### `errors`
-Contains a method for creating structured error messages
+Contains a method for creating structured error messages.
 
 ##### `moduleCtrl`
 Contains a map of all registered modules and the methods required to stop as well as restart the modules, aptly named: `start` and `stop`.
 
 ##### `my`
-The namespace under which all module APIs are housed, the application core can access any registered module API method as follows: `sandbox.my.jainkModule.hello()`
+The namespace under which all registered module APIs are housed; the application core can access any registered module API method as follows: `sandbox.my.jainkModule.hello()`. This namespace is *only* available to the application core.
 
 ##### `put()`
-This method registers a module's API for use by the application core
+This method registers a module's API for use by the application core.
 
-#### `Module`
-A distinct piece of library code that application core consumes to do specialized tasks.
+---
+
+#### `Module` <a name="modules"></a>
+A distinct piece of library code the application core consumes to do specialized tasks.
+
+Module Example:
 
 ```
 export default function jainkyModule(sandbox) {
@@ -118,22 +132,35 @@ export default function jainkyModule(sandbox) {
 }
 ```
 
-Above we create a `jainkyModule` that consumes an instance of the `SandboxController` interface, the `sandbox` parameter. We register a single public method on the `jainkyModule` API using `sandbox.put`. The `hello` method is accessed in the application core as follows: `sandbox.my.jainkyModule.hello()`.
+Above we create a `jainkyModule` that consumes an instance of the `SandboxController` interface, i.e. the `sandbox` parameter in the example. We register a single public method on the `jainkyModule` API using `sandbox.put`. The `hello` method is accessed in the application core as follows: `sandbox.my.jainkyModule.hello()`.
 
-> Note: even though the name `sandbox` is used in both the module example and the application core example above, these **are not the same object**. Attempting to access the `sandbox.my` namespace or any of its sub-properties in the *module* example above would throw an error, as would attempting to access the `sandbox.moduleCtrl` namespace.
+> Note: even though the name `sandbox` is used in both the module example and the application core example above, these **are not the same object**. Attempting to access the `sandbox.my` namespace or any of its sub-properties in the *module* example immediately above would throw an error, as would attempting to access the `sandbox.moduleCtrl` namespace.
 
-Modules can *only* access the methods on the `SandboxController`. They can only register their public APIs for exposure to the application core.
+Modules can *only* access the methods on the `SandboxController` interface. They can only register their public APIs for exposure to the application core. 
 
-A module *may* return an optional function (seen above) that can tear down any resources when the application core attempts to stop the module.
+If a module wishes to communicate with peer modules *or* with the application core it must do so using events. To extend the example above to include sending an event to the application core or interested modules would look as follows:
 
-#### `SandboxController`
-This component is cosumed by each of the registered modules as shown above. It has all the same methods as the `ApplicationSandboxWrapper` *with the exception* of all the methods namespaced beneath the `my` property and `moduleCtrl`. 
+```
+sandbox.events.notify('event.of.interest', {data});
+```
+
+Finally, a module *may* return an optional function to stop itself (seen above) that can tear down any resources when the application core attempts to shut down the module.
+
+#### `SandboxController` <a name="sandbox-controller"></a>
+This component is consumed by each of the registered modules as shown module example above. It has all the same methods as the `ApplicationSandboxWrapper` *with the exception* of all the methods namespaced beneath the `my` property and `moduleCtrl`. 
 
 #### `Sandbox`
-Creates a sandbox for the application core  to 'play' in. This application core only has access to its own methods and those methods exposed on public APIs of registered modules.
+Creates a sandbox for the application core to 'play' in. This application core only has access to its own methods and those methods exposed on public APIs of registered modules accessible on the `sandbox.my` namespace.
 
 ##### `of()`
-The constructor for creating new application sandbox.
+The constructor for creating new sandboxed application core.
+
+```
+Sandbox(['bar-module', 'qux-module'], async function(sandbox) {
+  // In the first argument we list modules we want to include on the `sandbox`. 
+  // These modules *may* return a public API for us to consume here via `sandbox.my` or they may just produce side-effects we are interested in.
+});
+```
 
 ##### `module()`
 The constructor for creating a new module.

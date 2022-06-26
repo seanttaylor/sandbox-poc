@@ -15,7 +15,6 @@ Sandbox.of([
    * @param {Object} box - the application sandbox API; this is where the registered module functionality lives
    */
   async function myApp(box) {
-    console.dir(box);
     const { fetch } = box.ajax;
     const { ApplicationError } = box.errors;
     const data = await fetch({ url: 'https://httpbin.org/json' });
