@@ -37,9 +37,11 @@ function AppEvent(eventData) {
  */
 function notify(eventName, eventData) {
   try { 
-      eventEmitter.emit(eventName, AppEvent(eventData));
+    eventEmitter.emit(eventName, AppEvent(eventData));
   } catch(e) {
-      console.error(`Events.InternalError.EmittedEventError: (${eventName}) => ${e.message}`);
+    // Reason: Unlikely the native Node EventEmitter will break here; juice not worth the squeeze for mocking EventEmitter
+    /* istanbul ignore next */
+    console.error(`Events.InternalError.EmittedEventError: (${eventName}) => ${e.message}`);
   }
 }
 
