@@ -1,5 +1,5 @@
 import Sandbox from './src/sandbox/index.js';
-import Slideshows from './lib/repos/slideshows/index.js';
+import Slideshows from './lib/repos/post/index.js';
 import JainkyModule from './lib/jainky-module/index.js';
 
 const GLOBAL_ERROR_THRESHOLD = 10;
@@ -12,7 +12,7 @@ Sandbox.of([
   '/lib/repos/slideshows', 
   ],
   /***
-   * @param {Object} box - the application sandbox API; this is where the registered module functionality lives
+   * @param {Object} box - the sandboxed module APIs; this is where the registered module functionality lives
    */
   async function myApp(box) {
     const { fetch } = box.ajax;

@@ -158,7 +158,8 @@ The constructor for creating new sandboxed application core.
 ```
 Sandbox(['bar-module', 'qux-module'], async function(sandbox) {
   // In the first argument we list modules we want to include on the `sandbox`. 
-  // These modules *may* return a public API for us to consume here via `sandbox.my` or they may just produce side-effects we are interested in.
+  // These modules *may* return a public API for us to consume here via `sandbox.my`.
+  // They may also just produce side-effects we are interested in.
 });
 ```
 

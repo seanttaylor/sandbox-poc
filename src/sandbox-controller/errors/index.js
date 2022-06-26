@@ -10,6 +10,7 @@
  * @param {ApplicationErrorInterface} error
  */
  function ApplicationError(error) {
+  // validate error body here
   const errorText = `ApplicationError.InternalError.${error.name} (${error.id}) => ${error.message}`;
   const emittedError = Object.assign(error, {
   message: errorText,

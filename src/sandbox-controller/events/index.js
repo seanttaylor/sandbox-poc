@@ -10,12 +10,6 @@ const eventEmitter = new events.EventEmitter();
  */
 
 /**
- * @typedef AppEventHeader
- * @property {String} id 
- * @property {String} timestamp 
- */
-
-/**
  * Reliable interface for receiving data from emitted events
  * @param {Any} eventData 
  * @returns {Object}

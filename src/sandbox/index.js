@@ -1,6 +1,8 @@
 import SandboxController from '../sandbox-controller/index.js';
 
+// The sandboxed API modules that will ultimately be available to the application core
 const box = {};
+// A map of modules that have been registered with application core
 const myModules = {};
 
 /**
@@ -28,7 +30,7 @@ function deepFreeze(object) {
 
 /**
  * Exposes the API for starting and stopping modules to the application core; makes all registered module APIs immutable.
- * @param {Object} box - map APIs of registered modules
+ * @param {Object} box - sandboxed API modules
  * @param {Object} sandboxController - an instance of the SandboxController interface
  * @returns {Object}
  */

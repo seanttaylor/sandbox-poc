@@ -1,0 +1,58 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://example.com/example.json",
+    "type": "object",
+    "default": {},
+    "title": "The Application Error schema",
+    "required": [
+        "id",
+        "message",
+        "name",
+        "module"
+    ],
+    "properties": {
+        "id": {
+            "$id": "#/properties/id",
+            "type": "string",
+            "default": "",
+            "title": "An short identifier for a category of error emitted from a module",
+            "examples": [
+                "module.jainky"
+            ]
+        },
+        "message": {
+            "$id": "#/properties/message",
+            "type": "string",
+            "default": "",
+            "title": "Text describing detailing the nature of an error",
+            "examples": [
+                "This is a jainky module, lol"
+            ]
+        },
+        "name": {
+            "$id": "#/properties/name",
+            "type": "string",
+            "default": "",
+            "title": "String describing the general issue",
+            "examples": [
+                "LibJainkyModuleError",
+                "CannotCreateRecord"
+            ]
+        },
+        "module": {
+            "$id": "#/properties/module",
+            "type": "string",
+            "default": "",
+            "title": "The name of the module that emitted the error",
+            "examples": [
+                "/lib/jainky-module"
+            ]
+        }
+    },
+    "examples": [{
+        "id": "module.jainky",
+        "message": "This is a jainky module, lol",
+        "name": "LibJainkyModuleError",
+        "module": "/lib/jainky-module"
+    }]
+}
