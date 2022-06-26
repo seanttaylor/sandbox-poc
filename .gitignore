@@ -109,6 +109,3 @@ dist
 terraform.log
 terraform.tfstate
 terraform.tfstate.backup
-
-# Local JSON database
-database.json

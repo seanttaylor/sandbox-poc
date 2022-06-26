@@ -47,12 +47,24 @@
             "examples": [
                 "/lib/jainky-module"
             ]
+        },
+        "_open": {
+            "$id": "#/properties/_open",
+            "type": "object",
+            "default": "",
+            "title": "An optional field to include supplemental unstructured data in an `ApplicationError`. Note: this field is unstable and may be removed at any time.",
+            "examples": [
+                {}
+            ]
         }
     },
     "examples": [{
         "id": "module.jainky",
         "message": "This is a jainky module, lol",
         "name": "LibJainkyModuleError",
-        "module": "/lib/jainky-module"
+        "module": "/lib/jainky-module",
+        "_open": {
+            "stackTrace": "[STACK TRACE COULD BE HERE FOR EXAMPLE]"
+        }
     }]
 }

@@ -1,4 +1,5 @@
 import ajax from './ajax/index.js';
+import database from './database/connectors/memory.js';
 import events from './events/index.js';
 import errors from './errors/index.js';
 
@@ -27,6 +28,7 @@ function SandboxController(box) {
     return {
       controller: {
         ajax,
+        database,
         errors,
         events,
         put

@@ -1,26 +1,22 @@
 import Sandbox from './src/sandbox/index.js';
-import Slideshows from './lib/repos/post/index.js';
+import PostRepository from './lib/repos/post/index.js';
 import JainkyModule from './lib/jainky-module/index.js';
 
 const GLOBAL_ERROR_THRESHOLD = 10;
 
-Sandbox.module('/lib/repos/slideshows', Slideshows);
+Sandbox.module('/lib/repos/post', PostRepository);
 Sandbox.module('/lib/jainky-module', JainkyModule);
 
 Sandbox.of([
   '/lib/jainky-module',
-  '/lib/repos/slideshows', 
+  '/lib/repos/post', 
   ],
   /***
    * @param {Object} box - the sandboxed module APIs; this is where the registered module functionality lives
    */
   async function myApp(box) {
-    const { fetch } = box.ajax;
     const { ApplicationError } = box.errors;
-    const data = await fetch({ url: 'https://httpbin.org/json' });
     
-    box.events.notify('slideshow.downloaded', data);
-
     box.events.on('application.error', onApplicationError);
 
     /**
@@ -49,12 +45,19 @@ Sandbox.of([
       box.events.notify('application.info.moduleRestarted', moduleName);
     }
 
+    await box.my.postRepo.create({
+      authorId: "/users/1d2b3f93-804b-4e02-94ad-2eec6b90997d",
+      body: "Another day in the life of a playboy billionaire genius..."
+    });
+
+    /*
     setTimeout(()=> {
       try {
         restartModule('/lib/jainky-module');
       } catch(e) {
         console.error(e.message)
       }
-    }, 30000)
+    }, 30000);
+    */
   }
 );
