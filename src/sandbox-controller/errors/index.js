@@ -4,6 +4,7 @@
  * @property {String} message
  * @property {String} module
  * @property {String} name
+ * @property {String} _open
  */
 
 /**
