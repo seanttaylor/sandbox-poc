@@ -29,7 +29,7 @@ function IPostRepository(myImpl = {}) {
         create: myImpl.create || required,
         getPostById: myImpl.getPostById || required,
         getAllPosts: myImpl.getAllPosts || required,
-        getPostsByStoryId: myImpl.getPostsByAuthorId || required,
+        getPostsByAuthorId: myImpl.getPostsByAuthorId || required,
         deletePost: myImpl.deletePost || required,
         editPost: myImpl.editPost || required,
         exists: myImpl.exists || required,
