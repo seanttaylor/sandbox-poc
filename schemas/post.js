@@ -12,7 +12,7 @@ export default {
         "body",
         "comments",
         "likes",
-        "createdAtTimestamp"
+        "createdAt"
     ],
     "properties": {
         "authorId": {
@@ -49,15 +49,15 @@ export default {
                 []
             ]
         },
-        "lastModifiedTimestamp": {
-            "type": "null",
-            "default": null,
+        "lastModified": {
+            "type": ["string", "null"],
+            "default": "null",
             "title": "The lastModifiedTimestamp Schema",
             "examples": [
-                null
+                "null"
             ]
         },
-        "createdAtTimestamp": {
+        "createdAt": {
             "type": "string",
             "default": "",
             "title": "The createdAtTimestamp Schema",
@@ -71,7 +71,7 @@ export default {
         "body": "Hello world! Plaboy Billionaire Genius here...",
         "comments": [],
         "likes": [],
-        "lastModifiedTimestamp": null,
-        "createdAtTimestamp": "2022-06-26T14:24:04.904Z"
+        "lastModified": null,
+        "createdAt": "2022-06-26T14:24:04.904Z"
     }]
 }

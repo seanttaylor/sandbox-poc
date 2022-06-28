@@ -25,4 +25,9 @@ describe('ApplicationError', () => {
         expect(Object.keys(myError).includes('module')).toBe(true);
         expect(Object.keys(myError).includes('_open')).toBe(true);
     });
+
+    test('Should log a fallback error when the {ApplicationError} interface is not satisfied', async () => {
+        const myError = ApplicationError();
+        expect(myError === undefined).toBe(true);
+    });
 });
