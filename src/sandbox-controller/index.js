@@ -1,3 +1,5 @@
+/* istanbul ignore file*/
+// Reason: Related to Jest's current lack of support for ES modules. See (https://github.com/seanttaylor/sandbox-poc/issues/8)
 import ajax from './ajax/index.js';
 import database from './database/connectors/memory.js';
 import events from './events/index.js';

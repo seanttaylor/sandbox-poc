@@ -1,4 +1,5 @@
 /* istanbul ignore file */
+// Reason: These code paths are exercised during testing of repositories. 
 
 import Ajv from 'ajv';
 import dataTemplate from '../database.js';
@@ -243,15 +244,30 @@ export default (function InMemoryDatabaseConnector() {
     return [];
   }
 
+  /**
+   * Determines whether a key exists in a collection
+   * @param {String} id
+   * @param {String} collection - collection to search
+   * @returns {Boolean}
+   */
+  function exists({ id, collection }) {
+    if (data[collection][id]) {
+      return true;
+    }
+
+    return false;
+  }
+
   return {
     add,
-    putOne,
-    updateOne,
-    removeOne,
+    close,
+    drop,
+    exists,
     findAll,
     findOne,
-    drop,
-    close,
+    putOne,
+    removeOne,
+    updateOne,
   };
 }());
 

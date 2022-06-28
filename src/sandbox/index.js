@@ -1,3 +1,5 @@
+/* istanbul ignore file*/
+// Reason: Related to Jest's current lack of support for ES modules. See (https://github.com/seanttaylor/sandbox-poc/issues/8)
 import SandboxController from '../sandbox-controller/index.js';
 
 // The sandboxed API modules that will ultimately be available to the application core

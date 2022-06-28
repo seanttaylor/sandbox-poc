@@ -1,3 +1,6 @@
+/* istanbul ignore file */
+// Reason: The `sandboxFetch` method will be exercised in integration tests; juice not worth the squeeze unit testing a deli-thin `node-fetch` wrapper. 
+
 import fetch from 'node-fetch';
 
 /**

@@ -1,22 +1,28 @@
+import { promisify } from 'util';
+
 import Sandbox from './src/sandbox/index.js';
 import PostRepository from './lib/repos/post/index.js';
 import JainkyModule from './lib/jainky-module/index.js';
+import figlet from 'figlet';
 
 const GLOBAL_ERROR_THRESHOLD = 10;
+const figletize = promisify(figlet);
 
 Sandbox.module('/lib/repos/post', PostRepository);
 Sandbox.module('/lib/jainky-module', JainkyModule);
 
 Sandbox.of([
   '/lib/jainky-module',
-  '/lib/repos/post', 
-  ],
+  '/lib/repos/post',
+],
   /***
    * @param {Object} box - the sandboxed module APIs; this is where the registered module functionality lives
    */
   async function myApp(box) {
     const { ApplicationError } = box.errors;
-    
+
+    hello();
+
     box.events.on('application.error', onApplicationError);
 
     /**
@@ -32,7 +38,7 @@ Sandbox.of([
      * @param {AppEvent} appEvent - an instance of the {AppEvent} interface
      */
     function onApplicationError(appEvent) {
-      console.error(appEvent.payload())
+      console.error(appEvent.payload());
     }
 
     /**
@@ -43,6 +49,14 @@ Sandbox.of([
       box.moduleCtrl[`${moduleName}`].stop();
       box.moduleCtrl[`${moduleName}`].start();
       box.events.notify('application.info.moduleRestarted', moduleName);
+    }
+
+    /**
+     * 
+     */
+    async function hello() {
+      const banner = await figletize('sandbox v.0.0.1');
+      console.log(banner);
     }
 
     await box.my.postRepo.create({

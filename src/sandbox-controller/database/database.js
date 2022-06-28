@@ -1,3 +1,6 @@
+/* istanbul ignore file */
+// Reason: This file only exports mock data for the in-memory document store immplementation
+
 export default {
    "__comments": "Sample data store with some valid seed data.",
     "users": {

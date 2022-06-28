@@ -1,9 +1,9 @@
 // For more info about the Jest mocking APIs see: https://jestjs.io/docs/mock-functions#mock-property
-import events from '../src/sandbox-controller/events/index.js';
+import events from '../../src/sandbox-controller/events/index.js';
 
 
 /**
- * This test suite verifies the functionality of the event broadcasting mechanism and the interface of 
+ * This test suite verifies the functionality of the event broadcasting system and the interface of 
  * all data payloads associated with a triggered events
  */
 describe('Events', () => {

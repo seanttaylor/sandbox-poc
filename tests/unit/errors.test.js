@@ -1,10 +1,9 @@
-// For more info about the Jest mocking APIs see: https://jestjs.io/docs/mock-functions#mock-property
-import errors from '../src/sandbox-controller/errors/index.js';
+import errors from '../../src/sandbox-controller/errors/index.js';
 
-const { ApplicationError } = errors; 
+const { ApplicationError } = errors;
 
 /**
- * This test suite verfies the {ApplicationError} interface.
+ * This test suite verifies the {ApplicationError} interface.
  */
 describe('ApplicationError', () => {
     test('Should create an object conforming to the {ApplicationError} interface', async () => {
@@ -22,7 +21,7 @@ describe('ApplicationError', () => {
         expect(myError.id === id).toBe(true);
         expect(Object.keys(myError).includes('message')).toBe(true);
         expect(Object.keys(myError).includes('name')).toBe(true);
-        
+
         expect(Object.keys(myError).includes('module')).toBe(true);
         expect(Object.keys(myError).includes('_open')).toBe(true);
     });
