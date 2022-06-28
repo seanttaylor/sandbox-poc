@@ -5,13 +5,13 @@
     "default": {},
     "title": "The Application Error schema",
     "required": [
-        "id",
+        "code",
         "message",
         "name",
         "module"
     ],
     "properties": {
-        "id": {
+        "code": {
             "$id": "#/properties/id",
             "type": "string",
             "default": "",
@@ -59,7 +59,7 @@
         }
     },
     "examples": [{
-        "id": "module.jainky",
+        "code": "module.jainky",
         "message": "This is a jainky module, lol",
         "name": "LibJainkyModuleError",
         "module": "/lib/jainky-module",

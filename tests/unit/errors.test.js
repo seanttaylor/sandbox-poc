@@ -7,9 +7,9 @@ const { ApplicationError } = errors;
  */
 describe('ApplicationError', () => {
     test('Should create an object conforming to the {ApplicationError} interface', async () => {
-        const id = "ThingyError.BadRequest.CouldNotDoTheThing";
+        const code = "ThingyError.BadRequest.CouldNotDoTheThing";
         const myError = ApplicationError({
-            id,
+            code,
             message: "This is a jainky module, lol",
             name: "LibJainkyModuleError",
             module: "/lib/jainky-module",
@@ -18,7 +18,7 @@ describe('ApplicationError', () => {
             }
         });
 
-        expect(myError.id === id).toBe(true);
+        expect(myError.code === code).toBe(true);
         expect(Object.keys(myError).includes('message')).toBe(true);
         expect(Object.keys(myError).includes('name')).toBe(true);
 
