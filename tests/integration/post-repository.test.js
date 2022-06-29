@@ -1,16 +1,18 @@
 
 import { faker } from '@faker-js/faker';
+import pluginEventAuthz from '../../lib/plugins/event-authz/index.js';
 import PostRepository from '../../lib/repos/post/index.js';
 import SandboxController from '../../src/sandbox-controller/index.js';
 
 /**
- * This test suite tests the public methods the PostRepository API.
+ * This test suite tests the public methods the PostRepository API and client-defined Plugin intialization. 
  */
 describe('PostRepository API', () => {
     // SandboxController augments sandbox with a method for registering the public API of application modules (e.g. the PostRepository module)
     const sandbox = {};
     const { controller } = SandboxController(sandbox);
     // The controller applies the API of the module to the sandbox
+    pluginEventAuthz(controller);
     PostRepository(controller);
 
     test('Should be able to create a new Post', async () => {

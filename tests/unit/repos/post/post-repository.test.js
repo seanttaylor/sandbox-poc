@@ -4,7 +4,7 @@ const on = jest.fn();
 const notify = jest.fn();
 
 const fakeController = {
-    events: {
+    '/plugins/events-authz': {
         on,
         notify
     }

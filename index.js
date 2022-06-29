@@ -23,10 +23,10 @@ Sandbox.of([
    */
   async function myApp(box) {
     const { ApplicationError } = box.get('errors');
-    const events = box.get('events');
-    const eventsWithAuthz = box.get('/plugins/events-authz');
+    const subscriberId = 'myApp';
+    const events = box.get('/plugins/events-authz');
     
-    events.on({ event: 'application.error', handler: onApplicationError });
+    events.on({ event: 'application.error', handler: onApplicationError, subscriberId });
 
     /**
      * Logic for handling the event the `GLOBAL_ERROR_THRESHOLD` value is exceeded for *any* running module
@@ -69,14 +69,13 @@ Sandbox.of([
 
     hello();
 
-    /*
+    
     setTimeout(()=> {
       try {
-        restartModule('/lib/jainky-module');
+        events.notify('application.info.moduleStopped', 42);
       } catch(e) {
-        console.error(e.message)
+        console.error(e.message);
       }
     }, 30000);
-    */
   }
 );

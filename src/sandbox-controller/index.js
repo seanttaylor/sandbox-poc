@@ -48,7 +48,7 @@ function SandboxController(box) {
   function plugin({ extendsDefault, fn, name, of }) {
     // This plugin extends a default module
     if (extendsDefault) {
-      const unpluggedModule = box[of]; 
+      const unpluggedModule = defaultApplicationModules[of]; 
       // Since this plugin extends a default module we want to make its functionality immediately available by applying the plugin
       box['plugins'][name] = fn(unpluggedModule);
       return;
