@@ -8,9 +8,10 @@ describe('SandboxController', () => {
         const myBox = {};
         const { controller } = SandboxController(myBox);
 
-        expect(Object.keys(controller).includes('ajax')).toBe(true);
-        expect(Object.keys(controller).includes('errors')).toBe(true);
-        expect(Object.keys(controller).includes('events')).toBe(true);
-        expect(Object.keys(controller).includes('put')).toBe(true);
+        expect(typeof controller.get('ajax')).toEqual('object');
+        expect(typeof controller.get('errors')).toEqual('object');
+        expect(typeof controller.get('events')).toEqual('object');
+        expect(typeof controller.put).toEqual('function');
+        expect(typeof controller.get).toEqual('function');
     });
 });

@@ -14,9 +14,9 @@ Sandbox.module('/lib/jainky-module', JainkyModule);
 Sandbox.module('/lib/plugins/event-authz', PluginEventAuthz);
 
 Sandbox.of([
+  '/lib/plugins/event-authz',
   '/lib/jainky-module',
   '/lib/repos/post',
-  '/lib/plugins/event-authz'
 ],
   /***
    * @param {Object} box - the sandboxed module APIs; this is where the registered module functionality lives
@@ -24,9 +24,9 @@ Sandbox.of([
   async function myApp(box) {
     const { ApplicationError } = box.get('errors');
     const events = box.get('events');
-    const eventsWithAuthz = box.my.plugins['/plugins/events-authz'](events);
+    const eventsWithAuthz = box.get('/plugins/events-authz');
     
-    eventsWithAuthz.on({ event: 'application.error', handler: onApplicationError });
+    events.on({ event: 'application.error', handler: onApplicationError });
 
     /**
      * Logic for handling the event the `GLOBAL_ERROR_THRESHOLD` value is exceeded for *any* running module

@@ -20,7 +20,8 @@ const defaultApplicationModules = {
  */
 function SandboxController(box) {
   box.my = {};
-  box.my.plugins = {}
+  box.my.plugins = {};
+  box.plugins = {};
 
   /**
    * Registers a module's API on the sandbox, this is the functionality a module exposes to the rest of the app via the sandbox.
@@ -28,16 +29,9 @@ function SandboxController(box) {
    * @param {Object} moduleAPI - the API exposed by the module
    */
   function put(moduleName, moduleAPI) {
-    const isPlugin = moduleName.includes('/plugins/');
-
     // We don't need to re-register moduleAPIs that have already been registered
     if (box['my'][moduleName]) {
       return
-    }
-
-    if (isPlugin) {
-      box['my']['plugins'][moduleName] = moduleAPI.myPlugin;
-      return;
     }
 
     box['my'][moduleName] = moduleAPI;
@@ -45,29 +39,44 @@ function SandboxController(box) {
 
   /**
    * 
-   * @param {String} extend - the name of the existing module the plugin extends
+   * @param {Boolean} extendsDefault - indicates whether the module being extends is a default or client module
    * @param {Function} fn - the business logic of the plugin
    * @param {String} name - the namespace of the the plugin on the sandbox
+   * @param {String} of - the name of the existing module the plugin extends
+
    */
-  function plugin({ extend, fn, name }) {
-    const unpluggedModule = box[extend];
-    box['my'][name] = fn(unpluggedModule);
+  function plugin({ extendsDefault, fn, name, of }) {
+    // This plugin extends a default module
+    if (extendsDefault) {
+      const unpluggedModule = box[of]; 
+      // Since this plugin extends a default module we want to make its functionality immediately available by applying the plugin
+      box['plugins'][name] = fn(unpluggedModule);
+      return;
+    }
+    // Plugins that extend client modules are applied at the descretion of the application core
+    box['my']['plugins'][name] = fn;
   }
 
   /**
    * 
-   * @param {String} module 
+   * @param {String} module - the name of the module to retrieve
    */
   function get(module) {
+    // The requested module is a plugin
+    if (module.includes('/plugins/')) {
+      
+      if (!box['plugins'][module]) {
+        console.error(`PluginError.NotFound (${module}) => Could not find the requested plugin`);
+        return;
+      }
+      
+      return box['plugins'][module];
+    }
     return defaultApplicationModules[module];
   }
 
   return {
     controller: {
-      //ajax,
-      //database,
-      //errors,
-      //events,
       get,
       plugin,
       put
