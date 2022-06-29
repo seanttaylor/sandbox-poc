@@ -5,6 +5,13 @@ import database from './database/connectors/memory.js';
 import events from './events/index.js';
 import errors from './errors/index.js';
 
+const defaultApplicationModules = {
+  ajax,
+  database,
+  events,
+  errors,
+}
+
 /**
  * Attaches key functions to the sandbox that all modules have access to. Exposes
  * an API for modules to register or request functionalities from the sandbox. 
@@ -13,6 +20,7 @@ import errors from './errors/index.js';
  */
 function SandboxController(box) {
   box.my = {};
+  box.my.plugins = {}
 
   /**
    * Registers a module's API on the sandbox, this is the functionality a module exposes to the rest of the app via the sandbox.
@@ -20,24 +28,53 @@ function SandboxController(box) {
    * @param {Object} moduleAPI - the API exposed by the module
    */
   function put(moduleName, moduleAPI) {
+    const isPlugin = moduleName.includes('/plugins/');
+
     // We don't need to re-register moduleAPIs that have already been registered
     if (box['my'][moduleName]) {
       return
     }
+
+    if (isPlugin) {
+      box['my']['plugins'][moduleName] = moduleAPI.myPlugin;
+      return;
+    }
+
     box['my'][moduleName] = moduleAPI;
   }
-      
-    return {
-      controller: {
-        ajax,
-        database,
-        errors,
-        events,
-        put
-      }
+
+  /**
+   * 
+   * @param {String} extend - the name of the existing module the plugin extends
+   * @param {Function} fn - the business logic of the plugin
+   * @param {String} name - the namespace of the the plugin on the sandbox
+   */
+  function plugin({ extend, fn, name }) {
+    const unpluggedModule = box[extend];
+    box['my'][name] = fn(unpluggedModule);
+  }
+
+  /**
+   * 
+   * @param {String} module 
+   */
+  function get(module) {
+    return defaultApplicationModules[module];
+  }
+
+  return {
+    controller: {
+      //ajax,
+      //database,
+      //errors,
+      //events,
+      get,
+      plugin,
+      put
     }
+  }
 }
 
-export default SandboxController; 
+export default SandboxController;
 
 

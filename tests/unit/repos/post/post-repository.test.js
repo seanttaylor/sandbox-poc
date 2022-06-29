@@ -1,5 +1,13 @@
 // For more info about the Jest mocking APIs see: https://jestjs.io/docs/mock-functions#mock-property
 import PostRepository from '../../../../lib/repos/post/index.js';
+const on = jest.fn();
+const notify = jest.fn();
+const fakeController = {
+    events: {
+        on,
+        notify
+    }
+};
 
 /**
  * Creates a mock sandbox for modules under test to consume
@@ -7,12 +15,13 @@ import PostRepository from '../../../../lib/repos/post/index.js';
  */
 function BoxFactory() {
     return  {
-        events: {
-            notify: jest.fn(),
-            on: jest.fn()
+        put() {
+
         },
-        put: jest.fn()
-    };
+        get(name) {
+            return fakeController[name];
+        }
+    }
 }
 
 /**
@@ -22,8 +31,8 @@ describe('PostRepository Initialization', () => {
     test('Should register the PostRepository API on the sandbox on module initialization via `put`', async () => {
         const myBox = BoxFactory();
         PostRepository(myBox);
-        
-        expect(myBox.events.on.mock.calls.length).toBe(2);
+
+        expect(myBox.get.on.mock.calls.length).toBe(2);
         expect(myBox.put.mock.calls.length).toBe(1);
     });
 

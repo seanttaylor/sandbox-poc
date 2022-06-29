@@ -4,7 +4,7 @@ import SandboxController from '../sandbox-controller/index.js';
 
 // The sandboxed API modules that will ultimately be available to the application core
 const box = {};
-// A map of modules that have been registered with application core
+// A map of all modules that have been registered with application core by the client
 const myModules = {};
 
 /**
@@ -94,7 +94,7 @@ async function of(modulesList, callback) {
 
     } catch (e) {
       console.error(
-        `InitializationError.InternalError in: (${modulesList[i]}) ${e.message} `
+        `InitializationError.InternalError in: (${modulesList[i]}) ${e.stack} `
       );
     }
   }
@@ -104,7 +104,7 @@ async function of(modulesList, callback) {
     await callback(applicationSandboxWrapper(box, controller));
   } catch (e) {
     console.error(
-      `Application.InternalError.UncaughtModuleError => ${e.message}`
+      `Application.InternalError.UncaughtModuleError => ${e.stack}`
     );
     // controller.stopAll(myModules);
   }

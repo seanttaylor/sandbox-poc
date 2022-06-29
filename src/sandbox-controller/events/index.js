@@ -47,11 +47,11 @@ function notify(eventName, eventData) {
 
 /**
  * Registers an event of interest with the application sandbox
- * @param {String} eventName
- * @param {Function} eventHandler
+ * @param {String} event
+ * @param {Function} handler
  */
-function on(eventName, eventHandler) {
-  eventEmitter.on(eventName, eventHandler);
+function on({event, handler}) {
+  eventEmitter.on(event, handler);
 }
 
 export default {

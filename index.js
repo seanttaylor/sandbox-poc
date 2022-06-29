@@ -1,29 +1,32 @@
 import { promisify } from 'util';
+import figlet from 'figlet';
 
 import Sandbox from './src/sandbox/index.js';
 import PostRepository from './lib/repos/post/index.js';
 import JainkyModule from './lib/jainky-module/index.js';
-import figlet from 'figlet';
+import PluginEventAuthz from './lib/plugins/event-authz/index.js';
 
 const GLOBAL_ERROR_THRESHOLD = 10;
 const figletize = promisify(figlet);
 
 Sandbox.module('/lib/repos/post', PostRepository);
 Sandbox.module('/lib/jainky-module', JainkyModule);
+Sandbox.module('/lib/plugins/event-authz', PluginEventAuthz);
 
 Sandbox.of([
   '/lib/jainky-module',
   '/lib/repos/post',
+  '/lib/plugins/event-authz'
 ],
   /***
    * @param {Object} box - the sandboxed module APIs; this is where the registered module functionality lives
    */
   async function myApp(box) {
-    const { ApplicationError } = box.errors;
-
-    hello();
-
-    box.events.on('application.error', onApplicationError);
+    const { ApplicationError } = box.get('errors');
+    const events = box.get('events');
+    const eventsWithAuthz = box.my.plugins['/plugins/events-authz'](events);
+    
+    eventsWithAuthz.on({ event: 'application.error', handler: onApplicationError });
 
     /**
      * Logic for handling the event the `GLOBAL_ERROR_THRESHOLD` value is exceeded for *any* running module
@@ -63,6 +66,8 @@ Sandbox.of([
       authorId: "/users/1d2b3f93-804b-4e02-94ad-2eec6b90997d",
       body: "Another day in the life of a playboy billionaire genius..."
     });
+
+    hello();
 
     /*
     setTimeout(()=> {

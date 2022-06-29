@@ -9,7 +9,7 @@ import events from '../../src/sandbox-controller/events/index.js';
 describe('Events', () => {
     test('Should trigger a registered event for broadast', async () => {
         const fakeCallback = jest.fn();
-        events.on('fake-event', fakeCallback);
+        events.on({ event: 'fake-event', handler: fakeCallback });
         events.notify('fake-event', 42);
 
         expect(fakeCallback.mock.calls.length).toBe(1);
@@ -20,7 +20,7 @@ describe('Events', () => {
 
     test('Should get an object conforming to the {AppEvent} interface in the data associated with a triggered event', async () => {
         const fakeCallback = jest.fn();
-        events.on('new-fake-event', fakeCallback);
+        events.on({ event: 'new-fake-event', handler: fakeCallback });
         events.notify('new-fake-event', 42);
 
         expect(fakeCallback.mock.calls.length).toBe(1);
@@ -33,7 +33,7 @@ describe('Events', () => {
 
     test('Should be able to get the data associated with a triggered event', async () => {
         const fakeCallback = jest.fn();
-        events.on('new-fake-event', fakeCallback);
+        events.on({ event: 'new-fake-event', handler: fakeCallback });
         events.notify('new-fake-event', 42);
 
         expect(fakeCallback.mock.calls.length).toBe(1);

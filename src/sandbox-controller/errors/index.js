@@ -34,8 +34,8 @@ const ajv = new Ajv();
 
   const errorText = `ApplicationError.InternalError.${error.name} (${error.code}) => ${error.message}`;
   const emittedError = Object.assign(error, {
-  message: errorText,
-  timestamp: new Date().toISOString(),
+    message: errorText,
+    timestamp: new Date().toISOString(),
   });
 
   return emittedError;
