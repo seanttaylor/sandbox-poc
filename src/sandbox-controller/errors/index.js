@@ -1,7 +1,10 @@
 import Ajv from 'ajv';
 import applicationErrorSchema from '../../../schemas/application-error.js';
+import { IConsole } from '../../interfaces/console.js';
+import SimpleConsole from '../console/index.js'
 
 const ajv = new Ajv();
+const console = IConsole(SimpleConsole);
 
 /**
  * @typedef ApplicationErrorInterface

@@ -1,7 +1,10 @@
 import events from 'events';
 import { randomUUID } from 'crypto';
+import { IConsole } from '../../interfaces/console.js';
+import SimpleConsole from '../console/index.js'
 
 const eventEmitter = new events.EventEmitter();
+const console = IConsole(SimpleConsole);
 
 /**
  * @typedef AppEvent

@@ -4,9 +4,13 @@ import ajax from './ajax/index.js';
 import database from './database/connectors/memory.js';
 import events from './events/index.js';
 import errors from './errors/index.js';
+import { IConsole } from '../interfaces/console.js';
+import SimpleConsole from './console/index.js';
 
+const console = IConsole(SimpleConsole);
 const defaultSandboxAPIs = {
   ajax,
+  console,
   database,
   events,
   errors,
