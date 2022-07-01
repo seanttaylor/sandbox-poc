@@ -5,7 +5,7 @@ import database from './database/connectors/memory.js';
 import events from './events/index.js';
 import errors from './errors/index.js';
 
-const defaultApplicationModules = {
+const defaultSandboxAPIs = {
   ajax,
   database,
   events,
@@ -13,9 +13,9 @@ const defaultApplicationModules = {
 }
 
 /**
- * Attaches key functions to the sandbox that all modules have access to. Exposes
- * an API for modules to register or request functionalities from the sandbox. 
- * @param {Object} box - plain JavaScript object that will house the public APIs of registered modules
+ * Attaches key methods on the sandbox that the application core and *client-defined* modules have access to. Exposes
+ * an API for client-defined modules to register or request functionalities from the default sandbox APIs. 
+ * @param {Object} box - plain JavaScript object that will house the public APIs of registered client-defined modules
  * @returns {Object}
  */
 function SandboxController(box) {
@@ -24,12 +24,12 @@ function SandboxController(box) {
   box.plugins = {};
 
   /**
-   * Registers a module's API on the sandbox, this is the functionality a module exposes to the rest of the app via the sandbox.
+   * Registers a client-defined module's API on the sandbox. This is the functionality a module exposes to the rest of the app via the sandbox.
    * @param {String} moduleName - the namespace the functionality will live under on the sandbox
-   * @param {Object} moduleAPI - the API exposed by the module
+   * @param {Object} moduleAPI - the API exposed by the client-defined module
    */
   function put(moduleName, moduleAPI) {
-    // We don't need to re-register moduleAPIs that have already been registered
+    // We don't need to re-register client-defined module APIs that have already been registered
     if (box['my'][moduleName]) {
       return
     }
@@ -38,22 +38,24 @@ function SandboxController(box) {
   }
 
   /**
-   * 
-   * @param {Boolean} extendsDefault - indicates whether the module being extends is a default or client module
+   * Creates a plugin for an existing module
+   * @param {Boolean} extendsDefault - indicates whether the code being extended is a default sandbox API or client-defined module
    * @param {Function} fn - the business logic of the plugin
    * @param {String} name - the namespace of the the plugin on the sandbox
    * @param {String} of - the name of the existing module the plugin extends
 
    */
   function plugin({ extendsDefault, fn, name, of }) {
-    // This plugin extends a default module
+    // This plugin extends a default sandbox API 
     if (extendsDefault) {
-      const unpluggedModule = defaultApplicationModules[of]; 
-      // Since this plugin extends a default module we want to make its functionality immediately available by applying the plugin
+      const unpluggedModule = defaultSandboxAPIs[of]; 
+      // Since this plugin extends a default sandbox API we want to make its functionality immediately available by applying the plugin
       box['plugins'][name] = fn(unpluggedModule);
       return;
     }
-    // Plugins that extend client modules are applied at the descretion of the application core
+
+    // This plugin extends a client-defined module
+    // Plugins that extend client-defined modules are applied at the descretion of the application core
     box['my']['plugins'][name] = fn;
   }
 
@@ -72,7 +74,7 @@ function SandboxController(box) {
       
       return box['plugins'][module];
     }
-    return defaultApplicationModules[module];
+    return defaultSandboxAPIs[module];
   }
 
   return {

@@ -4,7 +4,7 @@ import SandboxController from '../sandbox-controller/index.js';
 
 // The sandboxed API modules that will ultimately be available to the application core
 const box = {};
-// A map of all modules that have been registered with application core by the client
+// A map of all client-defined modules that have been registered with application core
 const myModules = {};
 
 /**
@@ -31,7 +31,8 @@ function deepFreeze(object) {
 }
 
 /**
- * Exposes the API for starting and stopping modules to the application core; makes all registered module APIs immutable.
+ * Exposes the API for starting and stopping *client-defined* modules to the application core; makes all APIs immutable--both client-defined 
+ * module APIs and default sandbox APIs.
  * @param {Object} box - sandboxed API modules
  * @param {Object} sandboxController - an instance of the SandboxController interface
  * @returns {Object}
@@ -46,7 +47,7 @@ function applicationSandboxWrapper(box, sandboxController) {
 }
 
 /**
- * Registers the constructor function for a module; reserves a placeholder for a registering a method to stop the module
+ * Registers the constructor function for a client-defined module; reserves a placeholder for a registering a method to stop the module
  * @param {String} moduleName 
  * @param {Function} myModule
  */
@@ -55,7 +56,7 @@ function module(moduleName, myModule) {
 }
 
 /**
- * Creates a new application with access to sandboxed module APIs
+ * Creates a new application with access to default sandbox APIs and any registered client-defined module APIs.
  * @param {Array} modulesList - list of modules to register on the application sandbox
  * @param {Function} callback - the app that will be launched once the sandboxed modules are initialized
  */
@@ -73,7 +74,7 @@ async function of(modulesList, callback) {
     }
   }
 
-  // initialize the required modules
+  
   for (let i = 0; i < modulesList.length; i += 1) {
     if (!Object.keys(myModules).includes(modulesList[i])) {
       console.error(
@@ -83,13 +84,13 @@ async function of(modulesList, callback) {
     }
 
     try {
-      // initialize modules
+      // initialize required client-defined modules
       let stopFn = myModules[modulesList[i]]['start'](controller);
 
       // bind the controller to the module constructor for future invocations
       myModules[modulesList[i]]['start'] = myModules[modulesList[i]]['start'].bind(null, controller);
 
-      // initialized modules *may* return a function to tear down any resources when the module is stopped
+      // initialized client-defined modules *may* return a function to tear down any resources when the module is stopped
       myModules[modulesList[i]]['stop'] = stopFn ? stopFn : ()=> {}
 
     } catch (e) {
@@ -99,14 +100,13 @@ async function of(modulesList, callback) {
     }
   }
 
-  // launch the application
+  // launch the applicationc core
   try {
     await callback(applicationSandboxWrapper(box, controller));
   } catch (e) {
     console.error(
       `Application.InternalError.UncaughtModuleError => ${e.stack}`
     );
-    // controller.stopAll(myModules);
   }
 }
 
