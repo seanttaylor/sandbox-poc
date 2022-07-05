@@ -102,7 +102,7 @@ async function of(modulesList, callback) {
 
   // launch the applicationc core
   try {
-    await callback(applicationSandboxWrapper(box, controller));
+    callback(applicationSandboxWrapper(box, controller));
   } catch (e) {
     console.error(
       `Application.InternalError.UncaughtModuleError => ${e.stack}`

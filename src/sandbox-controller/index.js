@@ -46,7 +46,7 @@ function SandboxController(box) {
    * @param {Boolean} extendsDefault - indicates whether the code being extended is a default sandbox API or client-defined module
    * @param {Function} fn - the business logic of the plugin
    * @param {String} name - the namespace of the the plugin on the sandbox
-   * @param {String} of - the name of the existing module the plugin extends
+   * @param {String} of - (optional) the name of the existing module the plugin extends
 
    */
   function plugin({ extendsDefault, fn, name, of }) {
@@ -60,7 +60,7 @@ function SandboxController(box) {
 
     // This plugin extends a client-defined module
     // Plugins that extend client-defined modules are applied at the descretion of the application core
-    box['my']['plugins'][name] = fn;
+    box['my']['plugins'][name] = { load: fn };
   }
 
   /**

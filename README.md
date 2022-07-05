@@ -232,20 +232,20 @@ Plugins that extend client-defined modules are accessible only to the applicatio
 ```
 Sandbox(['jainky-module'], async function(sandbox) {
   const jainkyModule = sandbox.my.jainkyModule;
-  const superJainkyModule = sandbox.my.plugins['/plugins/super-jainky-module'](jainkyModule);
+  const superJainkyModule = sandbox.my.plugins['/plugins/super-jainky-module'].load(jainkyModule);
 });
 ```
 
 When a client-defined module is extended with a plugin (i.e. `jainky-module` above), the application core decides whether or not it will apply the plugin for a specified module. Above, the 'jainky-module' is consumed by the plugin 'super-jainky-module' to produce an upgraded API.
 
 ##### Plugins for Default Sandbox APIs
-With plugins for default sandbox APIs the opposite is true: client-defined modules must *opt-in* to use upgraded APIs. To consume the `events-authz` plugin for the default `events` API above inside a clien-defined module, we would do:
+With plugins for default sandbox APIs the opposite is true: client-defined modules must *opt-in* to use upgraded APIs. To consume the `events-authz` plugin for the default `events` API above inside a client-defined module, we would do:
 
 ```
 const events = sandbox.get('/plugins/events-authz');
 ```
 
-We call the plugin by its specifed name and the API is immediately available for use inside   *client-defined* modules.
+We call the plugin by its specifed name and the API is immediately available for use inside *client-defined* modules.
 
 > Note: We could access the original 'unplugged' events API with `sandbox.get('events')`. Plugins only augment; they do not alter the code they plug into.  
 

@@ -1,28 +1,22 @@
 // For more info about the Jest mocking APIs see: https://jestjs.io/docs/mock-functions#mock-property
 
-import pluginEventAuthz from '../../../lib/plugins/event-authz/index.js';
-import { MockSandBoxFactory } from '../../mocks/mock-sandbox-factory.js';
-
+import PluginEventAuthz from '../../../lib/plugins/event-authz/index.js';
+import MockSandBoxFactory from '../../mocks/mock-sandbox-factory.js';
 
 /**
  * This test suite verifies EventAuthz plugin functionality.
  */
 describe('EventAuthzPlugin', () => {
-    const box = {
-        plugin: jest.fn(),
-        get: jest.fn()
-    };
-
     test('Should call the `plugin` method defined on the sandbox to register the plugin', async () => {
         const mockSandbox = MockSandBoxFactory();
-        pluginEventAuthz(mockSandbox);
+        PluginEventAuthz(mockSandbox);
 
         expect(mockSandbox.plugin.mock.calls.length).toBe(1);
     });
 
     test('Should call the `plugin` method with the plugin configuration', async () => {
         const mockSandbox = MockSandBoxFactory();
-        pluginEventAuthz(mockSandbox);
+        PluginEventAuthz(mockSandbox);
 
         expect(typeof (mockSandbox.plugin.mock.calls[0][0])).toEqual('object');
         expect(Object.keys(mockSandbox.plugin.mock.calls[0][0]).includes('extendsDefault')).toEqual(true);
@@ -35,7 +29,7 @@ describe('EventAuthzPlugin', () => {
         const mockSandbox = MockSandBoxFactory();
         const notify = jest.fn();
         const on = jest.fn();
-        pluginEventAuthz(mockSandbox);
+        PluginEventAuthz(mockSandbox);
 
         // We create a fake plugin instance and provide the default application events interface
         const fakePlugin = mockSandbox.plugin.mock.calls[0][0]['fn']({ notify, on });
@@ -51,17 +45,17 @@ describe('EventAuthzPlugin', () => {
         const notify = jest.fn();
         const on = jest.fn();
         const handler = jest.fn();
-        pluginEventAuthz(mockSandbox);
+        PluginEventAuthz(mockSandbox);
 
         const fakePlugin = mockSandbox.plugin.mock.calls[0][0]['fn']({ notify, on });
 
-        fakePlugin.on({ 
-            event: 'application.info.testEventDoNotRemove', 
-            subscriberId: 'testRunner', 
-            handler 
+        fakePlugin.on({
+            event: 'application.info.testEventDoNotRemove',
+            subscriberId: 'testRunner',
+            handler
         });
         fakePlugin.notify('application.info.testEventDoNotRemove', 42);
-        
+
         expect(notify.mock.calls.length).toEqual(1);
         expect(on.mock.calls.length).toEqual(1);
     });
@@ -71,17 +65,17 @@ describe('EventAuthzPlugin', () => {
         const notify = jest.fn();
         const on = jest.fn();
         const handler = jest.fn();
-        pluginEventAuthz(mockSandbox);
+        PluginEventAuthz(mockSandbox);
 
         const fakePlugin = mockSandbox.plugin.mock.calls[0][0]['fn']({ notify, on });
 
-        fakePlugin.on({ 
-            event: 'application.info.testEventDoNotRemove', 
-            subscriberId: 'randomSubscriber', 
-            handler 
+        fakePlugin.on({
+            event: 'application.info.testEventDoNotRemove',
+            subscriberId: 'randomSubscriber',
+            handler
         });
         fakePlugin.notify('application.info.testEventDoNotRemove', 42);
-        
+
         // Since randomSubscriber does not have permissions, the mocked `events.on` method does not subscribe anything
         expect(notify.mock.calls.length).toEqual(1);
         expect(on.mock.calls.length).toEqual(0);
@@ -92,18 +86,18 @@ describe('EventAuthzPlugin', () => {
         const notify = jest.fn();
         const on = jest.fn();
         const handler = jest.fn();
-        pluginEventAuthz(mockSandbox);
+        PluginEventAuthz(mockSandbox);
 
         const fakePlugin = mockSandbox.plugin.mock.calls[0][0]['fn']({ notify, on });
 
-        fakePlugin.on({ 
-            event: 'bogusEvent', 
-            subscriberId: 'testRunner', 
-            handler 
+        fakePlugin.on({
+            event: 'bogusEvent',
+            subscriberId: 'testRunner',
+            handler
         });
         fakePlugin.notify('bogusEvent', 42);
-        
-         // Since bogusEvent is not configured in permissions, the mocked `events.on` method does not subscribe anything
+
+        // Since bogusEvent is not configured in permissions, the mocked `events.on` method does not subscribe anything
         expect(notify.mock.calls.length).toEqual(1);
         expect(on.mock.calls.length).toEqual(0);
     });

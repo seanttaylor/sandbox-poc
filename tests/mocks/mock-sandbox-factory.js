@@ -7,7 +7,7 @@ const fakeModules = {
     events: jest.fn(),
     errors: jest.fn(),
     database: jest.fn(),
-    console: jest.fn().mockImplementation(()=> {
+    console: jest.fn().mockImplementation(() => {
         return {
             debug() {
                 //goes nowhere does nothing in test
@@ -36,4 +36,4 @@ function MockSandBoxFactory() {
     }
 }
 
-export { MockSandBoxFactory }
+export default MockSandBoxFactory; 
