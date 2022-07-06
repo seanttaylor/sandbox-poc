@@ -36,4 +36,4 @@ function IPostRepository(myImpl = {}) {
     };
 }
 
-export { IPostRepository };
+export default IPostRepository;

@@ -12,14 +12,16 @@ import Sandbox from './src/sandbox/index.js';
 import PostRepository from './lib/repos/post/index.js';
 import JainkyModule from './lib/jainky-module/index.js';
 import StatusService from './lib/services/status/index.js';
+import PostService from './lib/services/post/index.js';
 
 /******** PLUGINS ********/
 import PluginEventAuthz from './lib/plugins/event-authz/index.js';
 import PluginStatusRouter from './lib/plugins/router/status/index.js';
+import PluginPostRouter from './lib/plugins/router/post/index.js';
 
 const GLOBAL_ERROR_THRESHOLD = 10;
 const SERVER_PORT = process.env.PORT || 3000;
-const APP_NAME = process.env.APP_NAME || 'sandbox'; 
+const APP_NAME = process.env.APP_NAME || 'sandbox';
 const APP_VERSION = process.env.APP_VERSION || '0.0.1';
 
 const figletize = promisify(figlet);
@@ -30,25 +32,34 @@ Sandbox.module('/lib/jainky-module', JainkyModule);
 Sandbox.module('/lib/plugins/event-authz', PluginEventAuthz);
 Sandbox.module('/lib/plugins/status-router', PluginStatusRouter);
 Sandbox.module('/lib/services/status', StatusService);
+Sandbox.module('/lib/plugins/post-router', PluginPostRouter);
+Sandbox.module('/lib/services/post', PostService);
 
 Sandbox.of([
   '/lib/plugins/event-authz',
   '/lib/jainky-module',
   '/lib/repos/post',
+  '/lib/services/post',
+  '/lib/plugins/post-router',
   '/lib/services/status',
   '/lib/plugins/status-router'
 ],
   /***
-   * @param {Object} box - the sandboxed module APIs; this is where the registered module functionality lives
+   * The application core 
+   * @param {Object} sandbox - the sandboxed module APIs; this is where the registered module functionality lives
    */
-  async function myApp(box) {
-    const events = box.get('/plugins/events-authz');
-    const console = box.get('console');
+  async function myApp(sandbox) {
+    const events = sandbox.get('/plugins/events-authz');
+    const console = sandbox.get('console');
     const subscriberId = 'myApp';
 
     /******** PLUGIN CONFIGURATION ********/
-    const StatusAPI = box.my.plugins['/plugins/status-router'].load(RouterFactory, box.my.statusService);
+    const StatusAPI = sandbox.my.plugins['/plugins/status-router'].load(RouterFactory, sandbox.my.statusService);
+    const PostAPI = sandbox.my.plugins['/plugins/post-router'].load(RouterFactory, sandbox.my.postService);
 
+    /******** MODULE CONFIGURATION *********/
+    const { postRepo } = sandbox.my;
+    sandbox.my.postService.setRepository(postRepo);
 
     /******** EVENT REGISTRATION ********/
     events.on({ event: 'application.error', handler: onApplicationError, subscriberId });
@@ -62,6 +73,7 @@ Sandbox.of([
 
     /******** ROUTES ********/
     expressApp.use('/status', StatusAPI);
+    expressApp.use('/api/v1/posts', PostAPI);
 
 
     expressApp.use((req, res) => {
@@ -86,7 +98,7 @@ Sandbox.of([
 
     /******** GREETING ********/
     hello();
-    
+
     /**
      * Creates a router instance to enable registration of API routes 
      * @returns {Object}
@@ -116,9 +128,9 @@ Sandbox.of([
      * @param {String} moduleName 
      */
     function restartModule(moduleName) {
-      box.moduleCtrl[`${moduleName}`].stop();
-      box.moduleCtrl[`${moduleName}`].start();
-      box.events.notify('application.info.moduleRestarted', moduleName);
+      sandbox.moduleCtrl[`${moduleName}`].stop();
+      sandbox.moduleCtrl[`${moduleName}`].start();
+      sandbox.events.notify('application.info.moduleRestarted', moduleName);
     }
 
     /**
