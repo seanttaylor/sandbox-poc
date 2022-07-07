@@ -114,7 +114,7 @@ describe('PostRepository API', () => {
         expect(nonExistentPost.length).toEqual(0);
     });
 
-    test('Should be able to check if a Post exists in the datastore', async () => {
+    test('Should be able to check if a Post exists in the data store', async () => {
         const bogusPostId = `${faker.datatype.uuid()}`;
         const postExists = await sandbox.my.postRepo.exists(bogusPostId);
 

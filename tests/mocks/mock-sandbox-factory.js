@@ -4,7 +4,12 @@
 
 const fakeModules = {
     ajax: jest.fn(),
-    events: jest.fn(),
+    events: jest.fn().mockImplementation(()=> {
+        return {
+            on: jest.fn(),
+            notify: jest.fn()
+        }
+    }),
     errors: jest.fn(),
     database: jest.fn(),
     console: jest.fn().mockImplementation(() => {
