@@ -40,7 +40,7 @@ describe('PostRepository API', () => {
             body
         });
 
-        const retrievedPost = await sandbox.my.postRepo.getPostById(record.id);
+        const [retrievedPost] = await sandbox.my.postRepo.getPostById(record.id);
 
         expect(retrievedPost.id).toEqual(record.id);
         expect(retrievedPost.authorId).toEqual(authorId);
@@ -119,5 +119,13 @@ describe('PostRepository API', () => {
         const postExists = await sandbox.my.postRepo.exists(bogusPostId);
 
         expect(postExists).toBe(false);
+    });
+
+    test('Should be able to get an empty array when non-existent id is given for to `getPostById`', async () => {
+        const bogusPostId = `${faker.datatype.uuid()}`;
+        const nonExistentPost = await sandbox.my.postRepo.getPostById(bogusPostId);
+
+        expect(Array.isArray(nonExistentPost)).toBe(true);
+        expect(nonExistentPost.length === 0).toBe(true);
     });
 });

@@ -73,7 +73,7 @@ Sandbox.of([
 
     /******** ROUTES ********/
     expressApp.use('/status', StatusAPI);
-    expressApp.use('/api/v1/posts', PostAPI);
+    expressApp.use('/api/v1', PostAPI);
 
 
     expressApp.use((req, res) => {

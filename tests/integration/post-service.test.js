@@ -149,7 +149,7 @@ describe('PostService', () => {
         postService.setRepository(postRepo);
 
         const { id } = await postService.create({ authorId, body });
-        const result = await postService.getPostById(id);
+        const [result] = await postService.getPostById(id);
 
         expect(result.id === id).toBe(true);
         expect(result.body === body).toBe(true);
