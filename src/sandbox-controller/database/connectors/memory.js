@@ -122,7 +122,7 @@ export default (function InMemoryDatabaseConnector() {
    */
 
   async function putOne({ doc, collection }) {
-    const { id } = doc.value();
+    const { id } = doc;
 
     if (typeof doc !== 'object') {
       throw new Error(
@@ -142,7 +142,7 @@ export default (function InMemoryDatabaseConnector() {
 
     try {
       const validate = ajv.compile(schemaValidators[collection]);
-      const record = doc.value();
+      const record = doc;
 
       if (!validate(record)) {
         throw new Error(

@@ -1,34 +1,12 @@
+import MockSandboxFacory from '../../mocks/mock-sandbox-factory.js';
 import WAL from '../../../lib/wal/index.js';
-
-const on = jest.fn();
-const notify = jest.fn();
-const fakeController = {
-    '/plugins/events-authz': {
-        on,
-        notify
-    }
-};
-
-/**
- * Creates a mock sandbox for modules under test to consume
- * @returns {Object}
- */
-function BoxFactory() {
-
-    return {
-        put: jest.fn(),
-        get(name) {
-            return fakeController[name];
-        }
-    }
-}
 
 /**
  * This test suite verifies the WAL interface.
  */
  describe('WAL', () => {
     test('Should register the WAL API on the sandbox', async () => {
-        const mockSandbox = BoxFactory();
+        const mockSandbox = MockSandboxFacory();
         WAL(mockSandbox);
 
         expect(mockSandbox.put.mock.calls.length === 1).toBe(true);

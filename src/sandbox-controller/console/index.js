@@ -1,36 +1,36 @@
 /* istanbul ignore file */
 // Reason: The failed tests are enough during the unit test run. We generally don't need to see the logs. Juice not worth the squeeze.
 
-const IS_TEST_MODE = process.env.NODE_ENV === 'ci/cd/test'; 
+const LOG_VERBOSE = process.env.LOG_VERBOSE; 
 
 /**
  * @param {String} string
  */
 function log(string) {
-    if (IS_TEST_MODE) {
+    if (LOG_VERBOSE) {
+        console.log(string);
         return;
     }
-    console.log(string);
 }
 
 /**
  * @param {String} string 
  */
 function error(string) {
-    if (IS_TEST_MODE) {
+    if (LOG_VERBOSE) {
+        console.error(string);
         return;
     }
-    console.error(string);
 }
 
 /**
  * @param {String} string
  */
 function info(string) {
-    if (IS_TEST_MODE) {
+    if (LOG_VERBOSE) {
+        console.info(string);
         return;
     }
-    console.info(string);
 }
 
 export default {

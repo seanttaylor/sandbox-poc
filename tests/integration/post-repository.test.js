@@ -19,6 +19,7 @@ describe('PostRepository API', () => {
         const authorId = "/users/1d2b3f93-804b-4e02-94ad-2eec6b90997d";
         const body = faker.hacker.phrase();
         const record = await sandbox.my.postRepo.create({
+            id: `/posts/${faker.datatype.uuid()}`,
             authorId,
             body
         });
@@ -36,6 +37,7 @@ describe('PostRepository API', () => {
         const authorId = "/users/1d2b3f93-804b-4e02-94ad-2eec6b90997d";
         const body = faker.hacker.phrase();
         const record = await sandbox.my.postRepo.create({
+            id: `/posts/${faker.datatype.uuid()}`,
             authorId,
             body
         });
@@ -51,6 +53,7 @@ describe('PostRepository API', () => {
         const authorId = "/users/1d2b3f93-804b-4e02-94ad-2eec6b90997d";
         const body = faker.hacker.phrase();
         await sandbox.my.postRepo.create({
+            id: `/posts/${faker.datatype.uuid()}`,
             authorId,
             body
         });
@@ -65,6 +68,7 @@ describe('PostRepository API', () => {
         const authorId = "/users/b20cdf59-b121-4b00-9e43-d2c48e2cf98f";
         const body = faker.hacker.phrase();
         await sandbox.my.postRepo.create({
+            id: `/posts/${faker.datatype.uuid()}`,
             authorId,
             body
         });
@@ -84,6 +88,7 @@ describe('PostRepository API', () => {
         const editedBody = "Baby's first edit";
 
         const post = await sandbox.my.postRepo.create({
+            id: `/posts/${faker.datatype.uuid()}`,
             authorId,
             body
         });
@@ -101,6 +106,7 @@ describe('PostRepository API', () => {
         const authorId = "/users/b20cdf59-b121-4b00-9e43-d2c48e2cf98f";
         const body = faker.hacker.phrase();
         const post = await sandbox.my.postRepo.create({
+            id: `/posts/${faker.datatype.uuid()}`,
             authorId,
             body
         });

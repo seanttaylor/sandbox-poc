@@ -54,8 +54,11 @@ Sandbox.of([
     const subscriberId = 'myApp';
 
     /******** PLUGIN CONFIGURATION ********/
-    const StatusAPI = sandbox.my.plugins['/plugins/status-router'].load(RouterFactory, sandbox.my.statusService);
-    const PostAPI = sandbox.my.plugins['/plugins/post-router'].load(RouterFactory, sandbox.my.postService);
+    const StatusAPI = sandbox.my.plugins['/plugins/status-router'].load(RouterFactory(), sandbox.my.statusService);
+    const PostAPI = sandbox.my.plugins['/plugins/post-router'].load(RouterFactory(), sandbox.my.postService);
+
+    sandbox.my.plugins['/plugins/chaos'].load(process.env.INSERT_CHAOS);
+
 
     /******** MODULE CONFIGURATION *********/
     const { postRepo } = sandbox.my;
@@ -64,12 +67,10 @@ Sandbox.of([
     /******** EVENT REGISTRATION ********/
     events.on({ event: 'application.error', handler: onApplicationError, subscriberId });
 
-
     /******** MIDDLEWARE *********/
     expressApp.use(morgan('tiny'));
     expressApp.use(bodyParser.json());
     expressApp.use(bodyParser.urlencoded({ extended: false }));
-
 
     /******** ROUTES ********/
     expressApp.use('/status', StatusAPI);
@@ -96,8 +97,9 @@ Sandbox.of([
       });
     }
 
-    /******** GREETING ********/
+    /******** APPLICATION READY ********/
     hello();
+    events.notify('application.ready');
 
     /**
      * Creates a router instance to enable registration of API routes 

@@ -1,6 +1,7 @@
 // For more info about the Jest mocking APIs see: https://jestjs.io/docs/mock-functions#mock-property
 
 import PluginStatusRouter from '../../../lib/plugins/router/status/index.js';
+import MockRouterFactory from '../../mocks/mock-router-factory.js';
 import MockSandBoxFactory from '../../mocks/mock-sandbox-factory.js';
 
 /**
@@ -30,13 +31,12 @@ describe('StatusRouterPlugin', () => {
 
     test('Should call the `fn` method defined on the plugin configuration to launch the plugin', async () => {
         const mockSandbox = MockSandBoxFactory();
-        const mockHttpGet = jest.fn();
-        const MockRouterFactory = () => { return { get: mockHttpGet } };
+        const mockRouter = MockRouterFactory();
 
         PluginStatusRouter(mockSandbox);
 
         // Create a fake plugin instance and provide it with dependencies
-        const mockPlugin = mockSandbox.plugin.mock.calls[0][0]['fn'](MockRouterFactory);
+        const mockPlugin = mockSandbox.plugin.mock.calls[0][0]['fn'](mockRouter);
 
         // Validate the plugin returns the correct API
         expect(typeof (mockPlugin)).toBe('object');
@@ -46,27 +46,26 @@ describe('StatusRouterPlugin', () => {
 
     test('Should be able to get an object describing system status via the router plugin', async () => {
         const mockSandbox = MockSandBoxFactory();
-        const mockHttpGet = jest.fn();
+        const mockRouter = MockRouterFactory();
         const json = jest.fn();
         const set = jest.fn();
         const status = jest.fn();
         const mockStatusService = {
             getSystemStatus: () => { return { uptime: 42, status: 'OK' } }
         };
-        const MockRouterFactory = () => { return { get: mockHttpGet } };
 
         PluginStatusRouter(mockSandbox);
 
         // Create a fake plugin instance and provide it with dependencies
-        mockSandbox.plugin.mock.calls[0][0]['fn'](MockRouterFactory, mockStatusService);
+        mockSandbox.plugin.mock.calls[0][0]['fn'](mockRouter, mockStatusService);
 
         // Validate the mocked router `get` method is called to register the '/' route with a handler
-        expect(mockHttpGet.mock.calls[0][0] === '/').toBe(true);
-        expect(typeof (mockHttpGet.mock.calls[0][1]) === 'function').toBe(true);
+        expect(mockRouter.get.mock.calls[0][0] === '/').toBe(true);
+        expect(typeof (mockRouter.get.mock.calls[0][1]) === 'function').toBe(true);
 
         // Call the registered route handler with bogus request and response objects
         // The route handler is async so we have to `await` here
-        await mockHttpGet.mock.calls[0][1]({}, { json, set, status }, "");
+        await mockRouter.get.mock.calls[0][1]({}, { json, set, status }, "");
 
         // Verify response object methods are called
         expect(set.mock.calls.length === 1).toBe(true);

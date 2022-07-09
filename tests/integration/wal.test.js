@@ -17,9 +17,10 @@ describe('WAL', () => {
         const events = controller.get('/plugins/events-authz');
         const wal = sandbox.my.wal;
         
-        events.notify('postService.post.createRequestReceived', { 
+        events.notify('postService.post.writeRequestReceived', { 
             operation: 'create',
             record: {
+                id: `/posts/${faker.datatype.uuid()}`,
                 authorId: `/users/${faker.datatype.uuid()}`,
                 body: faker.hacker.phrase()
             },

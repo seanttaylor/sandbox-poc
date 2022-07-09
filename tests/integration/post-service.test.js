@@ -12,6 +12,8 @@ describe('PostService', () => {
         try {
             const sandbox = {};
             const { controller } = SandboxController(sandbox);
+            
+            PluginEventAuthz(controller);
             PostService(controller);
 
             const postService = sandbox.my.postService;

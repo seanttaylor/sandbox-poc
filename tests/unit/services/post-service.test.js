@@ -7,6 +7,7 @@ import PostService from '../../../lib/services/post/index.js';
 describe('PostService', () => {
     test('Should register the Post Service API on the sandbox', async () => {
         const mockSandbox = MockSandboxFactory();
+
         PostService(mockSandbox);
 
         expect(mockSandbox.put.mock.calls.length === 1).toBe(true);
