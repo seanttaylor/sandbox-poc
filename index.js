@@ -10,7 +10,7 @@ import Sandbox from './src/sandbox/index.js';
 
 /******** SERVICES ********/
 import PostRepository from './lib/repos/post/index.js';
-import JainkyModule from './lib/jainky-module/index.js';
+import WriteAheadLog from './lib/wal/index.js';
 import StatusService from './lib/services/status/index.js';
 import PostService from './lib/services/post/index.js';
 
@@ -28,7 +28,7 @@ const figletize = promisify(figlet);
 const expressApp = express();
 
 Sandbox.module('/lib/repos/post', PostRepository);
-Sandbox.module('/lib/jainky-module', JainkyModule);
+Sandbox.module('/lib/wal', WriteAheadLog);
 Sandbox.module('/lib/plugins/event-authz', PluginEventAuthz);
 Sandbox.module('/lib/plugins/status-router', PluginStatusRouter);
 Sandbox.module('/lib/services/status', StatusService);
@@ -37,7 +37,7 @@ Sandbox.module('/lib/services/post', PostService);
 
 Sandbox.of([
   '/lib/plugins/event-authz',
-  '/lib/jainky-module',
+  '/lib/wal',
   '/lib/repos/post',
   '/lib/services/post',
   '/lib/plugins/post-router',

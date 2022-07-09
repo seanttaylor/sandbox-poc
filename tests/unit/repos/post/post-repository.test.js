@@ -1,8 +1,8 @@
 // For more info about the Jest mocking APIs see: https://jestjs.io/docs/mock-functions#mock-property
 import PostRepository from '../../../../lib/repos/post/index.js';
+
 const on = jest.fn();
 const notify = jest.fn();
-
 const fakeController = {
     '/plugins/events-authz': {
         on,
@@ -25,7 +25,7 @@ function BoxFactory() {
 }
 
 /**
- * This test suite verifies the interfaces of the module sandbox as well as the PostRepository API after it has been registered on the sandbox.
+ * This test suite verifies the PostRepository interface.
  */
 describe('PostRepository Initialization', () => {
     test('Should register the PostRepository API on the sandbox on module initialization via `put`', async () => {

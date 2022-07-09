@@ -20,7 +20,6 @@ describe('PluginPostRouter', () => {
         }
     };
 
-
     test('Should call the `plugin` method defined on the sandbox to register the plugin', async () => {
         const mockSandbox = MockSandBoxFactory();
         PluginPostRouter(mockSandbox);
