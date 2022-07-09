@@ -18,6 +18,7 @@ import PostService from './lib/services/post/index.js';
 import PluginEventAuthz from './lib/plugins/event-authz/index.js';
 import PluginStatusRouter from './lib/plugins/router/status/index.js';
 import PluginPostRouter from './lib/plugins/router/post/index.js';
+import PluginChaos from './lib/plugins/chaos/index.js';
 
 const GLOBAL_ERROR_THRESHOLD = 10;
 const SERVER_PORT = process.env.PORT || 3000;
@@ -34,6 +35,8 @@ Sandbox.module('/lib/plugins/status-router', PluginStatusRouter);
 Sandbox.module('/lib/services/status', StatusService);
 Sandbox.module('/lib/plugins/post-router', PluginPostRouter);
 Sandbox.module('/lib/services/post', PostService);
+Sandbox.module('/lib/plugins/chaos', PluginChaos);
+
 
 Sandbox.of([
   '/lib/plugins/event-authz',
@@ -42,7 +45,8 @@ Sandbox.of([
   '/lib/services/post',
   '/lib/plugins/post-router',
   '/lib/services/status',
-  '/lib/plugins/status-router'
+  '/lib/plugins/status-router',
+  '/lib/plugins/chaos'
 ],
   /***
    * The application core 

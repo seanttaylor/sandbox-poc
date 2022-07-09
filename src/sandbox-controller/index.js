@@ -50,6 +50,12 @@ function SandboxController(box) {
 
    */
   function plugin({ extendsDefault, fn, name, of }) {
+    // The client has committed an error
+    if (extendsDefault && !of) {  
+      console.error('PluginError.BadRequest.CannotRegisterPlugin => Plugins of *DEFAULT* modules cannot be created without an `of` parameter specifying the module the plugin extends. Either set `extendsDefault` to `false` to indicate this plugin *DOES NOT* extend a *DEFAULT* module OR define the `of` parameter in the call to `sandbox.plugin`.')
+      return
+    }
+
     // This plugin extends a default sandbox API 
     if (extendsDefault) {
       const unpluggedModule = defaultSandboxAPIs[of]; 
