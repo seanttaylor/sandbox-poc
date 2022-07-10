@@ -61,7 +61,10 @@ Sandbox.of([
     const StatusAPI = sandbox.my.plugins['/plugins/status-router'].load(RouterFactory(), sandbox.my.statusService);
     const PostAPI = sandbox.my.plugins['/plugins/post-router'].load(RouterFactory(), sandbox.my.postService);
 
-    sandbox.my.plugins['/plugins/chaos'].load(process.env.INSERT_CHAOS);
+    sandbox.my.plugins['/plugins/chaos'].load({ 
+      chaosEnabled: process.env.CHAOS_ENABLED, 
+      scheduleTimeoutMillis: process.env.CHAOS_SCHEDULE_TIMEOUT_MILLIS
+    });
 
 
     /******** MODULE CONFIGURATION *********/
