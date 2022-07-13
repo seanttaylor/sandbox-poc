@@ -170,4 +170,18 @@ describe('PostService', () => {
 
         expect(result).toBeUndefined();
     });
+
+    test('Setting no repository should do nothing and return undefined', async () => {
+        const sandbox = {};
+        const { controller } = SandboxController(sandbox);
+
+        PluginEventAuthz(controller);
+        PostRepository(controller);
+        PostService(controller);
+
+        const postService = sandbox.my.postService;
+        const result = postService.setRepository();
+
+        expect(result).toBeUndefined();
+    });
 });

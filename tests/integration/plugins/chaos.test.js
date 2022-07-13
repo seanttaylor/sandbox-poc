@@ -35,7 +35,9 @@ describe('ChaosPlugin', () => {
         const experiments = chaosPlugin.getAllExperiments();
 
         expect(Object.keys(experiments).includes('testExperiment')).toBe(false);
-        expect(chaosPlugin.runAllExperiments()).toBeUndefined();
+        expect(typeof chaosPlugin.runAllExperiments() === 'object').toBe(true);
+        expect(Object.keys(chaosPlugin.runAllExperiments()).length === 0).toBe(true);
+
     });
 
     test('Should be able to run registered experiments', async () => {
@@ -76,6 +78,8 @@ describe('ChaosPlugin', () => {
         events.notify('chaos.experiment.registrationRequested', fakeExperimentConfig);
         const experiments = chaosPlugin.runAllExperiments();
 
-        expect(experiments).toBeUndefined();
+        expect(Object.keys(experiments).includes('testExperiment')).toBe(false);
+        expect(typeof chaosPlugin.runAllExperiments() === 'object').toBe(true);
+        expect(Object.keys(chaosPlugin.runAllExperiments()).length === 0).toBe(true);;
     });
 });
