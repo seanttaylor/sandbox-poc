@@ -4,7 +4,8 @@
  */
 export default function MockRouterFactory() { 
     return { 
-        get: jest.fn() 
+        get: jest.fn(),
+        post: jest.fn() 
     } 
 };
 

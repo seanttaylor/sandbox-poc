@@ -37,7 +37,6 @@ Sandbox.module('/lib/plugins/post-router', PluginPostRouter);
 Sandbox.module('/lib/services/post', PostService);
 Sandbox.module('/lib/plugins/chaos', PluginChaos);
 
-
 Sandbox.of([
   '/lib/plugins/event-authz',
   '/lib/wal',
@@ -55,20 +54,19 @@ Sandbox.of([
   async function myApp(sandbox) {
     const events = sandbox.get('/plugins/events-authz');
     const console = sandbox.get('console');
+    const postRepo = sandbox.my.postRepo;
     const subscriberId = 'myApp';
 
     /******** PLUGIN CONFIGURATION ********/
     const StatusAPI = sandbox.my.plugins['/plugins/status-router'].load(RouterFactory(), sandbox.my.statusService);
     const PostAPI = sandbox.my.plugins['/plugins/post-router'].load(RouterFactory(), sandbox.my.postService);
 
-    sandbox.my.plugins['/plugins/chaos'].load({ 
+    const pluginChaos = sandbox.my.plugins['/plugins/chaos'].load({ 
       chaosEnabled: process.env.CHAOS_ENABLED, 
       scheduleTimeoutMillis: process.env.CHAOS_SCHEDULE_TIMEOUT_MILLIS
     });
 
-
     /******** MODULE CONFIGURATION *********/
-    const { postRepo } = sandbox.my;
     sandbox.my.postService.setRepository(postRepo);
 
     /******** EVENT REGISTRATION ********/

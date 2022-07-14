@@ -8,7 +8,11 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}/index.js"
+            "program": "${workspaceFolder}/index.js",
+            "env": {
+                "CHAOS_ENABLED": "true",
+                "LOG_LEVEL": "debug"
+            }
         },
     ]
 }

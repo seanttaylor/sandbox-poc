@@ -1,13 +1,13 @@
 /* istanbul ignore file */
 // Reason: The failed tests are enough during the unit test run. We generally don't need to see the logs. Juice not worth the squeeze.
 
-const LOG_CONSOLE_MESSAGES = process.env.LOG_CONSOLE_MESSAGES === "true";
+const shouldLog = process.env.LOG_LEVEL === "debug";
 
 /**
  * @param {String} string
  */
 function log(string) {
-    if (LOG_CONSOLE_MESSAGES) {
+    if (shouldLog) {
         console.log(string);
         return;
     }
@@ -17,7 +17,7 @@ function log(string) {
  * @param {String} string 
  */
 function error(string) {
-    if (LOG_CONSOLE_MESSAGES) {
+    if (shouldLog) {
         console.error(string);
         return;
     }
@@ -27,7 +27,7 @@ function error(string) {
  * @param {String} string
  */
 function info(string) {
-    if (LOG_CONSOLE_MESSAGES) {
+    if (shouldLog) {
         console.info(string);
         return;
     }

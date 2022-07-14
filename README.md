@@ -45,6 +45,9 @@ Create an app that has the following key features:
 
 ## Architectural Notes <a name="architectural-notes"></a>
 
+#### Diagram of Key Application Components
+![architectural diagram](/docs/sandbox-pattern-v0.0.1.png?raw=true)
+
 ### Key Entities
 
 #### `Application` (Application Core)

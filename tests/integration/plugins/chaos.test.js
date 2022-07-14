@@ -29,7 +29,7 @@ describe('ChaosPlugin', () => {
         PluginChaos(controller);
 
         const events = controller.get('/plugins/events-authz');
-        const chaosPlugin = sandbox.my.plugins['/plugins/chaos'].load({ chaosEnabled: false });
+        const chaosPlugin = sandbox.my.plugins['/plugins/chaos'].load({ chaosEnabled: 'false' });
 
         events.notify('chaos.experiment.registrationRequested', { name: 'testExperiment', start: jest.fn(), end: jest.fn() });
         const experiments = chaosPlugin.getAllExperiments();

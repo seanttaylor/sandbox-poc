@@ -36,7 +36,7 @@ describe('PluginPostRouter', () => {
 
         PluginPostRouter(mockSandbox);
 
-        // Create a fake plugin instance and provide it with dependencies
+        // Create a plugin instance and provide it with dependencies
         const mockPlugin = mockSandbox.plugin.mock.calls[0][0]['fn'](MockRouterFactory());
 
         // Validate the plugin returns the correct API
@@ -54,7 +54,7 @@ describe('PluginPostRouter', () => {
         // We modify the mocked `getAllPosts` method here because we assert that the `mockPost` variable is returned by the method. We
         // need to retain a reference to `mockPost` for use in the `expect` call
         const mockPostService = Object.assign(MockPostService(), {
-            getAllPosts: ()=> [mockPost]
+            getAllPosts: () => [mockPost]
         });
 
         const json = jest.fn();
@@ -63,7 +63,7 @@ describe('PluginPostRouter', () => {
 
         PluginPostRouter(mockSandbox);
 
-        // Create a fake plugin instance and provide it with dependencies
+        // Create a plugin instance and provide it with dependencies
         mockSandbox.plugin.mock.calls[0][0]['fn'](mockRouter, mockPostService);
 
         // Validate the mocked router `get` method is called to register the '/' route with a handler
@@ -104,14 +104,14 @@ describe('PluginPostRouter', () => {
         const mockPostService = Object.assign(MockPostService(), {
             getPostById: (id) => { return id === mockPost.id ? [mockPost] : [] }
         });
-        
+
         const json = jest.fn();
         const set = jest.fn();
         const status = jest.fn();
 
         PluginPostRouter(mockSandbox);
 
-        // Create a fake plugin instance and provide it with dependencies
+        // Create a plugin instance and provide it with dependencies
         mockSandbox.plugin.mock.calls[0][0]['fn'](mockRouter, mockPostService);
 
         // Validate the mocked router `get` method is called to register the '/posts/:id' route with a handler
@@ -140,4 +140,49 @@ describe('PluginPostRouter', () => {
         expect(json.mock.calls[0][0][0]['body'] === mockPost.body).toBe(true);
     });
 
+    test('Should be able to create a single `Post` instance via the router plugin', async () => {
+        const mockSandbox = MockSandBoxFactory();
+        const mockRouter = MockRouterFactory();
+
+        // We add a mock `create` method here because we assert that the `mockPost` variable is returned by the method. We
+        // need to retain a reference to `mockPost` for use in the `expect` call
+        const mockPostService = Object.assign(MockPostService(), {
+            create: ({ authorId, body }) => { return [{ authorId, body, }] }
+        });
+        const json = jest.fn();
+        const set = jest.fn();
+        const status = jest.fn();
+        const mockBody = faker.hacker.phrase();
+        const mockAuthorId = `/users/${faker.datatype.uuid()}`;
+
+        PluginPostRouter(mockSandbox);
+
+        // Create a plugin instance and provide it with dependencies
+        mockSandbox.plugin.mock.calls[0][0]['fn'](mockRouter, mockPostService);
+
+        // Validate the mocked router `post` method is called to register the '/posts' route with a handler
+        expect(mockRouter.post.mock.calls[0][0] === '/posts').toBe(true);
+        expect(typeof (mockRouter.post.mock.calls[0][1]) === 'function').toBe(true);
+
+        // Call the registered route handler with bogus request and response objects
+        // The route handler is async so we have to `await` here
+        await mockRouter.post.mock.calls[0][1]({ body: { body: mockBody, authorId: mockAuthorId } }, { json, set, status });
+
+        // Verify response object methods are called
+        expect(set.mock.calls.length === 1).toBe(true);
+        expect(status.mock.calls.length === 1).toBe(true);
+        expect(json.mock.calls.length === 1).toBe(true);
+
+        expect(set.mock.calls[0][0] === 'content-type').toBe(true);
+        expect(set.mock.calls[0][1] === 'application/json').toBe(true);
+
+        expect(status.mock.calls[0][0] === 200).toBe(true);
+
+        // Verify the route handler returns the a list of `Post` instances
+        expect(Array.isArray(json.mock.calls[0][0])).toBe(true);
+
+        // Because this handler returns a list we need to use a third index to access the first list item in the response
+        expect(json.mock.calls[0][0][0]['authorId'] === mockAuthorId).toBe(true);
+        expect(json.mock.calls[0][0][0]['body'] === mockBody).toBe(true);
+    });
 });

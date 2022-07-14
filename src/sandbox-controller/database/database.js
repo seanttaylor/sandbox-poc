@@ -69,6 +69,8 @@ export default {
         "/posts/2244428a-a945-4d4c-bf4d-a9d8ca6cbf09": {
             "id": "/posts/2244428a-a945-4d4c-bf4d-a9d8ca6cbf09",
             "authorId": "/users/2a1acb10-8d2b-4248-a74e-a8418f941dd9",
+            "schemaVersion": "0.0.1", 
+            "schemaURL": "/schemas/posts/0.0.1/post.json", 
             "body": "Hello world! Playboy Billionaire Genius here...",
             "comments": [],
             "likes": [],

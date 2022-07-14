@@ -1,4 +1,4 @@
 name, type, description
-LOG_VERBOSE, Boolean, indicates whether to display `console` messages on stdout. Used to declutter console output during test runs
+LOG_CONSOLE_MESSAGES, Boolean, indicates whether to display `console` messages on stdout. Used to declutter console output during test runs
 CHAOS_ENABLED, Boolean, indicates whether to execute registered chaos experiments 
 CHAOS_SCHEDULED_TIMEOUT_MILLIS, Number, the number of milliseconds to wait before executing an experiment

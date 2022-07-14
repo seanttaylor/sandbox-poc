@@ -1,0 +1,15 @@
+version: "3.8"
+
+services:
+  sandbox:
+    container_name: sandbox
+    image: sandbox:0.0.1
+    ports:
+      - "3000:3000"               
+    environment:
+      - LOG_LEVEL=debug
+      - CHAOS_ENABLED=true
+      - CHAOS_SCHEDULE_TIMEOUT_MILLIS=3000
+    volumes:
+      - ./:/app
+   
