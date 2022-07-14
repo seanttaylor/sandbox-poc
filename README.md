@@ -166,7 +166,7 @@ events.notify('event.of.interest', { data });
 
 Finally, a client-defined module *may* return an optional function to stop itself (seen above) that can tear down any resources when the application core attempts to shut down the module.
 
-#### `SandboxController` <a name="sandbox-controller"></a>
+#### `SandboxController (Proxy)` <a name="sandbox-controller"></a>
 Also referred to as 'default sandbox APIs.' This component is consumed by each of the registered client-defined modules as shown in the module example above. The `SandboxController` *does not* contain methods and properties namespaced beneath the `sandbox.my` and `sandbox.moduleCtrl` properties. These properties are *only* available to the application core. 
 
 #### `Sandbox`

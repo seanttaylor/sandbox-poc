@@ -13,6 +13,7 @@ import PostRepository from './lib/repos/post/index.js';
 import WriteAheadLog from './lib/wal/index.js';
 import StatusService from './lib/services/status/index.js';
 import PostService from './lib/services/post/index.js';
+import Supervisor from './lib/supervisor/index.js';
 
 /******** PLUGINS ********/
 import PluginEventAuthz from './lib/plugins/event-authz/index.js';
@@ -30,6 +31,8 @@ const expressApp = express();
 
 Sandbox.module('/lib/repos/post', PostRepository);
 Sandbox.module('/lib/wal', WriteAheadLog);
+Sandbox.module('/lib/plugins/chaos', PluginChaos);
+Sandbox.module('/lib/supervisor', Supervisor);
 Sandbox.module('/lib/plugins/event-authz', PluginEventAuthz);
 Sandbox.module('/lib/plugins/status-router', PluginStatusRouter);
 Sandbox.module('/lib/services/status', StatusService);
@@ -45,7 +48,8 @@ Sandbox.of([
   '/lib/plugins/post-router',
   '/lib/services/status',
   '/lib/plugins/status-router',
-  '/lib/plugins/chaos'
+  '/lib/plugins/chaos',
+  '/lib/supervisor',
 ],
   /***
    * The application core 
@@ -71,6 +75,7 @@ Sandbox.of([
 
     /******** EVENT REGISTRATION ********/
     events.on({ event: 'application.error', handler: onApplicationError, subscriberId });
+    events.on({ event: 'application.error.globalErrorThresholdExceeded', handler: onGlobalModuleErrorThresholdExceeded, subscriberId });
 
     /******** MIDDLEWARE *********/
     expressApp.use(morgan('tiny'));
@@ -119,7 +124,8 @@ Sandbox.of([
      * @param {String} module - a module that exceeds the error threshold, triggering a stop request
      */
     function onGlobalModuleErrorThresholdExceeded(module) {
-      box.events.emit('application.info.moduleStopped', module);
+      // events.emit('application.info.moduleStopped', module);
+      // module restart logic here
     }
 
     /**
