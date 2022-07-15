@@ -10,8 +10,12 @@
             ],
             "program": "${workspaceFolder}/index.js",
             "env": {
+                "APP_VERSION": "0.0.3",
+                "CHAOS_SCHEDULE_TIMEOUT_MILLIS": "10000",
                 "CHAOS_ENABLED": "true",
-                "LOG_LEVEL": "debug"
+                "GLOBAL_ERROR_THRESHOLD": "1",
+                "LOG_LEVEL": "debug",
+                "PORT": "9000",
             }
         },
     ]

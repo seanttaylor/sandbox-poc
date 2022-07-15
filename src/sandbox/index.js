@@ -62,6 +62,7 @@ function module(moduleName, myModule) {
  */
 async function of(modulesList, callback) {
   const { controller } = deepFreeze(SandboxController(box));
+  //const { controller } = SandboxController(box);
 
   // no modules or "*" both mean "use all modules"
   if (!modulesList || modulesList === '*') {

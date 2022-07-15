@@ -61,7 +61,7 @@ Sandbox.of([
     const postRepo = sandbox.my.postRepo;
     const subscriberId = 'myApp';
 
-    /******** PLUGIN CONFIGURATION ********/
+    /**************** PLUGIN CONFIGURATION ****************/
     const StatusAPI = sandbox.my.plugins['/plugins/status-router'].load(RouterFactory(), sandbox.my.statusService);
     const PostAPI = sandbox.my.plugins['/plugins/post-router'].load(RouterFactory(), sandbox.my.postService);
 
@@ -70,19 +70,20 @@ Sandbox.of([
       scheduleTimeoutMillis: process.env.CHAOS_SCHEDULE_TIMEOUT_MILLIS
     });
 
-    /******** MODULE CONFIGURATION *********/
+    /**************** MODULE CONFIGURATION *****************/
     sandbox.my.postService.setRepository(postRepo);
+    sandbox.my.supervisor.setErrorThreshold(process.env.GLOBAL_ERROR_THRESHOLD);
 
-    /******** EVENT REGISTRATION ********/
+    /**************** EVENT REGISTRATION ****************/
     events.on({ event: 'application.error', handler: onApplicationError, subscriberId });
     events.on({ event: 'application.error.globalErrorThresholdExceeded', handler: onGlobalModuleErrorThresholdExceeded, subscriberId });
 
-    /******** MIDDLEWARE *********/
+    /**************** MIDDLEWARE *****************/
     expressApp.use(morgan('tiny'));
     expressApp.use(bodyParser.json());
     expressApp.use(bodyParser.urlencoded({ extended: false }));
 
-    /******** ROUTES ********/
+    /**************** ROUTES ****************/
     expressApp.use('/status', StatusAPI);
     expressApp.use('/api/v1', PostAPI);
 
@@ -107,7 +108,7 @@ Sandbox.of([
       });
     }
 
-    /******** APPLICATION READY ********/
+    /**************** APPLICATION READY ****************/
     hello();
     events.notify('application.ready');
 
@@ -121,10 +122,12 @@ Sandbox.of([
 
     /**
      * Logic for handling the event the `GLOBAL_ERROR_THRESHOLD` value is exceeded for *any* running module
-     * @param {String} module - a module that exceeds the error threshold, triggering a stop request
+     * @param {AppEvent} appEvent - a module that exceeds the error threshold, triggering a stop request
      */
-    function onGlobalModuleErrorThresholdExceeded(module) {
-      // events.emit('application.info.moduleStopped', module);
+    function onGlobalModuleErrorThresholdExceeded(appEvent) {
+      const moduleName = appEvent.payload();
+      //const restartedPostService = sandbox.my.postService.start();
+      events.notify('application.info.moduleStopped');
       // module restart logic here
     }
 

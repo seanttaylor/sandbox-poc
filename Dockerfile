@@ -14,6 +14,6 @@ WORKDIR /app
 
 RUN npm ci --omit=dev
 
-EXPOSE 3000
+EXPOSE 9000
 
 CMD [ "npm", "start" ]

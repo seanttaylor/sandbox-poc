@@ -13,6 +13,7 @@ To implement a design of application sandboxes in order to learn where this patt
 * [Overview](#overview)
 * [Objective(s)](#objectives)
 * [Architectural Notes](#architectural-notes)
+* [Key Application Events](#key-events)
 * [References](#references)
 
 
@@ -252,12 +253,24 @@ We call the plugin by its specifed name and the API is immediately available for
 
 > Note: We could access the original 'unplugged' events API with `sandbox.get('events')`. Plugins only augment; they do not alter the code they plug into.  
 
+#### `Key Application Events` <a name="key-events"></a>
+A list of key events emitted by application modules.
+
+|                 **Event Name**                 |            **Originator**            |                                                                                          **Descriptor**                                                                                         |                     **Event Arguments(s)**                    |
+|:----------------------------------------------:|:------------------------------------:|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:-------------------------------------------------------------:|
+| application.ready                              | Application Core                     | A general notice to all modules that the application has started without initialization errors                                                                                                  | None                                                          |
+| application.info.moduleStopped                 | Application Core                     | A general notice to all modules that a specified module has stopped                                                                                                                             | {String} name of the the stopped module                       |
+| application.info.moduleRestarted               | Application Core                     | A general notice to all modules that a specified module has restarted                                                                                                                           | {String} name of the the restarted module                     |
+| application.error                              | All modules _can_ produce this event | A general notice to the application core that an error has occurred                                                                                                                             | {ApplicationError} interface                                  |
+| application.error.globalErrorThresholdExceeded | lib/supervisor                       | A notice to the application core that the `GLOBAL_ERROR_COUNT_THRESHOLD` environment variable has been exceeded by a module.  Typically triggers a compensatory action by the application core. | {String} name of the module that breached the error threshold |
+| chaos.experiment.registrationRequested         | All modules _can_ produce this event | Allows client-defined modules to opt-in to chaos experiments                                                                                                                                    | {Experiment} interface                                        |
+| postService.post.writeRequestReceived          | lib/services/post                    | A notice that the `PostService.create` method has been called to write a new `Post` to the data store                                                                                           | {PostWriteRequest} interface                                  |
 
 ## References <a name="references"></a>
 
 * *JavaScript Design Patterns* by Stoyan Stefanov
 * [Box Tech Talk: Scalable JavaScript Application Architecture by Nicholas Zakas](https://www.youtube.com/watch?v=mKouqShWI4o)
-* Patterns For Large-Scale JavaScript Application Architectures by Addy Osmani
+* *Patterns For Large-Scale JavaScript Application Architectures* by Addy Osmani
 * [Addy Osmani - Scaling Your JavaScript Applications Part 1](https://www.youtube.com/watch?v=2g8AceFb0is)
 * [Addy Osmani - Scaling Your JavaScript Applications Part 3](https://www.youtube.com/watch?v=LZK-ObWu_5I)
 * *Enterprise Integration Patterns* by Gregor Hohpe and Bobby Woolf
