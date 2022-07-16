@@ -23,6 +23,7 @@
         error: myImpl.error || required,
         info: myImpl.info || required,
         log: myImpl.log || required,
+        warn: myImpl.warn || required
     };
 }
 

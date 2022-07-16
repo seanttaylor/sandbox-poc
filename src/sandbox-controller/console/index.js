@@ -33,8 +33,19 @@ function info(string) {
     }
 }
 
+/**
+ * @param {String} string
+ */
+ function warn(string) {
+    if (shouldLog) {
+        console.warn(string);
+        return;
+    }
+}
+
 export default {
     error,
     info,
     log,
+    warn,
 }

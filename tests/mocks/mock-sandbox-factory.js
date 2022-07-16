@@ -17,15 +17,10 @@ function MockSandBoxFactory() {
         ajax: jest.fn(),
         console: jest.fn().mockImplementation(() => {
             return {
-                debug() {
-                    //goes nowhere does nothing in test
-                },
-                error() {
-                    //goes nowhere does nothing in test
-                },
-                info() {
-                    //goes nowhere does nothing in test
-                },
+                debug: jest.fn(),
+                error: jest.fn(),
+                info: jest.fn(),
+                warn: jest.fn()
             }
         })(),
         database: jest.fn(),

@@ -14,6 +14,7 @@ import WriteAheadLog from './lib/wal/index.js';
 import StatusService from './lib/services/status/index.js';
 import PostService from './lib/services/post/index.js';
 import Supervisor from './lib/supervisor/index.js';
+import RecoveryManager from './lib/recovery/index.js';
 
 /******** PLUGINS ********/
 import PluginEventAuthz from './lib/plugins/event-authz/index.js';
@@ -21,7 +22,6 @@ import PluginStatusRouter from './lib/plugins/router/status/index.js';
 import PluginPostRouter from './lib/plugins/router/post/index.js';
 import PluginChaos from './lib/plugins/chaos/index.js';
 
-const GLOBAL_ERROR_THRESHOLD = 10;
 const SERVER_PORT = process.env.PORT || 3000;
 const APP_NAME = process.env.APP_NAME || 'sandbox';
 const APP_VERSION = process.env.APP_VERSION || '0.0.1';
@@ -39,6 +39,7 @@ Sandbox.module('/lib/services/status', StatusService);
 Sandbox.module('/lib/plugins/post-router', PluginPostRouter);
 Sandbox.module('/lib/services/post', PostService);
 Sandbox.module('/lib/plugins/chaos', PluginChaos);
+Sandbox.module('/lib/recovery', RecoveryManager);
 
 Sandbox.of([
   '/lib/plugins/event-authz',
@@ -50,6 +51,7 @@ Sandbox.of([
   '/lib/plugins/status-router',
   '/lib/plugins/chaos',
   '/lib/supervisor',
+  '/lib/recovery'
 ],
   /***
    * The application core 
@@ -65,18 +67,19 @@ Sandbox.of([
     const StatusAPI = sandbox.my.plugins['/plugins/status-router'].load(RouterFactory(), sandbox.my.statusService);
     const PostAPI = sandbox.my.plugins['/plugins/post-router'].load(RouterFactory(), sandbox.my.postService);
 
-    const pluginChaos = sandbox.my.plugins['/plugins/chaos'].load({ 
-      chaosEnabled: process.env.CHAOS_ENABLED, 
+    const pluginChaos = sandbox.my.plugins['/plugins/chaos'].load({
+      chaosEnabled: process.env.CHAOS_ENABLED,
       scheduleTimeoutMillis: process.env.CHAOS_SCHEDULE_TIMEOUT_MILLIS
     });
 
     /**************** MODULE CONFIGURATION *****************/
     sandbox.my.postService.setRepository(postRepo);
-    sandbox.my.supervisor.setErrorThreshold(process.env.GLOBAL_ERROR_THRESHOLD);
+    sandbox.my.supervisor.setErrorThreshold(process.env.GLOBAL_ERROR_COUNT_THRESHOLD);
 
     /**************** EVENT REGISTRATION ****************/
     events.on({ event: 'application.error', handler: onApplicationError, subscriberId });
     events.on({ event: 'application.error.globalErrorThresholdExceeded', handler: onGlobalModuleErrorThresholdExceeded, subscriberId });
+    // events.on({ event: 'application.ready', handler: onApplicationReady, subscriberId });
 
     /**************** MIDDLEWARE *****************/
     expressApp.use(morgan('tiny'));
@@ -86,7 +89,6 @@ Sandbox.of([
     /**************** ROUTES ****************/
     expressApp.use('/status', StatusAPI);
     expressApp.use('/api/v1', PostAPI);
-
 
     expressApp.use((req, res) => {
       // console.error(`Error 404 on ${req.url}.`);
@@ -111,6 +113,10 @@ Sandbox.of([
     /**************** APPLICATION READY ****************/
     hello();
     events.notify('application.ready');
+    events.notify('recovery.recoveryStrategyRegistered', {
+      moduleName: 'postService',
+      strategies: [{ name: 'resetRepository', fn: resetRepository }]
+    });
 
     /**
      * Creates a router instance to enable registration of API routes 
@@ -121,12 +127,11 @@ Sandbox.of([
     }
 
     /**
-     * Logic for handling the event the `GLOBAL_ERROR_THRESHOLD` value is exceeded for *any* running module
+     * Logic for handling the event the `GLOBAL_ERROR_COUNT_THRESHOLD` value is exceeded for *any* running module
      * @param {AppEvent} appEvent - a module that exceeds the error threshold, triggering a stop request
      */
     function onGlobalModuleErrorThresholdExceeded(appEvent) {
       const moduleName = appEvent.payload();
-      //const restartedPostService = sandbox.my.postService.start();
       events.notify('application.info.moduleStopped');
       // module restart logic here
     }
@@ -140,13 +145,10 @@ Sandbox.of([
     }
 
     /**
-     * Restarts a specified module
-     * @param {String} moduleName 
+     * Basic recovery strategy for resolving failures to create posts
      */
-    function restartModule(moduleName) {
-      sandbox.moduleCtrl[`${moduleName}`].stop();
-      sandbox.moduleCtrl[`${moduleName}`].start();
-      sandbox.events.notify('application.info.moduleRestarted', moduleName);
+    function resetRepository() {
+      sandbox.my.postService.setRepository(postRepo);
     }
 
     /**
