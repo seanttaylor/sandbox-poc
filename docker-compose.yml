@@ -7,11 +7,12 @@ services:
     ports:
       - "9000:9000"               
     environment:
-      - PORT=9000
       - APP_VERSION=0.0.3
-      - LOG_LEVEL=debug
       - CHAOS_ENABLED=true
       - CHAOS_SCHEDULE_TIMEOUT_MILLIS=30000
+      - GLOBAL_ERROR_COUNT_THRESHOLD=1
+      - LOG_LEVEL=debug
+      - PORT=9000
     volumes:
       - ./:/app
    

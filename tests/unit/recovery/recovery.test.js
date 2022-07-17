@@ -32,7 +32,7 @@ describe('RecoveryManager', () => {
     test('Should extract the event payload and create a new {Recovery} on the `recovery.recoveryStrategyRegistered` event', async () => {
         const mockSandbox = MockSandboxFactory();
         const mockEvent = {
-            payload: jest.fn()
+            payload: jest.fn().mockImplementation(() => ({ moduleName: 'bogusService', strategies: [] }))
         }
         RecoveryManager(mockSandbox);
 
@@ -49,9 +49,9 @@ describe('RecoveryManager', () => {
         const mockSandbox = MockSandboxFactory();
         const mockStrategy = jest.fn();
         const mockEvent = {
-            payload: jest.fn().mockImplementation(() => ({ 
-                moduleName: 'postService', 
-                strategies: [{ name: 'mockStrategy', fn: jest.fn() }] 
+            payload: jest.fn().mockImplementation(() => ({
+                moduleName: 'postService',
+                strategies: [{ name: 'mockStrategy', fn: jest.fn() }]
             }))
         };
         RecoveryManager(mockSandbox);
@@ -72,7 +72,7 @@ describe('RecoveryManager', () => {
             payload: jest.fn().mockImplementation(() => ({ moduleName: 'postService', strategies: [mockStrategy] }))
         };
         const mockGlobalErrorThresholdExeceededEvent = {
-            payload: jest.fn().mockImplementation(() => 'postService')
+            payload: jest.fn().mockImplementation(() => ({ moduleName: 'postService', errorCount: 1 }))
         };
         RecoveryManager(mockSandbox);
 
@@ -100,7 +100,7 @@ describe('RecoveryManager', () => {
             payload: jest.fn().mockImplementation(() => ({ moduleName: 'postService', strategies: [mockErrorStrategy] }))
         };
         const mockGlobalErrorThresholdExeceededEvent = {
-            payload: jest.fn().mockImplementation(() => 'postService')
+            payload: jest.fn().mockImplementation(() => ({ moduleName: 'postService', errorCount: 1 }))
         };
         RecoveryManager(mockSandbox);
 
@@ -142,4 +142,5 @@ describe('RecoveryManager', () => {
         // We verify the `StrategyError.BadRequest` error was logged
         expect(console.error.mock.calls[0][0].includes('StrategyError.BadRequest')).toBe(true);
     });
+
 });

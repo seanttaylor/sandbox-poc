@@ -13,7 +13,7 @@
                 "APP_VERSION": "0.0.3",
                 "CHAOS_SCHEDULE_TIMEOUT_MILLIS": "10000",
                 "CHAOS_ENABLED": "true",
-                "GLOBAL_ERROR_THRESHOLD": "1",
+                "GLOBAL_ERROR_COUNT_THRESHOLD": "1",
                 "LOG_LEVEL": "debug",
                 "PORT": "9000",
             }
