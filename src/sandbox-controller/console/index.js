@@ -14,12 +14,11 @@ function log(string) {
 }
 
 /**
- * @param {String} string 
+ * @param {Object|String} error 
  */
-function error(string) {
+function error(err) {
     if (shouldLog) {
-        console.error(string);
-        return;
+        console.error('ⓧ', err);
     }
 }
 
@@ -28,8 +27,7 @@ function error(string) {
  */
 function info(string) {
     if (shouldLog) {
-        console.info(string);
-        return;
+        console.info(`ℹ︎ ${string}`);
     }
 }
 
@@ -38,8 +36,7 @@ function info(string) {
  */
  function warn(string) {
     if (shouldLog) {
-        console.warn(string);
-        return;
+        console.warn(`⚠️ ${string}`);
     }
 }
 
