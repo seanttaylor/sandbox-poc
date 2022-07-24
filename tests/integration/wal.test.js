@@ -17,13 +17,13 @@ describe('WAL', () => {
         const events = controller.get('/plugins/events-authz');
         const wal = sandbox.my.wal;
         
-        events.notify('postService.post.writeRequestReceived', { 
+        events.notify('postService.post.writeRequestReceived', {
+            id: `/posts/${faker.datatype.uuid()}`,
+            authorId: `/users/${faker.datatype.uuid()}`,
+            body: faker.hacker.phrase(),
+            moduleName: 'postService',
             operation: 'create',
-            record: {
-                id: `/posts/${faker.datatype.uuid()}`,
-                authorId: `/users/${faker.datatype.uuid()}`,
-                body: faker.hacker.phrase()
-            },
+            sequenceId: faker.datatype.uuid(),
         });
     
         expect(typeof(wal.getLastSequenceId()) === 'string').toBe(true);
