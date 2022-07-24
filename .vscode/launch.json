@@ -15,8 +15,22 @@
                 "CHAOS_ENABLED": "true",
                 "GLOBAL_ERROR_COUNT_THRESHOLD": "1",
                 "LOG_LEVEL": "debug",
-                "PORT": "9000",
+                "PORT": "9000"
             }
         },
+        {
+            "type": "node-terminal",
+            "name": "Run Script: test",
+            "request": "launch",
+            "command": "npm run test",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "APP_VERSION": "0.0.3",
+                "CHAOS_SCHEDULE_TIMEOUT_MILLIS": "10000",
+                "CHAOS_ENABLED": "true",
+                "GLOBAL_ERROR_COUNT_THRESHOLD": "1",
+                "LOG_LEVEL": "debug",
+            }
+        }
     ]
 }
