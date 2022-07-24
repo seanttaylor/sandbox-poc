@@ -79,7 +79,7 @@ Sandbox.of([
     /**************** EVENT REGISTRATION ****************/
     events.on({ event: 'application.error', handler: onApplicationError, subscriberId });
     events.on({ event: 'application.error.globalErrorThresholdExceeded', handler: onGlobalModuleErrorThresholdExceeded, subscriberId });
-    events.on({ event: 'recovery.moduleRecovered', handler: onModuleRecovered, subscriberId });
+    events.on({ event: 'recovery.recoveryAttemptCompleted', handler: onModuleRecoveryAttemptCompleted, subscriberId });
 
     /**************** MIDDLEWARE *****************/
     expressApp.use(morgan('tiny'));
@@ -147,7 +147,7 @@ Sandbox.of([
      * Excecutes any remaining logic required to a return a recently recovered module to a normal state
      * @param {AppEvent} appEvent - an instance of the {AppEvent} interface
      */
-    function onModuleRecovered(appEvent) {
+    function onModuleRecoveryAttemptCompleted(appEvent) {
       const moduleName = appEvent.payload();
       const entries = sandbox.my.wal.getAllEntries();
 

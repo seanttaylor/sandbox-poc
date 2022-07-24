@@ -56,73 +56,15 @@ describe('RecoveryManger', () => {
 
         const fakeEventPayload = fakeRecoveryAttempted.mock.calls[0][0]['payload']();
 
-        expect(typeof (fakeEventPayload) === 'object').toBe(true);
-        expect(Object.keys(fakeEventPayload).includes('moduleName')).toBe(true);
-        expect(Object.keys(fakeEventPayload).includes('fn')).toBe(true);
+        expect(fakeRecoveryAttempted.mock.calls.length).toBeTruthy();
+        expect(typeof fakeRecoveryAttempted.mock.calls[0][0] === 'object').toBe(true);
+        expect(typeof fakeEventPayload === 'string').toBe(true);
     });
 
-    test('Should be able to trigger `recovery.moduleRecovered` event on successful recovery', async () => {
+    test('`lastAttemptedStrategyStatus` should be `error` when a recovery attempt does NOT recover a failing module', async () => {
         const sandbox = {};
         const { controller } = SandboxController(sandbox);
-        const fakeRecoveryAttempted = jest.fn()
-        const subscriberId = 'testRunner';
-
-        PluginEventAuthz(controller);
-        Supervisor(controller);
-        RecoveryManager(controller);
-
-        const events = controller.get('/plugins/events-authz');
-        const mockStrategy = { name: 'mockStrategy', fn: jest.fn() };
-
-        events.on({
-            event: 'recovery.recoveryAttemptCompleted',
-            handler: fakeRecoveryAttempted,
-            subscriberId
-        });
-
-        events.on({
-            event: 'recovery.moduleRecovered',
-            handler: (moduleName) => {
-                /**************** (ASSERTION HERE BECAUSE WE HAVE TO WAIT FOR AN EMITTED EVENT) ****************/
-                expect(moduleName === 'postService').toBe(true);
-                /***********************************************************************************************/
-            },
-            subscriberId
-        });
-
-        events.notify('recovery.recoveryStrategyRegistered', {
-            moduleName: 'postService',
-            strategies: [mockStrategy]
-        });
-
-        events.notify('application.error', {
-            code: 'service.error',
-            message: 'The post could not be created',
-            name: 'LibPostServiceError',
-            module: '/lib/services/post',
-            _open: {
-                serviceName: 'postService'
-            }
-        });
-
-        // We extract the payload from the 'recovery.recoveryAttemptCompleted' event
-        const fakeEventPayload = fakeRecoveryAttempted.mock.calls[0][0]['payload']();
-
-        // We call the callback in from the event payload above with a stubbed module error count provided by `/lib/supervisor`
-        fakeEventPayload.fn(1);
-
-        const allStrategies = sandbox.my.recovery.getAllStrategies();
-        expect(allStrategies.lastAttemptedStrategyStatus === 'success').toBe(true);
-    });
-
-    
-
-    test('Should NOT trigger `recovery.moduleRecovered` event on FAILED recovery attempt', async () => {
-        const sandbox = {};
-        const { controller } = SandboxController(sandbox);
-        const fakeRecoveryAttempted = jest.fn().mockImplementation(()=> {
-            throw Error();
-        });
+        const fakeRecoveryAttempted = jest.fn();
         const subscriberId = 'testRunner';
 
         PluginEventAuthz(controller);
@@ -131,9 +73,7 @@ describe('RecoveryManger', () => {
         const events = controller.get('/plugins/events-authz');
         const mockStrategy = { 
             name: 'mockStrategy', 
-            fn: jest.fn().mockImplementation(()=> {
-                throw Error();
-            })
+            fn: jest.fn()
         }; 
 
         events.on({
@@ -148,11 +88,11 @@ describe('RecoveryManger', () => {
         });
 
         events.notify('application.error.globalErrorThresholdExceeded', { code: 'service.error', errorCount: 1, moduleName: 'postService' });
+        events.notify('application.error.globalErrorThresholdExceeded', { code: 'service.error', errorCount: 2, moduleName: 'postService' });
 
         const allStrategies = sandbox.my.recovery.getAllStrategies();
 
-        // We validate that the handler for the `recovery.recoveryAttemptCompleted` event was NOT called indicating an error during recovery.
-        expect(fakeRecoveryAttempted.mock.calls.length === 0).toBe(true);
+        // We validate that a succesful recovery attempt that does not *actually* recover the module still results in an error status
         expect(allStrategies.lastAttemptedStrategyStatus === 'error').toBe(true);
     });
 });
