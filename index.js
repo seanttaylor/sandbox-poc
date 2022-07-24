@@ -79,7 +79,7 @@ Sandbox.of([
     /**************** EVENT REGISTRATION ****************/
     events.on({ event: 'application.error', handler: onApplicationError, subscriberId });
     events.on({ event: 'application.error.globalErrorThresholdExceeded', handler: onGlobalModuleErrorThresholdExceeded, subscriberId });
-    // events.on({ event: 'application.ready', handler: onApplicationReady, subscriberId });
+    events.on({ event: 'recovery.recoveryAttemptCompleted', handler: onModuleRecoveryAttemptCompleted, subscriberId });
 
     /**************** MIDDLEWARE *****************/
     expressApp.use(morgan('tiny'));
@@ -128,12 +128,11 @@ Sandbox.of([
 
     /**
      * Logic for handling the event the `GLOBAL_ERROR_COUNT_THRESHOLD` value is exceeded for *any* running module
-     * @param {AppEvent} appEvent - a module that exceeds the error threshold, triggering a stop request
+     * @param {AppEvent} appEvent - an instance of {AppEvent} interface
      */
     function onGlobalModuleErrorThresholdExceeded(appEvent) {
       const moduleName = appEvent.payload();
       events.notify('application.info.moduleStopped');
-      // module restart logic here
     }
 
     /**
@@ -142,6 +141,23 @@ Sandbox.of([
      */
     function onApplicationError(appEvent) {
       console.error(appEvent.payload());
+    }
+
+    /**
+     * Excecutes any remaining logic required to a return a recently recovered module to a normal state
+     * @param {AppEvent} appEvent - an instance of the {AppEvent} interface
+     */
+    function onModuleRecoveryAttemptCompleted(appEvent) {
+      const moduleName = appEvent.payload();
+      const entries = sandbox.my.wal.getAllEntries();
+
+      if (entries) {
+        events.notify('application.writeAheadLogAvailable', {
+          count: entries.length,
+          entries,
+          moduleName
+        });
+      }
     }
 
     /**

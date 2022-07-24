@@ -31,7 +31,7 @@ describe('RecoveryManager', () => {
 
     test('Should extract the event payload and create a new {Recovery} on the `recovery.recoveryStrategyRegistered` event', async () => {
         const mockSandbox = MockSandboxFactory();
-        const mockEvent = {
+        const mockEventRegistration = {
             payload: jest.fn().mockImplementation(() => ({ moduleName: 'bogusService', strategies: [] }))
         }
         RecoveryManager(mockSandbox);
@@ -39,10 +39,10 @@ describe('RecoveryManager', () => {
         const events = mockSandbox.get('/plugins/events-authz');
 
         // We call the handler function of the first event registration via `events.on`
-        events.on.mock.calls[0][0]['handler'](mockEvent);
+        events.on.mock.calls[0][0]['handler'](mockEventRegistration);
 
         // We verify the `payload` method of the mockEvent is called in the handler function
-        expect(mockEvent.payload.mock.calls.length === 1).toBe(true);
+        expect(mockEventRegistration.payload.mock.calls.length === 1).toBe(true);
     });
 
     test('Should be able to add additional recovery strategies after an initial registration', async () => {
@@ -72,7 +72,7 @@ describe('RecoveryManager', () => {
             payload: jest.fn().mockImplementation(() => ({ moduleName: 'postService', strategies: [mockStrategy] }))
         };
         const mockGlobalErrorThresholdExeceededEvent = {
-            payload: jest.fn().mockImplementation(() => ({ moduleName: 'postService', errorCount: 1 }))
+            payload: jest.fn().mockImplementation(() => ({ code: 'service.error', moduleName: 'postService', errorCount: 1 }))
         };
         RecoveryManager(mockSandbox);
 
@@ -100,7 +100,7 @@ describe('RecoveryManager', () => {
             payload: jest.fn().mockImplementation(() => ({ moduleName: 'postService', strategies: [mockErrorStrategy] }))
         };
         const mockGlobalErrorThresholdExeceededEvent = {
-            payload: jest.fn().mockImplementation(() => ({ moduleName: 'postService', errorCount: 1 }))
+            payload: jest.fn().mockImplementation(() => ({ code: 'service.error', errorCount: 1, moduleName: 'postService' }))
         };
         RecoveryManager(mockSandbox);
 
@@ -126,7 +126,7 @@ describe('RecoveryManager', () => {
             payload: jest.fn().mockImplementation(() => ({ moduleName: 'postService', strategies: [mockStrategy] }))
         };
         const mockGlobalErrorThresholdExeceededEvent = {
-            payload: jest.fn().mockImplementation(() => 'postService')
+            payload: jest.fn().mockImplementation(() => ({ code: 'service.error', errorCount: 1, moduleName: 'postService' }))
         };
         RecoveryManager(mockSandbox);
 

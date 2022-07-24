@@ -23,6 +23,14 @@ export default {
                 "/users/2a1acb10-8d2b-4248-a74e-a8418f941dd9"
             ]
         },
+        "sequenceId": {
+            "type": "string",
+            "default": "",
+            "title": "The sequenceId Schema",
+            "examples": [
+                "-N7cD76LK0xLpypGjJsn"
+            ]
+        },
         "body": {
             "type": "string",
             "default": "",
@@ -68,6 +76,7 @@ export default {
     },
     "examples": [{
         "authorId": "/users/2a1acb10-8d2b-4248-a74e-a8418f941dd9",
+        "sequenceId": "-N7cD76LK0xLpypGjJsn",
         "body": "Hello world! Plaboy Billionaire Genius here...",
         "comments": [],
         "likes": [],
