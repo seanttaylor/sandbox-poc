@@ -7,6 +7,40 @@ import MockSandBoxFactory from '../../mocks/mock-sandbox-factory.js';
  * This test suite verifies EventAuthz plugin functionality.
  */
 describe('EventAuthzPlugin', () => {
+    const testSchema =  {
+        "$schema": "https://json-schema.org/draft/2019-09/schema",
+        "$id": "http://example.com/example.json",
+        "type": "object",
+        "default": {},
+        "title": "Root Schema",
+        "required": [
+            "foo",
+            "qux"
+        ],
+        "properties": {
+            "foo": {
+                "type": "string",
+                "default": "",
+                "title": "The foo Schema",
+                "examples": [
+                    "bar"
+                ]
+            },
+            "qux": {
+                "type": "integer",
+                "default": 0,
+                "title": "The qux Schema",
+                "examples": [
+                    3
+                ]
+            }
+        },
+        "examples": [{
+            "foo": "bar",
+            "qux": 3
+        }]
+    };
+    
     test('Should call the `plugin` method defined on the sandbox to register the plugin', async () => {
         const mockSandbox = MockSandBoxFactory();
         PluginEventAuthz(mockSandbox);
@@ -101,5 +135,4 @@ describe('EventAuthzPlugin', () => {
         expect(notify.mock.calls.length).toEqual(1);
         expect(on.mock.calls.length).toEqual(0);
     });
-
 });

@@ -20,7 +20,7 @@
         },
         {
             "type": "node-terminal",
-            "name": "Run Script: test",
+            "name": "Run Script: test(2)",
             "request": "launch",
             "command": "npm run test",
             "cwd": "${workspaceFolder}",
