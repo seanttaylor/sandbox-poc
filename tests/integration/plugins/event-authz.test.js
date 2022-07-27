@@ -1,8 +1,9 @@
 import PluginEventAuthz from '../../../lib/plugins/event-authz';
 import SandboxController from '../../../src/sandbox-controller/index.js';
-import testSchema from './event-authz-test-schema.js';
+import path from 'node:path';
 
 describe('PluginEventsAuthz', () => {
+    const testSchemaPath = path.join(__dirname, 'event-authz-test-schema.js');
 
     test('Should be able to trigger an event that has been registered with an event schema', async () => {
         const sandbox = {};
@@ -13,11 +14,11 @@ describe('PluginEventsAuthz', () => {
         const events = controller.get('/plugins/events-authz');
         const fakeCallback = jest.fn();
         
-        events.on({ 
+        await events.on({ 
             event: 'application.info.testEventDoNotRemove', 
             handler: fakeCallback, 
             subscriberId: 'testRunner', 
-            schema: testSchema
+            schemaPath: testSchemaPath
         });
 
         events.notify('application.info.testEventDoNotRemove', {
@@ -41,11 +42,11 @@ describe('PluginEventsAuthz', () => {
         const events = controller.get('/plugins/events-authz');
         const fakeCallback = jest.fn();
         
-        events.on({ 
+        await events.on({ 
             event: 'application.info.testEventDoNotRemove', 
             handler: fakeCallback, 
             subscriberId: 'testRunner', 
-            schema: testSchema
+            schemaPath: testSchemaPath
         });
         
         events.notify('application.info.testEventDoNotRemove', 42);
