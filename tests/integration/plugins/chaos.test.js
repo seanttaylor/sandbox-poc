@@ -6,16 +6,22 @@ import SandboxController from '../../../src/sandbox-controller/index.js';
  * This test suite verifies Chaos plugin functionality.
  */
 describe('ChaosPlugin', () => {
-    test('Should be able to register a new experiment via `registrationRequested` event', async () => {
+    test('Should be able to register a new experiment', async () => {
         const sandbox = {};
         const { controller } = SandboxController(sandbox);
         PluginEventAuthz(controller);
         PluginChaos(controller);
 
-        const events = controller.get('/plugins/events-authz');
+        const { AppEvent } = controller.get('/plugins/events-authz');
         const chaosPlugin = sandbox.my.plugins['/plugins/chaos'].load({ chaosEnabled: true });
 
-        events.notify('chaos.experiment.registrationRequested', { name: 'testExperiment', start: jest.fn(), end: jest.fn() });
+        chaosPlugin.onExperimentRegistrationRequest(
+            AppEvent({ 
+                name: 'testExperiment', 
+                start: jest.fn(), 
+                end: jest.fn() 
+            })
+        );
         const experiments = chaosPlugin.getAllExperiments();
 
         expect(Object.keys(experiments).includes('testExperiment')).toBe(true);
@@ -31,7 +37,6 @@ describe('ChaosPlugin', () => {
         const events = controller.get('/plugins/events-authz');
         const chaosPlugin = sandbox.my.plugins['/plugins/chaos'].load({ chaosEnabled: 'false' });
 
-        events.notify('chaos.experiment.registrationRequested', { name: 'testExperiment', start: jest.fn(), end: jest.fn() });
         const experiments = chaosPlugin.getAllExperiments();
 
         expect(Object.keys(experiments).includes('testExperiment')).toBe(false);
@@ -51,10 +56,12 @@ describe('ChaosPlugin', () => {
             start: jest.fn(),
             end: jest.fn()
         };
-        const events = controller.get('/plugins/events-authz');
+        const { AppEvent } = controller.get('/plugins/events-authz');
         const chaosPlugin = sandbox.my.plugins['/plugins/chaos'].load({ chaosEnabled: true });
 
-        events.notify('chaos.experiment.registrationRequested', fakeExperimentConfig);
+        chaosPlugin.onExperimentRegistrationRequest(
+            AppEvent(fakeExperimentConfig)
+        );
         const experiments = chaosPlugin.runAllExperiments();
 
         expect(Object.keys(experiments).includes('testExperiment')).toBe(true);
@@ -72,10 +79,16 @@ describe('ChaosPlugin', () => {
             start: jest.fn(),
             end: jest.fn()
         };
-        const events = controller.get('/plugins/events-authz');
+        const { AppEvent } = controller.get('/plugins/events-authz');
         const chaosPlugin = sandbox.my.plugins['/plugins/chaos'].load({});
 
-        events.notify('chaos.experiment.registrationRequested', fakeExperimentConfig);
+        chaosPlugin.onExperimentRegistrationRequest(
+            AppEvent({ 
+                name: 'testExperiment', 
+                start: jest.fn(), 
+                end: jest.fn() 
+            })
+        );
         const experiments = chaosPlugin.runAllExperiments();
 
         expect(Object.keys(experiments).includes('testExperiment')).toBe(false);
