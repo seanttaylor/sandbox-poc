@@ -58,6 +58,7 @@ function on({event, handler}) {
 }
 
 export default {
+  AppEvent,
   notify,
   on
 }
