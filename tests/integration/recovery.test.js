@@ -16,11 +16,24 @@ describe('RecoveryManger', () => {
         RecoveryManager(controller);
 
         const events = controller.get('/plugins/events-authz');
+        const { AppEvent } = events;
         const mockStrategy = { name: 'mockStrategy', fn: jest.fn() };
 
-        events.notify('recovery.recoveryStrategyRegistered', { moduleName: 'postService', strategies: [mockStrategy] });
-        events.notify('application.error.globalErrorThresholdExceeded', { code: 'service.error', errorCount: 1, moduleName: 'postService' });
-      
+        sandbox.my.recovery.onRecoveryStrategyRegistered(
+            AppEvent({
+                moduleName: 'postService',
+                strategies: [mockStrategy]
+            })
+        );
+
+        sandbox.my.recovery.onGlobalErrorThresholdExceeded(
+            AppEvent({ 
+                code: 'service.error', 
+                errorCount: 1, 
+                moduleName: 'postService' 
+            })
+        );
+
         const recoveryStrategies = sandbox.my.recovery.getAllStrategies();
         // We subtract 1 from `attemptOffset` because it is 1 based and arrays are 0 based
         const strategyId = recoveryStrategies.postService.attemptOffset - 1;
@@ -40,20 +53,30 @@ describe('RecoveryManger', () => {
         RecoveryManager(controller);
 
         const events = controller.get('/plugins/events-authz');
+        const { AppEvent } = events;
         const mockStrategy = { name: 'mockStrategy', fn: jest.fn() };
 
         events.on({
-            event: 'recovery.recoveryAttemptCompleted',
+            event: 'application.recovery.recoveryAttemptCompleted',
             handler: fakeRecoveryAttempted,
             subscriberId: 'testRunner'
         })
 
-        events.notify('recovery.recoveryStrategyRegistered', {
-            moduleName: 'postService',
-            strategies: [mockStrategy]
-        });
-        events.notify('application.error.globalErrorThresholdExceeded', { code: 'service.error', errorCount: 1, moduleName: 'postService' });
+        sandbox.my.recovery.onRecoveryStrategyRegistered(
+            AppEvent({
+                moduleName: 'postService',
+                strategies: [mockStrategy]
+            })
+        );
 
+        sandbox.my.recovery.onGlobalErrorThresholdExceeded(
+            AppEvent({ 
+                code: 'service.error', 
+                errorCount: 1, 
+                moduleName: 'postService' 
+            })
+        );
+        
         const fakeEventPayload = fakeRecoveryAttempted.mock.calls[0][0]['payload']();
 
         expect(fakeRecoveryAttempted.mock.calls.length).toBeTruthy();
@@ -71,24 +94,41 @@ describe('RecoveryManger', () => {
         RecoveryManager(controller);
 
         const events = controller.get('/plugins/events-authz');
-        const mockStrategy = { 
-            name: 'mockStrategy', 
+        const { AppEvent } = events;
+        const mockStrategy = {
+            name: 'mockStrategy',
             fn: jest.fn()
-        }; 
+        };
 
         events.on({
-            event: 'recovery.recoveryAttemptCompleted',
+            event: 'application.recovery.recoveryAttemptCompleted',
             handler: fakeRecoveryAttempted,
             subscriberId
         });
 
-        events.notify('recovery.recoveryStrategyRegistered', {
-            moduleName: 'postService',
-            strategies: [mockStrategy]
-        });
+        sandbox.my.recovery.onRecoveryStrategyRegistered(
+            AppEvent({
+                moduleName: 'postService',
+                strategies: [mockStrategy]
+            })
+        );
+      
+        sandbox.my.recovery.onGlobalErrorThresholdExceeded(
+            AppEvent({ 
+                code: 'service.error', 
+                errorCount: 1, 
+                moduleName: 'postService' 
+            })
+        );
 
-        events.notify('application.error.globalErrorThresholdExceeded', { code: 'service.error', errorCount: 1, moduleName: 'postService' });
-        events.notify('application.error.globalErrorThresholdExceeded', { code: 'service.error', errorCount: 2, moduleName: 'postService' });
+        sandbox.my.recovery.onGlobalErrorThresholdExceeded(
+            AppEvent({ 
+                code: 'service.error', 
+                errorCount: 2, 
+                moduleName: 'postService' 
+            })
+        );
+
 
         const allStrategies = sandbox.my.recovery.getAllStrategies();
 
