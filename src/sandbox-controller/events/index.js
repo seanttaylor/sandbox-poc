@@ -24,6 +24,10 @@ function AppEvent(eventData) {
   };
 
   function payload() {
+    if (typeof(eventData.payload) === 'function') {
+      return eventData.payload();
+    }
+    
     return eventData;
   }
 
@@ -58,6 +62,7 @@ function on({event, handler}) {
 }
 
 export default {
+  AppEvent,
   notify,
   on
 }

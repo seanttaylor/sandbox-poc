@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node index.js",
+    "start": "LOG_LEVEL=debug node index.js",
     "test": "jest --coverage true --detectOpenHandles",
     "lint": "./node_modules/.bin/eslint --fix"
   },

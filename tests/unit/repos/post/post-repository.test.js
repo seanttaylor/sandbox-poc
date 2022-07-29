@@ -10,8 +10,8 @@ describe('PostRepository Initialization', () => {
         const myBox = MockSandboxFactory();
         PostRepository(myBox);
 
-        expect(myBox.get('/plugins/events-authz').on.mock.calls.length).toBe(2);
         expect(myBox.put.mock.calls.length).toBe(1);
+        expect(typeof(myBox.put.mock.calls[0][1]) === 'object');
     });
 
     test('Should expose the `postRepo.create` method on the sandbox', async () => {

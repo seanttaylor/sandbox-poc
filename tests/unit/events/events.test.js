@@ -1,6 +1,6 @@
 // For more info about the Jest mocking APIs see: https://jestjs.io/docs/mock-functions#mock-property
 import events from '../../../src/sandbox-controller/events/index.js';
-const testSchema =  {
+const testSchema = {
     "$schema": "https://json-schema.org/draft/2019-09/schema",
     "$id": "http://example.com/example.json",
     "type": "object",
@@ -70,5 +70,14 @@ describe('Events', () => {
 
         expect(fakeCallback.mock.calls.length).toBe(1);
         expect(fakeCallback.mock.calls[0][0]['payload']()).toEqual(42);
+    });
+
+    test('Should be able to flatten event payloads that are themselves instances of {AppEvent}', async () => {
+        const fakeCallback = jest.fn();
+        const { AppEvent } = events;
+        const fakeEventInner = AppEvent(42);
+        const fakeEventOuter = AppEvent(fakeEventInner);
+
+        expect(fakeEventOuter.payload()).toEqual(42);
     });
 });

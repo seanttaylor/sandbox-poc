@@ -55,13 +55,14 @@ Sandbox.of([
 ],
   /***
    * The application core 
-   * @param {Object} sandbox - the sandboxed module APIs; this is where the registered module functionality lives
+   * @param {Object} sandbox - the sandboxed module APIs; this is where the registered client-defined module functionality lives
    */
   async function myApp(sandbox) {
     const events = sandbox.get('/plugins/events-authz');
     const console = sandbox.get('console');
     const postRepo = sandbox.my.postRepo;
     const subscriberId = 'myApp';
+    const { AppEvent } = events;
 
     /**************** PLUGIN CONFIGURATION ****************/
     const StatusAPI = sandbox.my.plugins['/plugins/status-router'].load(RouterFactory(), sandbox.my.statusService);
@@ -79,7 +80,8 @@ Sandbox.of([
     /**************** EVENT REGISTRATION ****************/
     events.on({ event: 'application.error', handler: onApplicationError, subscriberId });
     events.on({ event: 'application.error.globalErrorThresholdExceeded', handler: onGlobalModuleErrorThresholdExceeded, subscriberId });
-    events.on({ event: 'recovery.recoveryAttemptCompleted', handler: onModuleRecoveryAttemptCompleted, subscriberId });
+    events.on({ event: 'application.recovery.recoveryAttemptCompleted', handler: onModuleRecoveryAttemptCompleted, subscriberId });
+    events.on({ event: 'application.chaos.experiment.registrationRequested', handler: onChaosExperimentRegistrationRequest, subscriberId });
 
     /**************** MIDDLEWARE *****************/
     expressApp.use(morgan('tiny'));
@@ -104,6 +106,7 @@ Sandbox.of([
       res.status(status).send({ status, error: 'There was an error.' });
     });
 
+    /**************** SERVER START ****************/
     if (process.env.NODE_ENV !== 'ci/cd/test') {
       http.createServer(expressApp).listen(SERVER_PORT, () => {
         console.info(`myApp listening on port ${SERVER_PORT} (http://localhost:${SERVER_PORT})`);
@@ -113,10 +116,12 @@ Sandbox.of([
     /**************** APPLICATION READY ****************/
     hello();
     events.notify('application.ready');
-    events.notify('recovery.recoveryStrategyRegistered', {
-      moduleName: 'postService',
-      strategies: [{ name: 'resetRepository', fn: resetRepository }]
-    });
+    sandbox.my.recovery.onRecoveryStrategyRegistered(
+      AppEvent({
+        moduleName: 'postService',
+        strategies: [{ name: 'resetRepository', fn: resetRepository }]
+      })
+    );
 
     /**
      * Creates a router instance to enable registration of API routes 
@@ -131,16 +136,23 @@ Sandbox.of([
      * @param {AppEvent} appEvent - an instance of {AppEvent} interface
      */
     function onGlobalModuleErrorThresholdExceeded(appEvent) {
-      const moduleName = appEvent.payload();
-      events.notify('application.info.moduleStopped');
+      sandbox.my.recovery.onGlobalErrorThresholdExceeded(appEvent);
     }
 
     /**
-     * Logic for handling the event a module fires the `application.error` event
+     * Receives an incoming request to setup a new chaos experiment; forwards the request to the chaos plugin
+     * @param {AppEvent} appEvent 
+     */
+    function onChaosExperimentRegistrationRequest(appEvent) {
+      pluginChaos.onExperimentRegistrationRequest(appEvent);
+    }
+
+    /**
+     * Logic for handling the event a module fires the `application.error` event; forwards to /lib/supervisor
      * @param {AppEvent} appEvent - an instance of the {AppEvent} interface
      */
     function onApplicationError(appEvent) {
-      console.error(appEvent.payload());
+      sandbox.my.supervisor.onApplicationError(appEvent);
     }
 
     /**
