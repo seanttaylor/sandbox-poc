@@ -24,6 +24,10 @@ function AppEvent(eventData) {
   };
 
   function payload() {
+    if (typeof(eventData.payload) === 'function') {
+      return eventData.payload();
+    }
+    
     return eventData;
   }
 

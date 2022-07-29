@@ -2,6 +2,7 @@
 
 import PluginEventAuthz from '../../../lib/plugins/event-authz/index.js';
 import MockSandBoxFactory from '../../mocks/mock-sandbox-factory.js';
+import SandboxController from '../../../src/sandbox-controller/index.js';
 
 /**
  * This test suite verifies EventAuthz plugin functionality.
@@ -134,5 +135,25 @@ describe('EventAuthzPlugin', () => {
         // Since bogusEvent is not configured in permissions, the mocked `events.on` method does not subscribe anything
         expect(notify.mock.calls.length).toEqual(1);
         expect(on.mock.calls.length).toEqual(0);
+    });
+
+    test('Should not be able to subscribe to events without explicit permission set', async () => {
+        const sandbox = {}
+        const { controller } = SandboxController(sandbox);
+        const handler = jest.fn();
+
+        PluginEventAuthz(controller);
+
+        const events = controller.get('/plugins/events-authz');
+        
+        events.on({
+            event: 'application.info.testEventDoNotRemove',
+            subscriberId: 'testRunner1',
+            handler
+        });
+        events.notify('application.info.testEventDoNotRemove', 42);
+
+        // We verify that the handler is not called indicating the subscription was not permitted to go through
+        expect(handler.mock.calls.length).toEqual(0);
     });
 });
