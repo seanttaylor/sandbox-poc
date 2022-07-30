@@ -118,7 +118,7 @@ Sandbox.of([
     events.notify('application.ready');
     sandbox.my.recovery.onRecoveryStrategyRegistered(
       AppEvent({
-        moduleName: 'postService',
+        serviceName: 'postService',
         strategies: [{ name: 'resetRepository', fn: resetRepository }]
       })
     );
@@ -160,14 +160,14 @@ Sandbox.of([
      * @param {AppEvent} appEvent - an instance of the {AppEvent} interface
      */
     function onModuleRecoveryAttemptCompleted(appEvent) {
-      const moduleName = appEvent.payload();
+      const serviceName = appEvent.payload();
       const entries = sandbox.my.wal.getAllEntries();
 
       if (entries) {
         events.notify('application.writeAheadLogAvailable', {
           count: entries.length,
           entries,
-          moduleName
+          serviceName
         });
       }
     }

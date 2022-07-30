@@ -21,7 +21,7 @@ describe('RecoveryManger', () => {
 
         sandbox.my.recovery.onRecoveryStrategyRegistered(
             AppEvent({
-                moduleName: 'postService',
+                serviceName: 'postService',
                 strategies: [mockStrategy]
             })
         );
@@ -30,7 +30,7 @@ describe('RecoveryManger', () => {
             AppEvent({ 
                 code: 'service.error', 
                 errorCount: 1, 
-                moduleName: 'postService' 
+                serviceName: 'postService' 
             })
         );
 
@@ -64,7 +64,7 @@ describe('RecoveryManger', () => {
 
         sandbox.my.recovery.onRecoveryStrategyRegistered(
             AppEvent({
-                moduleName: 'postService',
+                serviceName: 'postService',
                 strategies: [mockStrategy]
             })
         );
@@ -73,7 +73,7 @@ describe('RecoveryManger', () => {
             AppEvent({ 
                 code: 'service.error', 
                 errorCount: 1, 
-                moduleName: 'postService' 
+                serviceName: 'postService' 
             })
         );
         
@@ -108,7 +108,7 @@ describe('RecoveryManger', () => {
 
         sandbox.my.recovery.onRecoveryStrategyRegistered(
             AppEvent({
-                moduleName: 'postService',
+                serviceName: 'postService',
                 strategies: [mockStrategy]
             })
         );
@@ -117,7 +117,7 @@ describe('RecoveryManger', () => {
             AppEvent({ 
                 code: 'service.error', 
                 errorCount: 1, 
-                moduleName: 'postService' 
+                serviceName: 'postService' 
             })
         );
 
@@ -125,7 +125,7 @@ describe('RecoveryManger', () => {
             AppEvent({ 
                 code: 'service.error', 
                 errorCount: 2, 
-                moduleName: 'postService' 
+                serviceName: 'postService' 
             })
         );
 

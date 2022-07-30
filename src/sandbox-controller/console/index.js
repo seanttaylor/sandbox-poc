@@ -4,6 +4,16 @@
 const shouldLog = process.env.LOG_LEVEL === "debug";
 
 /**
+ * @param value - an expression that evaluates to TRUE or FALSE
+ * @param {String} string
+ */
+ function assert(value,string) {
+    if (shouldLog) {
+        console.assert(value, `⚠️ ${string}`);
+    }
+}
+
+/**
  * @param {String} string
  */
 function log(string) {
@@ -41,6 +51,7 @@ function info(string) {
 }
 
 export default {
+    assert,
     error,
     info,
     log,

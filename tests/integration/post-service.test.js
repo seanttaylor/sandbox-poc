@@ -200,12 +200,12 @@ describe('PostService', () => {
         const events = mockSandbox.get('/plugins/events-authz');
         events.on({ event: 'application.writeAheadLogAvailable', handler: fakeLogHandler, subscriberId });
         // This event triggers side-effects only; since we don't need to write anything to the PostService we just provide an empty array
-        events.notify('application.writeAheadLogAvailable', { entries: [], moduleName: 'postService' });
+        events.notify('application.writeAheadLogAvailable', { entries: [], serviceName: 'postService' });
 
         // We validate that the handler for the `application.writeAheadLogAvailable` is called when the event fires.
         expect(events.notify.mock.calls.length === 1).toBe(true);
         expect(typeof events.notify.mock.calls[0][1] === 'object').toBe(true);
         expect(Object.keys(events.notify.mock.calls[0][1]).includes('entries')).toBe(true);
-        expect(Object.keys(events.notify.mock.calls[0][1]).includes('moduleName')).toBe(true);
+        expect(Object.keys(events.notify.mock.calls[0][1]).includes('serviceName')).toBe(true);
     });
 });
