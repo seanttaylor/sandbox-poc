@@ -20,7 +20,7 @@ describe('WAL', () => {
                 id: `/posts/${faker.datatype.uuid()}`,
                 authorId: `/users/${faker.datatype.uuid()}`,
                 body: faker.hacker.phrase(),
-                moduleName: 'postService',
+                serviceName: 'postService',
                 operation: 'create',
                 sequenceId: faker.datatype.uuid(),
             })
