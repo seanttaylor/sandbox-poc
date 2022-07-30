@@ -82,6 +82,8 @@ Sandbox.of([
     events.on({ event: 'application.error.globalErrorThresholdExceeded', handler: onGlobalModuleErrorThresholdExceeded, subscriberId });
     events.on({ event: 'application.recovery.recoveryAttemptCompleted', handler: onModuleRecoveryAttemptCompleted, subscriberId });
     events.on({ event: 'application.chaos.experiment.registrationRequested', handler: onChaosExperimentRegistrationRequest, subscriberId });
+    events.on({ event: 'application.postService.post.writeRequestReceived', handler: onPostServiceWriteRequest, subscriberId });
+
 
     /**************** MIDDLEWARE *****************/
     expressApp.use(morgan('tiny'));
@@ -131,6 +133,8 @@ Sandbox.of([
       return new express.Router();
     }
 
+    /**************** HANDLERS ****************/
+
     /**
      * Logic for handling the event the `GLOBAL_ERROR_COUNT_THRESHOLD` value is exceeded for *any* running module
      * @param {AppEvent} appEvent - an instance of {AppEvent} interface
@@ -153,6 +157,14 @@ Sandbox.of([
      */
     function onApplicationError(appEvent) {
       sandbox.my.supervisor.onApplicationError(appEvent);
+    }
+
+    /**
+     * Logic for handling the event a module fires the `application.postService.post.writeRequestReceived` event; forwards to /lib/wal
+     * @param {AppEvent} appEvent - an instance of the {AppEvent} interface
+     */
+     function onPostServiceWriteRequest(appEvent) {
+      sandbox.my.wal.onWriteRequest(appEvent);
     }
 
     /**
