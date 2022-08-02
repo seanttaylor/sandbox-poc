@@ -7,6 +7,17 @@ import posts from '../../../../schemas/post.js';
 
 const ajv = new Ajv();
 
+/** 
+ * Exposes various APIs for accessing a data persistence implementations. **This is a 
+ * default sandbox API that is available to *all* client-defined modules.**
+ * @module Database
+ */
+
+/**
+ * An in-memory database connector for a simpled document-based datastore.
+ * @name InMemoryDatabaseConnector
+ * @returns {Object}
+ */
 export default (function InMemoryDatabaseConnector() {
   const data = { ...dataTemplate };
   const schemaValidators = {
@@ -227,7 +238,7 @@ export default (function InMemoryDatabaseConnector() {
   /**
    * Drop a collection from the database
    * @param {String} collection - collection to drop
-   * @returns
+   * @returns {Array}
    */
 
   async function drop(collection) {
@@ -238,7 +249,7 @@ export default (function InMemoryDatabaseConnector() {
   /**
    * Closes an existing connection to the database
    * This implementation does nothing as there is no database server connection
-   * @returns
+   * @returns {Array}
    */
   function close() {
     return [];

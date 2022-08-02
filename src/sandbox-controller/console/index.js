@@ -3,7 +3,15 @@
 
 const shouldLog = process.env.LOG_LEVEL === "debug";
 
+/** 
+ * Wraps native console interface; primarily useful for removing log messages from unit and integration test runs. Implements
+ * the {@link IConsole} interface that allows us to use a single interface for directing log output. This is a 
+ * default sandbox API that is available to *all* client-defined modules.
+ * @module Console 
+ */
+
 /**
+ * A wrapper for native `console.assert` 
  * @param value - an expression that evaluates to TRUE or FALSE
  * @param {String} string
  */
@@ -14,7 +22,8 @@ const shouldLog = process.env.LOG_LEVEL === "debug";
 }
 
 /**
- * @param {String} string
+ * A wrapper for native `console.log` 
+ * @param {String} string - A string to output
  */
 function log(string) {
     if (shouldLog) {
@@ -24,7 +33,8 @@ function log(string) {
 }
 
 /**
- * @param {Object|String} error 
+ * A wrapper for native `console.error` 
+ * @param {Object|String} error
  */
 function error(err) {
     if (shouldLog) {
@@ -33,7 +43,8 @@ function error(err) {
 }
 
 /**
- * @param {String} string
+ * A wrapper for native `console.info` 
+ * @param {String} string - A string to output
  */
 function info(string) {
     if (shouldLog) {
@@ -42,7 +53,8 @@ function info(string) {
 }
 
 /**
- * @param {String} string
+ * A wrapper for native `console.warn` 
+ * @param {String} string - A string to output
  */
  function warn(string) {
     if (shouldLog) {

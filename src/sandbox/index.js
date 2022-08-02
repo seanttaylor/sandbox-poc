@@ -2,6 +2,12 @@
 // Reason: Related to Jest's current lack of support for ES modules. See (https://github.com/seanttaylor/sandbox-poc/issues/8)
 import SandboxController from '../sandbox-controller/index.js';
 
+/**
+ * Provides constructor methods for creating client-defined modules and applications that can leverage those modules.
+ * @module Sandbox
+ */
+
+
 // The sandboxed API modules that will ultimately be available to the application core
 const box = {};
 // A map of all client-defined modules that have been registered with application core
@@ -10,8 +16,8 @@ const myModules = {};
 /**
  * Freezes an object and all its child properties recursively, making the object immutable
  * See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze for more on freezing objects
- * @param {Object} object 
- * @returns 
+ * @param {Object} object - a plain JavaScript object
+ * @returns {Object} - the frozen object
  */
 function deepFreeze(object) {
   // Retrieve the property names defined on object
