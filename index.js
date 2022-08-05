@@ -8,7 +8,7 @@ import morgan from 'morgan';
 
 import Sandbox from './src/sandbox/index.js';
 
-/******** SERVICES ********/
+/**************** SERVICES ****************/
 import PostRepository from './lib/repos/post/index.js';
 import WriteAheadLog from './lib/wal/index.js';
 import StatusService from './lib/services/status/index.js';
@@ -16,11 +16,12 @@ import PostService from './lib/services/post/index.js';
 import Supervisor from './lib/supervisor/index.js';
 import RecoveryManager from './lib/recovery/index.js';
 
-/******** PLUGINS ********/
+/**************** PLUGINS ****************/
 import PluginEventAuthz from './lib/plugins/event-authz/index.js';
 import PluginStatusRouter from './lib/plugins/router/status/index.js';
 import PluginPostRouter from './lib/plugins/router/post/index.js';
 import PluginChaos from './lib/plugins/chaos/index.js';
+import PluginHypermediaPost from './lib/plugins/hypermedia/post/index.js';
 
 const SERVER_PORT = process.env.PORT || 3000;
 const APP_NAME = process.env.APP_NAME || 'sandbox';
@@ -29,6 +30,7 @@ const APP_VERSION = process.env.APP_VERSION || '0.0.1';
 const figletize = promisify(figlet);
 const expressApp = express();
 
+/**************** MODULE DEFINITION ****************/
 Sandbox.module('/lib/repos/post', PostRepository);
 Sandbox.module('/lib/wal', WriteAheadLog);
 Sandbox.module('/lib/plugins/chaos', PluginChaos);
@@ -40,6 +42,7 @@ Sandbox.module('/lib/plugins/post-router', PluginPostRouter);
 Sandbox.module('/lib/services/post', PostService);
 Sandbox.module('/lib/plugins/chaos', PluginChaos);
 Sandbox.module('/lib/recovery', RecoveryManager);
+Sandbox.module('/lib/plugins/hypermedia-post', PluginHypermediaPost);
 
 Sandbox.of([
   '/lib/plugins/event-authz',
@@ -51,7 +54,8 @@ Sandbox.of([
   '/lib/plugins/status-router',
   '/lib/plugins/chaos',
   '/lib/supervisor',
-  '/lib/recovery'
+  '/lib/recovery',
+  '/lib/plugins/hypermedia-post'
 ],
   /***
    * @module ApplicationCore
@@ -66,8 +70,9 @@ Sandbox.of([
     const { AppEvent } = events;
 
     /**************** PLUGIN CONFIGURATION ****************/
+    const hypermediaPostService = sandbox.my.plugins['/plugins/hypermedia-post'].load(sandbox.my.postService);
     const StatusAPI = sandbox.my.plugins['/plugins/status-router'].load(RouterFactory(), sandbox.my.statusService);
-    const PostAPI = sandbox.my.plugins['/plugins/post-router'].load(RouterFactory(), sandbox.my.postService);
+    const PostAPI = sandbox.my.plugins['/plugins/post-router'].load(RouterFactory(), hypermediaPostService);
 
     const pluginChaos = sandbox.my.plugins['/plugins/chaos'].load({
       chaosEnabled: process.env.CHAOS_ENABLED,
