@@ -10,12 +10,13 @@ import SandboxController from '../sandbox-controller/index.js';
 
 // The sandboxed API modules that will ultimately be available to the application core
 const box = {};
+
 // A map of all client-defined modules that have been registered with application core
 const myModules = {};
 
 /**
  * Freezes an object and all its child properties recursively, making the object immutable
- * See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze for more on freezing objects
+ * See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze for more on freezing objects.
  * @param {Object} object - a plain JavaScript object
  * @returns {Object} - the frozen object
  */

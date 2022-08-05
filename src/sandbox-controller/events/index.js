@@ -24,6 +24,13 @@ const console = IConsole(SimpleConsole);
  * @property {AppEventHeader} header - see AppEventHeader
  */
 
+/**
+ * @typedef {Object} Recovery
+ * @property {String} attemptOffset
+ * @property {String} serviceName - name of a service containing a Recovery procedure
+ * @property {Function[]} strategies - list of functions to execute in order to recover a module experiencing errors
+ */
+
 
 /**
  * Reliable interface for receiving data from emitted events

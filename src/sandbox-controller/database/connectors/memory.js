@@ -7,15 +7,10 @@ import posts from '../../../../schemas/post.js';
 
 const ajv = new Ajv();
 
-/** 
- * Exposes various APIs for accessing a data persistence implementations. **This is a 
- * default sandbox API that is available to *all* client-defined modules.**
- * @module Database
- */
-
 /**
- * An in-memory database connector for a simpled document-based datastore.
- * @name InMemoryDatabaseConnector
+ * An in-memory database connector for a simpled document-based datastore. This is a 
+ * default sandbox API that is available to *all* client-defined modules.
+ * @module DatabaseConnector/InMemory
  * @returns {Object}
  */
 export default (function InMemoryDatabaseConnector() {
@@ -26,8 +21,9 @@ export default (function InMemoryDatabaseConnector() {
 
   /**
    * Add a document to the database.
-   * @param {Object} doc - an instance of an entity DTO containing data to store
+   * @param {Object} doc - an instance of an entity containing data to store
    * @param {String} collection - name of collection to add to
+   * @memberof module:DatabaseConnector/InMemory
    * @returns {Object}
    */
 
@@ -69,8 +65,9 @@ export default (function InMemoryDatabaseConnector() {
 
   /**
    * Update a document in the database by id
-   * @param {Object} doc - an instance of an entity DTO containing data to store
+   * @param {Object} doc - an instance of an entity containing data to store
    * @param {String} collection - collection to update
+   * @memberof module:DatabaseConnector/InMemory
    * @returns {Object}
    */
 
@@ -127,8 +124,9 @@ export default (function InMemoryDatabaseConnector() {
   /**
    * Add a document to the database with a user-defined ID
    * @param {String} id - id of the document to create in the database
-   * @param {Object} doc - an instance of an entity DTO containg data to store
+   * @param {Object} doc - an instance of an entity containg data to store
    * @param {String} collection - collection to update
+   * @memberof module:DatabaseConnector/InMemory
    * @returns {Object}
    */
 
@@ -177,6 +175,7 @@ export default (function InMemoryDatabaseConnector() {
    * Remove a document from a collection BY ID ONLY
    * @param {String} id - uuid of the document in the database
    * @param {String} collection - collection to remove from
+   * @memberof module:DatabaseConnector/InMemory
    * @returns {Object}
    */
 
@@ -193,6 +192,7 @@ export default (function InMemoryDatabaseConnector() {
   /**
    * Find all documents in a collection
    * @param {String} collection - collection to pull from
+   * @memberof module:DatabaseConnector/InMemory
    * @returns {Object}
    */
 
@@ -209,6 +209,7 @@ export default (function InMemoryDatabaseConnector() {
    * Find a document in a collection by uuid
    * @param {String} id - uuid of the document
    * @param {String} collection - collection to pull from
+   * @memberof module:DatabaseConnector/InMemory
    * @returns {Object}
    */
 
@@ -238,6 +239,7 @@ export default (function InMemoryDatabaseConnector() {
   /**
    * Drop a collection from the database
    * @param {String} collection - collection to drop
+   * @memberof module:DatabaseConnector/InMemory
    * @returns {Array}
    */
 
@@ -249,6 +251,7 @@ export default (function InMemoryDatabaseConnector() {
   /**
    * Closes an existing connection to the database
    * This implementation does nothing as there is no database server connection
+   * @memberof module:DatabaseConnector/InMemory
    * @returns {Array}
    */
   function close() {
@@ -259,6 +262,7 @@ export default (function InMemoryDatabaseConnector() {
    * Determines whether a key exists in a collection
    * @param {String} id
    * @param {String} collection - collection to search
+   * @memberof module:DatabaseConnector/InMemory
    * @returns {Boolean}
    */
   function exists({ id, collection }) {
