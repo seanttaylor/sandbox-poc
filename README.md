@@ -5,7 +5,9 @@ To implement a design of application sandboxes in order to learn where this patt
 
 ## Local Development
 
-1. Do `npm start` to launch the application
+* Do `npm start` to launch the application
+* To view comprehensive documentation do `npm run docs` to generate an HTML site 
+* It is recommended to use the Live Server vscode extension to open the `index.html` file in the `/jsdoc` folder. Enjoy the docs!
 
 
 ## Table of Contents
