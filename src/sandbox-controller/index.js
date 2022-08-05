@@ -17,9 +17,11 @@ const defaultSandboxAPIs = {
 }
 
 /**
+ * Provides proxied access to default and client-defined APIs to the Application Core on boot.
  * Attaches key methods on the sandbox that the application core and *client-defined* modules have access to. Exposes
  * an API for client-defined modules to register or request functionalities from the default sandbox APIs. 
  * @param {Object} box - plain JavaScript object that will house the public APIs of registered client-defined modules
+ * @module SandboxController 
  * @returns {Object}
  */
 function SandboxController(box) {
@@ -31,6 +33,7 @@ function SandboxController(box) {
    * Registers a client-defined module's API on the sandbox. This is the functionality a module exposes to the rest of the app via the sandbox.
    * @param {String} moduleName - the namespace the functionality will live under on the sandbox
    * @param {Object} moduleAPI - the API exposed by the client-defined module
+   * @memberof module:SandboxController
    */
   function put(moduleName, moduleAPI) {
     // We don't need to re-register client-defined module APIs that have already been registered
@@ -42,12 +45,12 @@ function SandboxController(box) {
   }
 
   /**
-   * Creates a plugin for an existing module
+   * Constructor for creating a plugin for an existing default *or* client-defined module
    * @param {Boolean} extendsDefault - indicates whether the code being extended is a default sandbox API or client-defined module
    * @param {Function} fn - the business logic of the plugin
    * @param {String} name - the namespace of the the plugin on the sandbox
    * @param {String} of - (optional) the name of the existing module the plugin extends
-
+   * @memberof module:SandboxController
    */
   function plugin({ extendsDefault, fn, name, of }) {
     // The client has committed an error
@@ -70,8 +73,9 @@ function SandboxController(box) {
   }
 
   /**
-   * 
+   * Retrieves a specififed default API defined on the sandbox
    * @param {String} module - the name of the module to retrieve
+   * @memberof module:SandboxController
    */
   function get(module) {
     // The requested module is a plugin

@@ -6,15 +6,35 @@ import SimpleConsole from '../console/index.js'
 const eventEmitter = new events.EventEmitter();
 const console = IConsole(SimpleConsole);
 
+/** 
+ * A service providing publish/subscribe functionality to all application modules. **This is a 
+ * default sandbox API that is available to *all* client-defined modules.**
+ * @module Events
+ */
+
+/** 
+* @typedef AppEventHeader 
+* @property {String} id - unique identifier for the emitted event
+* @property {String} timestamp - date/time the event was emitted
+*/
+
 /**
  * @typedef AppEvent
- * @property {Function} payload 
- * @property {AppEventHeader} header
+ * @property {Function} payload - returns the data associated with the event
+ * @property {AppEventHeader} header - see AppEventHeader
  */
 
 /**
+ * @typedef {Object} Recovery
+ * @property {String} attemptOffset
+ * @property {String} serviceName - name of a service containing a Recovery procedure
+ * @property {Function[]} strategies - list of functions to execute in order to recover a module experiencing errors
+ */
+
+
+/**
  * Reliable interface for receiving data from emitted events
- * @param {Any} eventData 
+ * @param {Any} eventData - any data associated with emitted event
  * @returns {Object}
  */
 function AppEvent(eventData) {

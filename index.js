@@ -54,6 +54,7 @@ Sandbox.of([
   '/lib/recovery'
 ],
   /***
+   * @module ApplicationCore
    * The application core 
    * @param {Object} sandbox - the sandboxed module APIs; this is where the registered client-defined module functionality lives
    */
@@ -138,6 +139,7 @@ Sandbox.of([
     /**
      * Logic for handling the event the `GLOBAL_ERROR_COUNT_THRESHOLD` value is exceeded for *any* running module
      * @param {AppEvent} appEvent - an instance of {AppEvent} interface
+     * @memberof ApplicationCore
      */
     function onGlobalModuleErrorThresholdExceeded(appEvent) {
       sandbox.my.recovery.onGlobalErrorThresholdExceeded(appEvent);
@@ -186,6 +188,8 @@ Sandbox.of([
 
     /**
      * Basic recovery strategy for resolving failures to create posts
+     * @module Foo
+     * @function resetRepository
      */
     function resetRepository() {
       sandbox.my.postService.setRepository(postRepo);
