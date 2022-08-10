@@ -2,6 +2,8 @@
 
 import { faker } from '@faker-js/faker';
 
+const mockPosts = {};
+
 function MockPostFactory() {
     return {
         "id": `/posts/${faker.datatype.uuid()}`,
@@ -15,15 +17,37 @@ function MockPostFactory() {
 };
 
 export default function MockPostService() {
-    function getAllPosts() {
+    async function create() {
         const post = MockPostFactory();
-        return [post];
+        mockPosts[post.id] = post;
+        return post;
     }
 
+    async function deletePost(id) {
+        delete mockPosts[id];
+    }
+
+    async function editPost({ id, body }) {
+        mockPosts[id]['body'] = body;
+        return mockPosts[id];
+    }
+    
+    async function getAllPosts() {
+        const post = MockPostFactory();
+        return Object.values(mockPosts);
+    }
+   
+    async function getPostById(id) {
+        return [mockPosts[id]];
+    }
+
+    
+
     return {
-        getAllPosts
+        create,
+        deletePost,
+        editPost,
+        getAllPosts,
+        getPostById
     }
 }
-const mockPostService = {
-    getAllPosts: () => { return [mockPost] }
-};
