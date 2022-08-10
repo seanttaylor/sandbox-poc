@@ -15,7 +15,8 @@
                 "CHAOS_ENABLED": "false",
                 "GLOBAL_ERROR_COUNT_THRESHOLD": "1",
                 "LOG_LEVEL": "debug",
-                "PORT": "9000"
+                "PORT": "9000",
+                "SCHEMA_BASE_URL": "/schemas"
             }
         },
         {

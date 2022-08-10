@@ -12,7 +12,7 @@ export default {
             "email": "tstark@avengers.io", 
             "profileImageURL": "https://via.placeholder.com/150", 
             "schemaVersion": "0.0.1", 
-            "schemaURL": "/schemas/users/0.0.1/user.json",
+            "schemaURL": "/schemas/user/0.0.1/user.json",
             "lastModifiedTimestamp": null,
             "createdAtTimestamp": "2022-06-26T14:24:04.904Z" 
         },
@@ -24,7 +24,7 @@ export default {
             "email": "pparker@avengers.io", 
             "profileImageURL": "https://via.placeholder.com/150", 
             "schemaVersion": "0.0.1",
-            "schemaURL": "/schemas/users/0.0.1/user.json",
+            "schemaURL": "/schemas/user/0.0.1/user.json",
             "lastModifiedTimestamp": null,
             "createdAtTimestamp": "2022-06-26T14:24:04.904Z"  
         },
@@ -36,7 +36,7 @@ export default {
             "email": "srogers@avengers.io", 
             "profileImageURL": "https://via.placeholder.com/150", 
             "schemaVersion": "0.0.1",
-            "schemaURL": "/schemas/users/0.0.1/user.json",
+            "schemaURL": "/schemas/user/0.0.1/user.json",
             "lastModifiedTimestamp": null,
             "createdAtTimestamp": "2022-06-26T14:24:04.904Z"  
         },
@@ -48,7 +48,7 @@ export default {
             "email": "nromanoff@avengers.io", 
             "profileImageURL": "https://via.placeholder.com/150", 
             "schemaVersion": "0.0.1",
-            "schemaURL": "/schemas/users/0.0.1/user.json",
+            "schemaURL": "/schemas/user/0.0.1/user.json",
             "lastModifiedTimestamp": null,
             "createdAtTimestamp": "2022-06-26T14:24:04.904Z"  
         },
@@ -60,7 +60,7 @@ export default {
             "email": "bbanner@avengers.io", 
             "profileImageURL": "https://via.placeholder.com/150", 
             "schemaVersion": "0.0.1", 
-            "schemaURL": "/schemas/users/0.0.1/user.json",
+            "schemaURL": "/schemas/user/0.0.1/user.json",
             "lastModifiedTimestamp": null,
             "createdAtTimestamp": "2022-06-26T14:24:04.904Z"  
         }
@@ -70,7 +70,7 @@ export default {
             "id": "/posts/2244428a-a945-4d4c-bf4d-a9d8ca6cbf09",
             "authorId": "/users/2a1acb10-8d2b-4248-a74e-a8418f941dd9",
             "schemaVersion": "0.0.1", 
-            "schemaURL": "/schemas/posts/0.0.1/post.json", 
+            "schemaURL": "/schemas/post/0.0.1/post.json", 
             "body": "Hello world! Playboy Billionaire Genius here...",
             "comments": [],
             "likes": [],
