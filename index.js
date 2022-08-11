@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'url';
 import { promisify } from 'util';
 import figlet from 'figlet';
 import express from 'express';
@@ -22,10 +23,17 @@ import PluginStatusRouter from './lib/plugins/router/status/index.js';
 import PluginPostRouter from './lib/plugins/router/post/index.js';
 import PluginChaos from './lib/plugins/chaos/index.js';
 import PluginHypermediaPost from './lib/plugins/hypermedia/post/index.js';
+import PluginHTTPMediaStrategyPost from './lib/plugins/http-media-strategy/post/index.js';
+import PluginHTMLPost from './lib/plugins/html/post/index.js';
 
 const SERVER_PORT = process.env.PORT || 3000;
 const APP_NAME = process.env.APP_NAME || 'sandbox';
 const APP_VERSION = process.env.APP_VERSION || '0.0.1';
+
+// Resolves issue of `__dirname` environment variable being `undefined` in ES modules
+// See (https://bobbyhadz.com/blog/javascript-dirname-is-not-defined-in-es-module-scope)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const figletize = promisify(figlet);
 const expressApp = express();
@@ -43,6 +51,9 @@ Sandbox.module('/lib/services/post', PostService);
 Sandbox.module('/lib/plugins/chaos', PluginChaos);
 Sandbox.module('/lib/recovery', RecoveryManager);
 Sandbox.module('/lib/plugins/hypermedia-post', PluginHypermediaPost);
+Sandbox.module('/lib/plugins/http-media-strategy/post', PluginHTTPMediaStrategyPost);
+Sandbox.module('/lib/plugins/html/post', PluginHTMLPost);
+
 
 Sandbox.of([
   '/lib/plugins/event-authz',
@@ -55,7 +66,9 @@ Sandbox.of([
   '/lib/plugins/chaos',
   '/lib/supervisor',
   '/lib/recovery',
-  '/lib/plugins/hypermedia-post'
+  '/lib/plugins/hypermedia-post',
+  '/lib/plugins/http-media-strategy/post',
+  '/lib/plugins/html/post'
 ],
   /***
    * @module ApplicationCore
@@ -64,20 +77,30 @@ Sandbox.of([
    */
   async function myApp(sandbox) {
     const events = sandbox.get('/plugins/events-authz');
-    const console = sandbox.get('console');
+    const myConsole = sandbox.get('console');
     const postRepo = sandbox.my.postRepo;
+    const postService = sandbox.my.postSerivce;
     const subscriberId = 'myApp';
     const { AppEvent } = events;
 
     /**************** PLUGIN CONFIGURATION ****************/
-    const hypermediaPostService = sandbox.my.plugins['/plugins/hypermedia-post'].load(sandbox.my.postService);
+    const htmlPostService = sandbox.my.plugins['/plugins/html/post'].load({ templatePath: path.join(__dirname, 'views')  } ,postService);
+    const hypermediaPostService = sandbox.my.plugins['/plugins/hypermedia-post'].load(postService);
+    const strategyPostService = sandbox.my.plugins['/plugins/http-media-strategy/post'].load({
+      applicationJSON: postService,
+      applicationHAL: hypermediaPostService,
+      textHTML: htmlPostService
+    });
+
     const StatusAPI = sandbox.my.plugins['/plugins/status-router'].load(RouterFactory(), sandbox.my.statusService);
+    // const PostAPI = sandbox.my.plugins['/plugins/post-router'].load(RouterFactory(), strategyPostService);
     const PostAPI = sandbox.my.plugins['/plugins/post-router'].load(RouterFactory(), hypermediaPostService);
 
     const pluginChaos = sandbox.my.plugins['/plugins/chaos'].load({
       chaosEnabled: process.env.CHAOS_ENABLED,
       scheduleTimeoutMillis: process.env.CHAOS_SCHEDULE_TIMEOUT_MILLIS
     });
+
 
     /**************** MODULE CONFIGURATION *****************/
     sandbox.my.postService.setRepository(postRepo);
@@ -90,11 +113,14 @@ Sandbox.of([
     events.on({ event: 'application.chaos.experiment.registrationRequested', handler: onChaosExperimentRegistrationRequest, subscriberId });
     events.on({ event: 'application.postService.post.writeRequestReceived', handler: onPostServiceWriteRequest, subscriberId });
 
+    /**************** SETTINGS *****************/
+    expressApp.set('view engine', 'ejs');
 
     /**************** MIDDLEWARE *****************/
     expressApp.use(morgan('tiny'));
     expressApp.use(bodyParser.json());
     expressApp.use(bodyParser.urlencoded({ extended: false }));
+    expressApp.use('/public', express.static(path.join(__dirname, 'public')));
 
     /**************** ROUTES ****************/
     expressApp.use('/status', StatusAPI);
@@ -110,14 +136,14 @@ Sandbox.of([
     expressApp.use((err, req, res, next) => {
       const status = err.status || 500;
       // const msg = err.error || err.message;
-      console.error(err);
+      myConsole.error(err);
       res.status(status).send({ status, error: 'There was an error.' });
     });
 
     /**************** SERVER START ****************/
     if (process.env.NODE_ENV !== 'ci/cd/test') {
       http.createServer(expressApp).listen(SERVER_PORT, () => {
-        console.info(`myApp listening on port ${SERVER_PORT} (http://localhost:${SERVER_PORT})`);
+        myConsole.info(`myApp listening on port ${SERVER_PORT} (http://localhost:${SERVER_PORT})`);
       });
     }
 
@@ -170,7 +196,7 @@ Sandbox.of([
      * Logic for handling the event a module fires the `application.postService.post.writeRequestReceived` event; forwards to /lib/wal
      * @param {AppEvent} appEvent - an instance of the {AppEvent} interface
      */
-     function onPostServiceWriteRequest(appEvent) {
+    function onPostServiceWriteRequest(appEvent) {
       sandbox.my.wal.onWriteRequest(appEvent);
     }
 
@@ -205,7 +231,7 @@ Sandbox.of([
      */
     async function hello() {
       const banner = await figletize(`${APP_NAME} v${APP_VERSION}`);
-      console.log(banner);
+      myConsole.log(banner);
     }
   }
 );
