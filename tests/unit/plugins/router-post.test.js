@@ -75,8 +75,8 @@ describe('PluginPostRouter', () => {
         await mockRouter.get.mock.calls[0][1]({ 
             headers: { accept: '*/*' }
         }, 
-            { send, set, status }, 
-            jest.fn()
+        { send, set, status }, 
+        jest.fn()
         );
 
         // Verify response object methods are called
@@ -129,8 +129,8 @@ describe('PluginPostRouter', () => {
             headers: { accept: '*/*' },
             url: mockPost.id
         },
-            { send, set, status },
-            jest.fn()
+        { send, set, status },
+        jest.fn()
         );
 
         // Verify response object methods are called

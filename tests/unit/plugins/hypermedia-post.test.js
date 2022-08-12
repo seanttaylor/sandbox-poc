@@ -77,11 +77,12 @@ describe('HypermediaPostPlugin', () => {
 
         // Create a test plugin instance and provide it with dependencies
         const testPlugin = mockSandbox.plugin.mock.calls[0][0]['fn'](mockPostService);
-        const testPost = await testPlugin.create({
+        const result = await testPlugin.create({
             authorId: faker.datatype.uuid(),
             body: faker.hacker.phrase()
         });
-        const post = await testPlugin.getPostById(testPost.id);
+        
+        const post = await testPlugin.getPostById(result.id);
 
         // Validate the plugin returns the correct API
         expect(typeof(testPlugin)).toBe('object');
@@ -103,12 +104,11 @@ describe('HypermediaPostPlugin', () => {
         // Create a test plugin instance and provide it with dependencies
         const testUpdate = faker.hacker.phrase();
         const testPlugin = mockSandbox.plugin.mock.calls[0][0]['fn'](mockPostService);
-        const testPost = await testPlugin.create({
+        const result = await testPlugin.create({
             authorId: faker.datatype.uuid(),
             body: faker.hacker.phrase()
         });
-        const post = await testPlugin.editPost({ id: testPost.id, body: testUpdate });
-
+        const post = await testPlugin.editPost({ id: result.id, body: testUpdate });
 
         // Validate the plugin returns the correct API
         expect(post.body === testUpdate).toBe(true);
@@ -130,11 +130,11 @@ describe('HypermediaPostPlugin', () => {
 
         // Create a test plugin instance and provide it with dependencies
         const testPlugin = mockSandbox.plugin.mock.calls[0][0]['fn'](mockPostService);
-        const testPost = await testPlugin.create({
+        const result = await testPlugin.create({
             authorId: faker.datatype.uuid(),
             body: faker.hacker.phrase()
         });
-        const post = await testPlugin.deletePost(testPost.id);
+        const post = await testPlugin.deletePost(result.id);
 
         // Validate the plugin returns the correct API
         expect(typeof(testPlugin)).toBe('object');

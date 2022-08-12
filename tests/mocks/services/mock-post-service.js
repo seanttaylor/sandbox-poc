@@ -34,25 +34,26 @@ export default function MockPostService() {
     async function create() {
         const post = MockPostFactory();
         mockPosts[post.id] = post;
-        return post;
+        return { data: [post], entries: 1 };
     }
 
     async function deletePost(id) {
         delete mockPosts[id];
+        return { data: [], entries: 0 };
     }
 
     async function editPost({ id, body }) {
         mockPosts[id]['body'] = body;
-        return mockPosts[id];
+        return { data: [mockPosts[id]], entries: 1 };
     }
     
     async function getAllPosts() {
-        const post = MockPostFactory();
-        return Object.values(mockPosts);
+       const posts  = Object.values(mockPosts);
+       return { data: posts, entries: posts.length };
     }
    
     async function getPostById(id) {
-        return [mockPosts[id]];
+        return { data: [mockPosts[id]], entries: 1};
     }
 
     function getMediaType() {
@@ -60,7 +61,8 @@ export default function MockPostService() {
     }
 
     function setMediaType() {
-        
+        // Just here to conform to the interface in during test
+        // Not supposed to do anything
     }
 
     return {
