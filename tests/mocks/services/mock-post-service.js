@@ -55,13 +55,21 @@ export default function MockPostService() {
         return [mockPosts[id]];
     }
 
-    
+    function getMediaType() {
+        return 'application/hal+json';
+    }
+
+    function setMediaType() {
+        
+    }
 
     return {
         create,
         deletePost,
         editPost,
         getAllPosts,
-        getPostById
+        getPostById,
+        getMediaType,
+        setMediaType
     }
 }
