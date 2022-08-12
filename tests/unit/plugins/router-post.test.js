@@ -120,7 +120,12 @@ describe('PluginPostRouter', () => {
 
         // Call the registered route handler with bogus request and response objects
         // The route handler is async so we have to `await` here
-        await mockRouter.get.mock.calls[1][1]({ url: mockPost.id }, { json, set, status });
+        await mockRouter.get.mock.calls[1][1]({
+            headers: { accept: '*/*' },
+            url: mockPost.id
+        },
+            { json, set, status }
+        );
 
         // Verify response object methods are called
         expect(set.mock.calls.length === 1).toBe(true);
@@ -166,7 +171,15 @@ describe('PluginPostRouter', () => {
 
         // Call the registered route handler with bogus request and response objects
         // The route handler is async so we have to `await` here
-        await mockRouter.post.mock.calls[0][1]({ body: { body: mockBody, authorId: mockAuthorId } }, { json, set, status });
+        await mockRouter.post.mock.calls[0][1]({
+            headers: { accept: '*/*' },
+            body: {
+                body: mockBody,
+                authorId: mockAuthorId
+            }
+        }, 
+        { json, set, status }
+        );
 
         // Verify response object methods are called
         expect(set.mock.calls.length === 1).toBe(true);

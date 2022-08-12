@@ -79,12 +79,12 @@ Sandbox.of([
     const events = sandbox.get('/plugins/events-authz');
     const myConsole = sandbox.get('console');
     const postRepo = sandbox.my.postRepo;
-    const postService = sandbox.my.postSerivce;
+    const postService = sandbox.my.postService;
     const subscriberId = 'myApp';
     const { AppEvent } = events;
 
     /**************** PLUGIN CONFIGURATION ****************/
-    const htmlPostService = sandbox.my.plugins['/plugins/html/post'].load({ templatePath: path.join(__dirname, 'views')  } ,postService);
+    const htmlPostService = sandbox.my.plugins['/plugins/html/post'].load({ templateRootPath: path.join(__dirname, 'views')  }, postService);
     const hypermediaPostService = sandbox.my.plugins['/plugins/hypermedia-post'].load(postService);
     const strategyPostService = sandbox.my.plugins['/plugins/http-media-strategy/post'].load({
       applicationJSON: postService,
@@ -93,8 +93,8 @@ Sandbox.of([
     });
 
     const StatusAPI = sandbox.my.plugins['/plugins/status-router'].load(RouterFactory(), sandbox.my.statusService);
-    // const PostAPI = sandbox.my.plugins['/plugins/post-router'].load(RouterFactory(), strategyPostService);
-    const PostAPI = sandbox.my.plugins['/plugins/post-router'].load(RouterFactory(), hypermediaPostService);
+    const PostAPI = sandbox.my.plugins['/plugins/post-router'].load(RouterFactory(), strategyPostService);
+    //const PostAPI = sandbox.my.plugins['/plugins/post-router'].load(RouterFactory(), hypermediaPostService);
 
     const pluginChaos = sandbox.my.plugins['/plugins/chaos'].load({
       chaosEnabled: process.env.CHAOS_ENABLED,
