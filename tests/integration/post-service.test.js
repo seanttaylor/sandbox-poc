@@ -39,7 +39,8 @@ describe('PostService', () => {
 
         postService.setRepository(postRepo);
 
-        const result = await postService.create({ authorId, body });
+        const createdPost = await postService.create({ authorId, body });
+        const result = createdPost.data[0];
 
         expect(Object.keys(result).includes('id')).toBe(true);
         expect(result.body === body).toBe(true);
@@ -62,8 +63,11 @@ describe('PostService', () => {
 
         postService.setRepository(postRepo);
 
-        const { id } = await postService.create({ authorId, body });
-        const updatedPost = await postService.editPost({ id, body: newBody });
+        const createdPost = await postService.create({ authorId, body });
+        const { id } = createdPost.data[0];
+        
+        const result = await postService.editPost({ id, body: newBody });
+        const [updatedPost] = result.data;
 
         expect(updatedPost.body === newBody).toBe(true);
         expect(updatedPost.id === id).toBe(true);
@@ -89,8 +93,8 @@ describe('PostService', () => {
         const { id } = await postService.create({ authorId, body });
         const result = await postService.deletePost(id);
 
-        expect(Array.isArray(result)).toBe(true);
-        expect(result.length === 0).toBe(true);
+        expect(Array.isArray(result.data)).toBe(true);
+        expect(result.data.length === 0).toBe(true);
     });
 
     test('Should be able to determine the existence of a `Post` using an id', async () => {
@@ -108,10 +112,12 @@ describe('PostService', () => {
 
         postService.setRepository(postRepo);
 
-        const { id } = await postService.create({ authorId, body });
+        const createdPost = await postService.create({ authorId, body });
+        const { id } = createdPost.data[0];
         const result = await postService.exists(id);
+        const [postExists] = result.data;
 
-        expect(result).toBe(true);
+        expect(postExists).toBe(true);
     });
 
     test('Should be able to get all instances of `Post` in the datastore', async () => {
@@ -132,8 +138,8 @@ describe('PostService', () => {
         await postService.create({ authorId, body });
         const result = await postService.getAllPosts();
 
-        expect(Array.isArray(result)).toBe(true);
-        expect(result.length > 0).toBe(true);
+        expect(Array.isArray(result.data)).toBe(true);
+        expect(result.data.length > 0).toBe(true);
     });
 
     test('Should be able to get an instance of `Post` by id from the data store', async () => {
@@ -151,11 +157,13 @@ describe('PostService', () => {
 
         postService.setRepository(postRepo);
 
-        const { id } = await postService.create({ authorId, body });
-        const [result] = await postService.getPostById(id);
+        const createdPost = await postService.create({ authorId, body });
+        const { id } = createdPost.data[0];
+        const result = await postService.getPostById(id);
+        const [post] = result.data;
 
-        expect(result.id === id).toBe(true);
-        expect(result.body === body).toBe(true);
+        expect(post.id === id).toBe(true);
+        expect(post.body === body).toBe(true);
     });
 
     test('Setting no repository should do nothing and return undefined', async () => {
