@@ -46,6 +46,26 @@ export default function MockPostService() {
         mockPosts[id]['body'] = body;
         return { data: [mockPosts[id]], entries: 1 };
     }
+
+    async function exists(id) {
+        if (mockPosts[id]) {
+            return {
+                exists: true,
+                summary: {
+                    exists: true,
+                    entries: 1
+                }
+            }
+        }
+
+        return {
+            exists: false,
+            summary: {
+                exists: false,
+                entries: 0
+            }
+        }
+    }
     
     async function getAllPosts() {
        const posts  = Object.values(mockPosts);
@@ -69,6 +89,7 @@ export default function MockPostService() {
         create,
         deletePost,
         editPost,
+        exists,
         getAllPosts,
         getPostById,
         getMediaType,
