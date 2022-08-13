@@ -115,10 +115,14 @@ describe('PostService', () => {
         const createdPost = await postService.create({ authorId, body });
         const { id } = createdPost.data[0];
         const result = await postService.exists(id);
-        const [postExists] = result.data;
 
-        expect(postExists).toBe(true);
+        expect(result.exists).toBe(true);
+        
+        const result2 = await postService.exists('foo');
+        expect(result2.exists).toBe(false);
     });
+
+    
 
     test('Should be able to get all instances of `Post` in the datastore', async () => {
         const authorId = `/users/${faker.datatype.uuid()}`;

@@ -147,4 +147,57 @@ describe('HypermediaPostPlugin', () => {
         expect(Object.keys(post._links).includes('sandbox:user-posts')).toBe(true);
     });
 
+    test('Should be able to return a representation for a *non-existent* `Post` in HAL format', async () => {
+        const mockSandbox = MockSandBoxFactory();
+        const mockPostService = MockPostService();
+
+        PluginHypermediaPost(mockSandbox);
+
+        // Create a test plugin instance and provide it with dependencies
+        const testPlugin = mockSandbox.plugin.mock.calls[0][0]['fn'](mockPostService);
+        const createdPost = await testPlugin.create({
+            authorId: faker.datatype.uuid(),
+            body: faker.hacker.phrase()
+        });
+        await testPlugin.deletePost(createdPost.id);
+
+        const result = await testPlugin.exists(createdPost.id);
+
+        // Validate the plugin returns the correct API
+        expect(typeof(testPlugin)).toBe('object');
+        expect(Object.keys(result).includes('_links')).toBe(true);
+        expect(Object.keys(result._links).includes('self')).toBe(true);
+        expect(Object.keys(result._links).includes('curies')).toBe(true);
+        expect(Object.keys(result._links).includes('sandbox:index')).toBe(true);
+        expect(Object.keys(result._links).includes('sandbox:posts')).toBe(true);
+        expect(Object.keys(result._links).includes('sandbox:users')).toBe(true);
+        expect(Object.keys(result._links).includes('sandbox:user-posts')).toBe(true);
+    });
+
+    test('Should return a representation for an existing `Post` in HAL format', async () => {
+        const mockSandbox = MockSandBoxFactory();
+        const mockPostService = MockPostService();
+
+        PluginHypermediaPost(mockSandbox);
+
+        // Create a test plugin instance and provide it with dependencies
+        const testPlugin = mockSandbox.plugin.mock.calls[0][0]['fn'](mockPostService);
+        const createdPost = await testPlugin.create({
+            authorId: faker.datatype.uuid(),
+            body: faker.hacker.phrase()
+        });
+
+        const result = await testPlugin.exists(createdPost.id);
+
+        // Validate the plugin returns the correct API
+        expect(typeof(testPlugin)).toBe('object');
+        expect(Object.keys(result).includes('_links')).toBe(true);
+        expect(Object.keys(result._links).includes('self')).toBe(true);
+        expect(Object.keys(result._links).includes('curies')).toBe(true);
+        expect(Object.keys(result._links).includes('sandbox:index')).toBe(true);
+        expect(Object.keys(result._links).includes('sandbox:posts')).toBe(true);
+        expect(Object.keys(result._links).includes('sandbox:users')).toBe(true);
+        expect(Object.keys(result._links).includes('sandbox:user-posts')).toBe(true);
+    });
+
 });

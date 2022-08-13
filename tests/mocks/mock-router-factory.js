@@ -7,7 +7,8 @@ export default function MockRouterFactory() {
         get: jest.fn(),
         delete: jest.fn(),
         patch: jest.fn(),
-        post: jest.fn() 
+        post: jest.fn(),
+        use: jest.fn()
     } 
 };
 
