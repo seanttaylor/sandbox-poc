@@ -9,6 +9,8 @@
                 "<node_internals>/**"
             ],
             "program": "${workspaceFolder}/index.js",
+            //This option set per (https://stackoverflow.com/questions/35904450/express-morgan-not-writing-logs-to-file-or-stdout)
+            "console": "integratedTerminal",
             "env": {
                 "APP_VERSION": "0.0.3",
                 "CHAOS_SCHEDULE_TIMEOUT_MILLIS": "10000",
