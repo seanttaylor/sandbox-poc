@@ -10,6 +10,7 @@ import MockPostService from '../../mocks/services/mock-post-service.js';
  * This test suite verifies PostRouter plugin functionality.
  */
 describe('PluginPostRouter', () => {
+    const evergreenPostId = '/posts/2244428a-a945-4d4c-bf4d-a9d8ca6cbf09';
 
     test('Should call the `plugin` method defined on the sandbox to register the plugin', async () => {
         const mockSandbox = MockSandBoxFactory();
@@ -106,9 +107,11 @@ describe('PluginPostRouter', () => {
         };
         // We add a mock `getPostById` method here because we assert that the `mockPost` variable is returned by the method. We
         // need to retain a reference to `mockPost` for use in the `expect` call
-        const mockPostService = Object.assign(MockPostService(), {
+        /*const mockPostService = Object.assign(MockPostService(), {
             getPostById: (id) => { return id === mockPost.id ? [mockPost] : [] }
-        });
+        });*/
+
+        const mockPostService = MockPostService();
 
         const send = jest.fn();
         const set = jest.fn();
@@ -125,9 +128,9 @@ describe('PluginPostRouter', () => {
 
         // Call the registered route handler with bogus request and response objects
         // The route handler is async so we have to `await` here
-        await mockRouter.get.mock.calls[1][1]({
+        await mockRouter.get.mock.calls[1][2]({
             headers: { accept: '*/*' },
-            url: mockPost.id
+            url: evergreenPostId
         },
         { send, set, status },
         jest.fn()
@@ -144,11 +147,10 @@ describe('PluginPostRouter', () => {
         expect(status.mock.calls[0][0] === 200).toBe(true);
 
         // Verify the route handler returns the a list of `Post` instances
-        expect(Array.isArray(send.mock.calls[0][0])).toBe(true);
+        expect(Array.isArray(send.mock.calls[0][0]['data'])).toBe(true);
 
         // Because this handler returns a list we need to use a third index to access the first list item in the response
-        expect(send.mock.calls[0][0][0]['id'] === mockPost.id).toBe(true);
-        expect(send.mock.calls[0][0][0]['body'] === mockPost.body).toBe(true);
+        expect(send.mock.calls[0][0]['data'][0]['id'] === evergreenPostId).toBe(true);
     });
 
     test('Should be able to create a single `Post` instance via the router plugin', async () => {
