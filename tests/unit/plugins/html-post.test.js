@@ -93,4 +93,30 @@ describe('PluginHTMLPost', () => {
         expect(typeof(HTMLResponse) === 'string').toBe(true);
         expect(HTMLResponse.includes('<a href=/www/posts/index.html>Posts</a>')).toBe(true);
     });
+
+    test('Should be able to render the result of fetching a *non-existent* Post via `PostService.exists` as HTML', async () => {
+        const mockSandbox = MockSandBoxFactory();
+        const mockPostService = MockPostService();
+        PluginHTMLPost(mockSandbox);
+
+        // Create a test plugin instance and provide it with dependencies
+        const testPlugin = mockSandbox.plugin.mock.calls[0][0]['fn']({ templateRootPath: templateDirectory }, mockPostService);
+        const HTMLResponse = await testPlugin.exists('foo');
+
+        expect(typeof(HTMLResponse) === 'string').toBe(true);
+        expect(HTMLResponse.includes('Post Not Found')).toBe(true);
+    });
+
+    test('Should be able to render the result of fetching a Post via `PostService.exists` as HTML', async () => {
+        const mockSandbox = MockSandBoxFactory();
+        const mockPostService = MockPostService();
+        PluginHTMLPost(mockSandbox);
+
+        // Create a test plugin instance and provide it with dependencies
+        const testPlugin = mockSandbox.plugin.mock.calls[0][0]['fn']({ templateRootPath: templateDirectory }, mockPostService);
+        const HTMLResponse = await testPlugin.exists(evergreenPostId);
+
+        expect(typeof(HTMLResponse) === 'string').toBe(true);
+        expect(HTMLResponse.includes(`Post(${evergreenPostId})`)).toBe(true);
+    })
 });

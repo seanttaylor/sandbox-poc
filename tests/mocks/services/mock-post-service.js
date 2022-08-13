@@ -2,20 +2,6 @@
 
 import { faker } from '@faker-js/faker';
 
-const mockPosts = {
-    "/posts/2244428a-a945-4d4c-bf4d-a9d8ca6cbf09": {
-        "id": "/posts/2244428a-a945-4d4c-bf4d-a9d8ca6cbf09",
-        "authorId": "/users/2a1acb10-8d2b-4248-a74e-a8418f941dd9",
-        "schemaVersion": "0.0.1", 
-        "schemaURL": "/schemas/post/0.0.1/post.json", 
-        "body": "Hello world! Playboy Billionaire Genius here...",
-        "comments": [],
-        "likes": [],
-        "lastModifiedTimestamp": null,
-        "createdAtTimestamp": "2022-06-26T14:24:04.904Z"  
-    }
-};
-
 function MockPostFactory() {
     return {
         "id": `/posts/${faker.datatype.uuid()}`,
@@ -31,6 +17,20 @@ function MockPostFactory() {
 };
 
 export default function MockPostService() {
+    const mockPosts = {
+        "/posts/2244428a-a945-4d4c-bf4d-a9d8ca6cbf09": {
+            "id": "/posts/2244428a-a945-4d4c-bf4d-a9d8ca6cbf09",
+            "authorId": "/users/2a1acb10-8d2b-4248-a74e-a8418f941dd9",
+            "schemaVersion": "0.0.1", 
+            "schemaURL": "/schemas/post/0.0.1/post.json", 
+            "body": "Hello world! Playboy Billionaire Genius here...",
+            "comments": [],
+            "likes": [],
+            "lastModifiedTimestamp": null,
+            "createdAtTimestamp": "2022-06-26T14:24:04.904Z"  
+        }
+    };
+
     async function create() {
         const post = MockPostFactory();
         mockPosts[post.id] = post;
@@ -51,20 +51,17 @@ export default function MockPostService() {
         if (mockPosts[id]) {
             return {
                 exists: true,
-                summary: {
-                    exists: true,
-                    entries: 1
-                }
+                entries: 1,
+                id
             }
         }
 
         return {
             exists: false,
-            summary: {
-                exists: false,
-                entries: 0
-            }
+            entries: 0,
+            id: null
         }
+        
     }
     
     async function getAllPosts() {
