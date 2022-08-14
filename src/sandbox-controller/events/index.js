@@ -1,5 +1,5 @@
 import events from 'events';
-import { randomUUID } from 'crypto';
+import generateGuid from '../../utils/id.js';
 import { IConsole } from '../../interfaces/console.js';
 import SimpleConsole from '../console/index.js'
 
@@ -39,7 +39,7 @@ const console = IConsole(SimpleConsole);
  */
 function AppEvent(eventData) {
   const header = { 
-    id: `/events/${randomUUID()}`,
+    id: `/events/${generateGuid()}`,
     timestamp: new Date().toISOString() 
   };
 
