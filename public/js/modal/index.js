@@ -2,7 +2,7 @@
  * Manages all instances of application modals and their behavior
  * @param {Object} sandbox - the application sandbox
  */
-export default function ModalManager(sandbox) {
+export default function PluginModalManager(sandbox) {
     const events = sandbox.get('/plugins/events-authz');
     let $;
     let $$;
@@ -22,14 +22,14 @@ export default function ModalManager(sandbox) {
      */
     function myPlugin(window) {
         window.document.addEventListener('DOMContentLoaded', onDomContentLoaded);
-        $ = window.document.querySelector.bind(document);
-        $$ = window.document.querySelectorAll.bind(document);
+        $ = window.document.querySelector.bind(window.document);
+        $$ = window.document.querySelectorAll.bind(window.document);
 
         /**
          * 
          */
         function onDomContentLoaded() {
-            events.notify('application.domContentLoaded', { $, $$ });
+          events.notify('application.domContentLoaded', { $, $$ });
         }
 
         /**
