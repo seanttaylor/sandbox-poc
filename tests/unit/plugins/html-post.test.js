@@ -101,22 +101,48 @@ describe('PluginHTMLPost', () => {
 
         // Create a test plugin instance and provide it with dependencies
         const testPlugin = mockSandbox.plugin.mock.calls[0][0]['fn']({ templateRootPath: templateDirectory }, mockPostService);
-        const HTMLResponse = await testPlugin.exists('foo');
+        const HTML = await testPlugin.exists('foo');
 
-        expect(typeof(HTMLResponse) === 'string').toBe(true);
-        expect(HTMLResponse.includes('Post Not Found')).toBe(true);
+        expect(typeof(HTML.response) === 'string').toBe(true);
+        expect(HTML.response.includes('Post Not Found')).toBe(true);
     });
 
     test('Should be able to render the result of fetching a Post via `PostService.exists` as HTML', async () => {
-        const mockSandbox = MockSandBoxFactory();
-        const mockPostService = MockPostService();
-        PluginHTMLPost(mockSandbox);
+      const mockSandbox = MockSandBoxFactory();
+      const mockPostService = MockPostService();
+      PluginHTMLPost(mockSandbox);
 
-        // Create a test plugin instance and provide it with dependencies
-        const testPlugin = mockSandbox.plugin.mock.calls[0][0]['fn']({ templateRootPath: templateDirectory }, mockPostService);
-        const HTMLResponse = await testPlugin.exists(evergreenPostId);
+      // Create a test plugin instance and provide it with dependencies
+      const testPlugin = mockSandbox.plugin.mock.calls[0][0]['fn']({ templateRootPath: templateDirectory }, mockPostService);
+      const HTML = await testPlugin.exists(evergreenPostId);
 
-        expect(typeof(HTMLResponse) === 'string').toBe(true);
-        expect(HTMLResponse.includes(`Post(${evergreenPostId})`)).toBe(true);
-    })
+      expect(typeof(HTML.response) === 'string').toBe(true);
+      expect(HTML.response.includes(`Post(${evergreenPostId})`)).toBe(true);
+    });
+
+    test('Should be able to render a generic HTML page on 400 HTTP status', async () => {
+      const mockSandbox = MockSandBoxFactory();
+      const mockPostService = MockPostService();
+      PluginHTMLPost(mockSandbox);
+
+      // Create a test plugin instance and provide it with dependencies
+      const testPlugin = mockSandbox.plugin.mock.calls[0][0]['fn']({ templateRootPath: templateDirectory }, mockPostService);
+      const HTML = await testPlugin.getErrorResponse(400);
+
+      expect(typeof(HTML) === 'string').toBe(true);
+      expect(HTML.includes('Client Error')).toBe(true);
+    });
+
+    test('Should be able to render a preview of a draft post as HTML', async () => {
+      const mockSandbox = MockSandBoxFactory();
+      const mockPostService = MockPostService();
+      PluginHTMLPost(mockSandbox);
+
+      // Create a test plugin instance and provide it with dependencies
+      const testPlugin = mockSandbox.plugin.mock.calls[0][0]['fn']({ templateRootPath: templateDirectory }, mockPostService);
+      const HTML = await testPlugin.getPostPreview({ body: "I'm a preview!" });
+
+      expect(typeof(HTML) === 'string').toBe(true);
+      expect(HTML.includes("I'm a preview!")).toBe(true);
+    });
 });

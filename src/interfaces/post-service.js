@@ -10,6 +10,7 @@
  * @property {Function} getPostById - finds a Post by uuid
  * @property {Function} getAllPosts - finds all Posts 
  * @property {Function} getPostsByAuthorId - finds a list of all unique
+ * @property {Function} getPostPreview - generates an HTML preview of a `Post`
  * Posts by a specified author
  */
 
@@ -20,18 +21,20 @@
 
  function IPostService(myImpl = {}) {
     function required() {
-        throw Error('Missing implementation');
+      throw Error('Missing implementation');
     }
 
     return {
-        create: myImpl.create || required,
-        deletePost: myImpl.deletePost || required,
-        editPost: myImpl.editPost || required,
-        exists: myImpl.exists || required,
-        getPostById: myImpl.getPostById || required,
-        getAllPosts: myImpl.getAllPosts || required,
-        getPostsByAuthorId: myImpl.getPostsByAuthorId || required,
-        setRepository: myImpl.setRepository || required
+      create: myImpl.create || required,
+      deletePost: myImpl.deletePost || required,
+      editPost: myImpl.editPost || required,
+      exists: myImpl.exists || required,
+      getPostById: myImpl.getPostById || required,
+      getAllPosts: myImpl.getAllPosts || required,
+      getErrorResponse: myImpl.getErrorResponse || required,
+      getPostsByAuthorId: myImpl.getPostsByAuthorId || required,
+      getPostPreview: myImpl.getPostPreview || required,
+      setRepository: myImpl.setRepository || required
     };
 }
 

@@ -74,20 +74,21 @@
 
     <div class="columns is-centered">
         <div class="column is-half">
+          <form action="">
             <div class="field is-grouped">
                 <p class="control is-expanded">
-                  <input class="input is-rounded" type="text" placeholder="Just say it...">
+                  <input name="body" class="input is-rounded" type="text" placeholder="Just say it...">
                 </p>
                 <p class="control">
-                  <a class="button is-info" id="create-post-button">
+                  <a class="button is-info" id="create-post-button" hx-get="/api/v1/posts/preview" hx-target=".modal-content" hx-include="[name='body']">
                     Post
                   </a>
                 </p>
-              </div>
-
+            </div>
+          </form>
               <div class="block"></div>
 
-              <ul>
+              <ul class="post-list">
                 <% data.map((post) => {%>
                     <div class="card">
                         <div class="card-image">
@@ -135,7 +136,7 @@
                             <%}%>
                           </footer>
                       </div>
-        
+                      <br>
                 <%})%>
             </ul>
         </div>
@@ -156,6 +157,7 @@
     
     
     <script src="https://unpkg.com/htmx.org@1.8.0"></script>
+    <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
     <script src="/dist/js/index.js" type="module"></script>
 </body>
 </html>

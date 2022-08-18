@@ -161,17 +161,17 @@ describe('HypermediaPostPlugin', () => {
         });
         await testPlugin.deletePost(createdPost.id);
 
-        const result = await testPlugin.exists(createdPost.id);
+        const HAL = await testPlugin.exists(createdPost.id);
 
         // Validate the plugin returns the correct API
         expect(typeof(testPlugin)).toBe('object');
-        expect(Object.keys(result).includes('_links')).toBe(true);
-        expect(Object.keys(result._links).includes('self')).toBe(true);
-        expect(Object.keys(result._links).includes('curies')).toBe(true);
-        expect(Object.keys(result._links).includes('sandbox:index')).toBe(true);
-        expect(Object.keys(result._links).includes('sandbox:posts')).toBe(true);
-        expect(Object.keys(result._links).includes('sandbox:users')).toBe(true);
-        expect(Object.keys(result._links).includes('sandbox:user-posts')).toBe(true);
+        expect(Object.keys(HAL.response).includes('_links')).toBe(true);
+        expect(Object.keys(HAL.response._links).includes('self')).toBe(true);
+        expect(Object.keys(HAL.response._links).includes('curies')).toBe(true);
+        expect(Object.keys(HAL.response._links).includes('sandbox:index')).toBe(true);
+        expect(Object.keys(HAL.response._links).includes('sandbox:posts')).toBe(true);
+        expect(Object.keys(HAL.response._links).includes('sandbox:users')).toBe(true);
+        expect(Object.keys(HAL.response._links).includes('sandbox:user-posts')).toBe(true);
     });
 
     test('Should return a representation for an existing `Post` in HAL format', async () => {
@@ -187,17 +187,17 @@ describe('HypermediaPostPlugin', () => {
             body: faker.hacker.phrase()
         });
 
-        const result = await testPlugin.exists(createdPost.id);
+        const HAL = await testPlugin.exists(createdPost.id);
 
         // Validate the plugin returns the correct API
         expect(typeof(testPlugin)).toBe('object');
-        expect(Object.keys(result).includes('_links')).toBe(true);
-        expect(Object.keys(result._links).includes('self')).toBe(true);
-        expect(Object.keys(result._links).includes('curies')).toBe(true);
-        expect(Object.keys(result._links).includes('sandbox:index')).toBe(true);
-        expect(Object.keys(result._links).includes('sandbox:posts')).toBe(true);
-        expect(Object.keys(result._links).includes('sandbox:users')).toBe(true);
-        expect(Object.keys(result._links).includes('sandbox:user-posts')).toBe(true);
+        expect(Object.keys(HAL.response).includes('_links')).toBe(true);
+        expect(Object.keys(HAL.response._links).includes('self')).toBe(true);
+        expect(Object.keys(HAL.response._links).includes('curies')).toBe(true);
+        expect(Object.keys(HAL.response._links).includes('sandbox:index')).toBe(true);
+        expect(Object.keys(HAL.response._links).includes('sandbox:posts')).toBe(true);
+        expect(Object.keys(HAL.response._links).includes('sandbox:users')).toBe(true);
+        expect(Object.keys(HAL.response._links).includes('sandbox:user-posts')).toBe(true);
     });
 
 });

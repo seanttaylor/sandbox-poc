@@ -123,12 +123,12 @@ describe('PluginPostRouter', () => {
         mockSandbox.plugin.mock.calls[0][0]['fn'](mockRouter, mockPostService);
 
         // Validate the mocked router `get` method is called to register the '/posts/:id' route with a handler
-        expect(mockRouter.get.mock.calls[1][0] === '/posts/:id').toBe(true);
+        expect(mockRouter.get.mock.calls[2][0] === '/posts/:id').toBe(true);
         expect(typeof (mockRouter.get.mock.calls[0][1]) === 'function').toBe(true);
 
         // Call the registered route handler with bogus request and response objects
         // The route handler is async so we have to `await` here
-        await mockRouter.get.mock.calls[1][2]({
+        await mockRouter.get.mock.calls[2][2]({
             headers: { accept: '*/*' },
             url: evergreenPostId
         },
