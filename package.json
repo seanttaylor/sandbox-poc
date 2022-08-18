@@ -6,7 +6,8 @@
     "start": "LOG_LEVEL=debug node index.js",
     "test": "jest --coverage true --detectOpenHandles",
     "docs": "./node_modules/.bin/jsdoc -c .jsdoc.json",
-    "lint": "./node_modules/.bin/eslint --fix"
+    "lint": "./node_modules/.bin/eslint --fix",
+    "build": "./node_modules/.bin/parcel build ./public/js/index.js --dist-dir ./dist/js"
   },
   "type": "module",
   "dependencies": {
@@ -23,8 +24,14 @@
     "@babel/preset-env": "^7.18.2",
     "@faker-js/faker": "^7.3.0",
     "babel-jest": "^28.1.1",
+    "buffer": "^6.0.3",
+    "crypto-browserify": "^3.12.0",
     "eslint": "^8.18.0",
     "jest": "^28.1.1",
-    "jsdoc": "^3.6.11"
+    "jsdoc": "^3.6.11",
+    "parcel": "^2.7.0",
+    "process": "^0.11.10",
+    "stream-browserify": "^3.0.0",
+    "util": "^0.12.4"
   }
 }

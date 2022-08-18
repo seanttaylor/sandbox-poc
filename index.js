@@ -120,7 +120,7 @@ Sandbox.of([
     expressApp.use(morgan('tiny'));
     expressApp.use(bodyParser.json());
     expressApp.use(bodyParser.urlencoded({ extended: false }));
-    expressApp.use('/public', express.static(path.join(__dirname, 'public')));
+    expressApp.use('/dist', express.static(path.join(__dirname, 'dist')));
 
     /**************** ROUTES ****************/
     expressApp.use('/status', StatusAPI);

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Post Preview</title>
+</head>
+<body>
+  <div class="card">
+    <header class="card-header">
+      <p class="card-header-title">
+       Draft Post Preview
+      </p>
+    </header>
+    <div class="card-image">
+      <!--<figure class="image is-4by3">
+        <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image">
+      </figure>-->
+    </div>
+    <div class="card-content">
+      <div class="media">
+        <div class="media-left">
+          <figure class="image is-48x48">
+            <img src="https://bulma.io/images/placeholders/96x96.png" alt="Placeholder image">
+          </figure>
+        </div>
+        <div class="media-content">
+          <p class="title is-4" data-author-display-name><%=data.post.authorDisplayName%>Tony Stark</p>
+          <p class="subtitle is-6" data-author-id="<%=data.post.authorId%>"><%=data.post.authorHandle%>@ironman</p>
+        </div>
+      </div>
+  
+      <div class="content">
+        <%-data.post.body%> 
+        <input type="hidden" value="<%-data.post.body%>" name="body" class="create-post-data" data-post-body>
+        <input type="hidden" value="/users/1d2b3f93-804b-4e02-94ad-2eec6b90997d" name="authorId" class="create-post-data" data-author-id>
+        <br>
+        <time><%=new Date().toDateString()%> <%=new Date().toLocaleTimeString()%></time>
+        <br>
+        <br>
+        <button class="button">
+          <span class="icon is-small">
+            <i class="fa fa-solid fa-heart"></i>
+          </span>
+        </button>
+        <button class="button">
+          42
+        </button>
+      </div>
+    </div>
+    <footer class="card-footer">        
+      <a href="#" class="card-footer-item" hx-post="/api/v1/posts" hx-target=".post-list" hx-swap="afterbegin" hx-ext="json-enc" hx-include=".create-post-data"> <strong>Publish</strong></a>
+    </footer>
+  </div>
+</body>
+</html>

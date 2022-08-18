@@ -68,11 +68,13 @@ export default {
     "posts": {
         "/posts/2244428a-a945-4d4c-bf4d-a9d8ca6cbf09": {
             "id": "/posts/2244428a-a945-4d4c-bf4d-a9d8ca6cbf09",
-            "authorId": "/users/2a1acb10-8d2b-4248-a74e-a8418f941dd9",
+            "authorId": "/users/1d2b3f93-804b-4e02-94ad-2eec6b90997d",
+            "authorHandle": "@ironman",
+            "authorDisplayName": "Tony Stark",
             "schemaVersion": "0.0.1", 
             "schemaURL": "/schemas/post/0.0.1/post.json", 
             "body": "Hello world! Playboy Billionaire Genius here...",
-            "comments": [],
+            "comments": ["/comments/eda2b86b-0e38-4c83-b294-36c3d302127a"],
             "likes": [],
             "lastModifiedTimestamp": null,
             "createdAtTimestamp": "2022-06-26T14:24:04.904Z"  
