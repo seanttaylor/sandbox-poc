@@ -25,6 +25,7 @@ import PluginChaos from './lib/plugins/chaos/index.js';
 import PluginHypermediaPost from './lib/plugins/hypermedia/post/index.js';
 import PluginHTTPMediaStrategyPost from './lib/plugins/http-media-strategy/post/index.js';
 import PluginHTMLPost from './lib/plugins/html/post/index.js';
+import UserAuthnService from './lib/services/user-authn/index.js';
 
 const SERVER_PORT = process.env.PORT || 3000;
 const APP_NAME = process.env.APP_NAME || 'sandbox';
@@ -53,6 +54,7 @@ Sandbox.module('/lib/recovery', RecoveryManager);
 Sandbox.module('/lib/plugins/hypermedia-post', PluginHypermediaPost);
 Sandbox.module('/lib/plugins/http-media-strategy/post', PluginHTTPMediaStrategyPost);
 Sandbox.module('/lib/plugins/html/post', PluginHTMLPost);
+Sandbox.module('/lib/services/user-authn', UserAuthnService);
 
 
 Sandbox.of([
@@ -68,7 +70,8 @@ Sandbox.of([
   '/lib/recovery',
   '/lib/plugins/hypermedia-post',
   '/lib/plugins/http-media-strategy/post',
-  '/lib/plugins/html/post'
+  '/lib/plugins/html/post',
+  '/lib/services/user-authn'
 ],
   /***
    * @module ApplicationCore

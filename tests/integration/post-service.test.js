@@ -9,20 +9,20 @@ import MockSandboxFactory from '../mocks/mock-sandbox-factory.js';
  * This test suite verifies the Post Service functionality.
  */
 describe('PostService', () => {
-    test('Should NOT be able to call methods on the PostService before a repository has been set with `setRepository`', async () => {
-        try {
-            const sandbox = {};
-            const { controller } = SandboxController(sandbox);
+  test('Should NOT be able to call methods on the PostService before a repository has been set with `setRepository`', async () => {
+    try {
+      const sandbox = {};
+      const { controller } = SandboxController(sandbox);
 
-            PluginEventAuthz(controller);
-            PostService(controller);
+      PluginEventAuthz(controller);
+      PostService(controller);
 
-            const postService = sandbox.my.postService;
-            await postService.create({ author: faker.datatype.uuid(), body: faker.hacker.phrase() });
-        } catch (e) {
-            expect(e.message).toMatch('Missing implementation');
-        }
-    });
+      const postService = sandbox.my.postService;
+      await postService.create({ author: faker.datatype.uuid(), body: faker.hacker.phrase() });
+    } catch (e) {
+      expect(e.message).toMatch('Missing implementation');
+    }
+  });
 
     test('Should be able to create a new `Post`', async () => {
         const authorId = `/users/${faker.datatype.uuid()}`;
