@@ -11,6 +11,7 @@ import Sandbox from './src/sandbox/index.js';
 
 /**************** SERVICES ****************/
 import PostRepository from './lib/repos/post/index.js';
+import SessionRepository from './lib/repos/session/index.js';
 import WriteAheadLog from './lib/wal/index.js';
 import StatusService from './lib/services/status/index.js';
 import PostService from './lib/services/post/index.js';
@@ -25,7 +26,7 @@ import PluginChaos from './lib/plugins/chaos/index.js';
 import PluginHypermediaPost from './lib/plugins/hypermedia/post/index.js';
 import PluginHTTPMediaStrategyPost from './lib/plugins/http-media-strategy/post/index.js';
 import PluginHTMLPost from './lib/plugins/html/post/index.js';
-import UserAuthnService from './lib/services/user-authn/index.js';
+import UserAuthnService from './lib/plugins/user-authn/index.js';
 
 const SERVER_PORT = process.env.PORT || 3000;
 const APP_NAME = process.env.APP_NAME || 'sandbox';
@@ -41,6 +42,7 @@ const expressApp = express();
 
 /**************** MODULE DEFINITION ****************/
 Sandbox.module('/lib/repos/post', PostRepository);
+Sandbox.module('/lib/repos/session', SessionRepository);
 Sandbox.module('/lib/wal', WriteAheadLog);
 Sandbox.module('/lib/plugins/chaos', PluginChaos);
 Sandbox.module('/lib/supervisor', Supervisor);
@@ -54,13 +56,14 @@ Sandbox.module('/lib/recovery', RecoveryManager);
 Sandbox.module('/lib/plugins/hypermedia-post', PluginHypermediaPost);
 Sandbox.module('/lib/plugins/http-media-strategy/post', PluginHTTPMediaStrategyPost);
 Sandbox.module('/lib/plugins/html/post', PluginHTMLPost);
-Sandbox.module('/lib/services/user-authn', UserAuthnService);
+Sandbox.module('/lib/plugins/user-authn', UserAuthnService);
 
 
 Sandbox.of([
   '/lib/plugins/event-authz',
   '/lib/wal',
   '/lib/repos/post',
+  '/lib/repos/session',
   '/lib/services/post',
   '/lib/plugins/post-router',
   '/lib/services/status',
@@ -71,7 +74,7 @@ Sandbox.of([
   '/lib/plugins/hypermedia-post',
   '/lib/plugins/http-media-strategy/post',
   '/lib/plugins/html/post',
-  '/lib/services/user-authn'
+  '/lib/plugins/user-authn'
 ],
   /***
    * @module ApplicationCore
@@ -99,6 +102,7 @@ Sandbox.of([
     const PostAPI = sandbox.my.plugins['/plugins/post-router'].load(RouterFactory(), strategyPostService);
     //const PostAPI = sandbox.my.plugins['/plugins/post-router'].load(RouterFactory(), hypermediaPostService);
 
+    const pluginUserAuthn = sandbox.my.plugins['/plugins/user-authn'].load();
     const pluginChaos = sandbox.my.plugins['/plugins/chaos'].load({
       chaosEnabled: process.env.CHAOS_ENABLED,
       scheduleTimeoutMillis: process.env.CHAOS_SCHEDULE_TIMEOUT_MILLIS
