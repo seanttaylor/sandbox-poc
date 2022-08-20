@@ -79,5 +79,16 @@ export default {
             "lastModifiedTimestamp": null,
             "createdAtTimestamp": "2022-06-26T14:24:04.904Z"  
         }
-    }
+    },
+    "sessions": {
+      /*"/sessions/2244428a-a945-4d4c-bf4d-a9d8ca6cbf09": {
+        "id": "/sessions/2244428a-a945-4d4c-bf4d-a9d8ca6cbf09",
+        "userId": "/users/1d2b3f93-804b-4e02-94ad-2eec6b90997d",
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+        "expiryDate": "2022-06-26T14:24:04.904Z", 
+        "isExpired": false,
+        "lastModifiedTimestamp": null,
+        "createdAtTimestamp": "2022-06-26T14:24:04.904Z"  
+      }*/
+  }
 }

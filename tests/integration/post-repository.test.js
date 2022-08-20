@@ -19,9 +19,9 @@ describe('PostRepository API', () => {
         const authorId = "/users/1d2b3f93-804b-4e02-94ad-2eec6b90997d";
         const body = faker.hacker.phrase();
         const record = await sandbox.my.postRepo.create({
-            id: `/posts/${faker.datatype.uuid()}`,
-            authorId,
-            body
+          id: `/posts/${faker.datatype.uuid()}`,
+          authorId,
+          body
         });
 
         expect(record.id).toBeTruthy();

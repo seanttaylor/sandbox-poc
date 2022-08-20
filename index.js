@@ -17,6 +17,7 @@ import StatusService from './lib/services/status/index.js';
 import PostService from './lib/services/post/index.js';
 import Supervisor from './lib/supervisor/index.js';
 import RecoveryManager from './lib/recovery/index.js';
+import SessionService from './lib/services/session/index.js';
 
 /**************** PLUGINS ****************/
 import PluginEventAuthz from './lib/plugins/event-authz/index.js';
@@ -26,6 +27,7 @@ import PluginChaos from './lib/plugins/chaos/index.js';
 import PluginHypermediaPost from './lib/plugins/hypermedia/post/index.js';
 import PluginHTTPMediaStrategyPost from './lib/plugins/http-media-strategy/post/index.js';
 import PluginHTMLPost from './lib/plugins/html/post/index.js';
+import PluginSessionRouter from './lib/plugins/router/session/index.js';
 import UserAuthnService from './lib/plugins/user-authn/index.js';
 
 const SERVER_PORT = process.env.PORT || 3000;
@@ -48,11 +50,13 @@ Sandbox.module('/lib/plugins/chaos', PluginChaos);
 Sandbox.module('/lib/supervisor', Supervisor);
 Sandbox.module('/lib/plugins/event-authz', PluginEventAuthz);
 Sandbox.module('/lib/plugins/status-router', PluginStatusRouter);
-Sandbox.module('/lib/services/status', StatusService);
 Sandbox.module('/lib/plugins/post-router', PluginPostRouter);
+Sandbox.module('/lib/services/status', StatusService);
+Sandbox.module('/lib/services/session', SessionService);
 Sandbox.module('/lib/services/post', PostService);
-Sandbox.module('/lib/plugins/chaos', PluginChaos);
 Sandbox.module('/lib/recovery', RecoveryManager);
+Sandbox.module('/lib/plugins/chaos', PluginChaos);
+Sandbox.module('/lib/plugins/session-router', PluginSessionRouter);
 Sandbox.module('/lib/plugins/hypermedia-post', PluginHypermediaPost);
 Sandbox.module('/lib/plugins/http-media-strategy/post', PluginHTTPMediaStrategyPost);
 Sandbox.module('/lib/plugins/html/post', PluginHTMLPost);
@@ -62,18 +66,20 @@ Sandbox.module('/lib/plugins/user-authn', UserAuthnService);
 Sandbox.of([
   '/lib/plugins/event-authz',
   '/lib/wal',
+  '/lib/recovery',
+  '/lib/supervisor',
   '/lib/repos/post',
   '/lib/repos/session',
+  '/lib/services/session',
   '/lib/services/post',
-  '/lib/plugins/post-router',
   '/lib/services/status',
-  '/lib/plugins/status-router',
   '/lib/plugins/chaos',
-  '/lib/supervisor',
-  '/lib/recovery',
-  '/lib/plugins/hypermedia-post',
-  '/lib/plugins/http-media-strategy/post',
   '/lib/plugins/html/post',
+  '/lib/plugins/http-media-strategy/post',
+  '/lib/plugins/hypermedia-post',
+  '/lib/plugins/post-router',
+  '/lib/plugins/session-router',
+  '/lib/plugins/status-router',
   '/lib/plugins/user-authn'
 ],
   /***
@@ -84,10 +90,14 @@ Sandbox.of([
   async function myApp(sandbox) {
     const events = sandbox.get('/plugins/events-authz');
     const myConsole = sandbox.get('console');
+
     const postRepo = sandbox.my.postRepo;
+    const sessionRepo = sandbox.my.sessionRepo;
     const postService = sandbox.my.postService;
+    const sessionService = sandbox.my.sessionService;
     const subscriberId = 'myApp';
     const { AppEvent } = events;
+
 
     /**************** PLUGIN CONFIGURATION ****************/
     const htmlPostService = sandbox.my.plugins['/plugins/html/post'].load({ templateRootPath: path.join(__dirname, 'views')  }, postService);
@@ -98,20 +108,22 @@ Sandbox.of([
       textHTML: htmlPostService
     });
 
-    const StatusAPI = sandbox.my.plugins['/plugins/status-router'].load(RouterFactory(), sandbox.my.statusService);
-    const PostAPI = sandbox.my.plugins['/plugins/post-router'].load(RouterFactory(), strategyPostService);
-    //const PostAPI = sandbox.my.plugins['/plugins/post-router'].load(RouterFactory(), hypermediaPostService);
-
-    const pluginUserAuthn = sandbox.my.plugins['/plugins/user-authn'].load();
+    const pluginUserAuthn = sandbox.my.plugins['/plugins/user-authn'].load({ JWT_SECRET: process.env.JWT_SECRET },sessionService);
     const pluginChaos = sandbox.my.plugins['/plugins/chaos'].load({
       chaosEnabled: process.env.CHAOS_ENABLED,
       scheduleTimeoutMillis: process.env.CHAOS_SCHEDULE_TIMEOUT_MILLIS
     });
 
+    const StatusAPI = sandbox.my.plugins['/plugins/status-router'].load(RouterFactory(), sandbox.my.statusService);
+    const PostAPI = sandbox.my.plugins['/plugins/post-router'].load(RouterFactory(), strategyPostService);
+    const SessionAPI = sandbox.my.plugins['/plugins/session-router'].load(RouterFactory(), sessionService);
+
 
     /**************** MODULE CONFIGURATION *****************/
     sandbox.my.postService.setRepository(postRepo);
+    sandbox.my.sessionService.setRepository(sessionRepo);
     sandbox.my.supervisor.setErrorThreshold(process.env.GLOBAL_ERROR_COUNT_THRESHOLD);
+
 
     /**************** EVENT REGISTRATION ****************/
     events.on({ event: 'application.error', handler: onApplicationError, subscriberId });
@@ -120,8 +132,10 @@ Sandbox.of([
     events.on({ event: 'application.chaos.experiment.registrationRequested', handler: onChaosExperimentRegistrationRequest, subscriberId });
     events.on({ event: 'application.postService.post.writeRequestReceived', handler: onPostServiceWriteRequest, subscriberId });
 
+
     /**************** SETTINGS *****************/
     expressApp.set('view engine', 'ejs');
+
 
     /**************** MIDDLEWARE *****************/
     expressApp.use(morgan('tiny'));
@@ -129,9 +143,11 @@ Sandbox.of([
     expressApp.use(bodyParser.urlencoded({ extended: false }));
     expressApp.use('/dist', express.static(path.join(__dirname, 'dist')));
 
+
     /**************** ROUTES ****************/
     expressApp.use('/status', StatusAPI);
     expressApp.use('/api/v1', PostAPI);
+    //expressApp.use('/api/v1', SessionAPI);
 
     expressApp.use((req, res) => {
       // console.error(`Error 404 on ${req.url}.`);
@@ -147,12 +163,14 @@ Sandbox.of([
       res.status(status).send({ status, error: 'There was an error.' });
     });
 
+
     /**************** SERVER START ****************/
     if (process.env.NODE_ENV !== 'ci/cd/test') {
       http.createServer(expressApp).listen(SERVER_PORT, () => {
         myConsole.info(`myApp listening on port ${SERVER_PORT} (http://localhost:${SERVER_PORT})`);
       });
     }
+
 
     /**************** APPLICATION READY ****************/
     hello();
@@ -172,12 +190,13 @@ Sandbox.of([
       return new express.Router();
     }
 
+    
     /**************** HANDLERS ****************/
 
     /**
      * Logic for handling the event the `GLOBAL_ERROR_COUNT_THRESHOLD` value is exceeded for *any* running module
      * @param {AppEvent} appEvent - an instance of {AppEvent} interface
-     * @memberof ApplicationCore
+     * @memberof module:ApplicationCore
      */
     function onGlobalModuleErrorThresholdExceeded(appEvent) {
       sandbox.my.recovery.onGlobalErrorThresholdExceeded(appEvent);
@@ -226,7 +245,7 @@ Sandbox.of([
 
     /**
      * Basic recovery strategy for resolving failures to create posts
-     * @module Foo
+     * @memberof module:ApplicationCore
      * @function resetRepository
      */
     function resetRepository() {
