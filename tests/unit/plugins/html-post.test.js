@@ -1,4 +1,5 @@
 // For more info about the Jest mocking APIs see: https://jestjs.io/docs/mock-functions#mock-property
+
 import { fileURLToPath } from 'url';
 import path from 'path';
 import PluginHTMLPost from '../../../lib/plugins/html/post/index.js';

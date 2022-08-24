@@ -13,8 +13,8 @@ export default {
             "profileImageURL": "https://via.placeholder.com/150", 
             "schemaVersion": "0.0.1", 
             "schemaURL": "/schemas/user/0.0.1/user.json",
-            "lastModifiedTimestamp": null,
-            "createdAtTimestamp": "2022-06-26T14:24:04.904Z" 
+            "lastModified": null,
+            "createdAt": "2022-06-26T14:24:04.904Z" 
         },
         "2294a21b-ba63-4e5e-b537-d61ba40e4a65": {
             "id": "/users/1d2b3f93-804b-4e02-94ad-2eec6b90997d",
@@ -25,8 +25,8 @@ export default {
             "profileImageURL": "https://via.placeholder.com/150", 
             "schemaVersion": "0.0.1",
             "schemaURL": "/schemas/user/0.0.1/user.json",
-            "lastModifiedTimestamp": null,
-            "createdAtTimestamp": "2022-06-26T14:24:04.904Z"  
+            "lastModified": null,
+            "createdAt": "2022-06-26T14:24:04.904Z"  
         },
         "2a1acb10-8d2b-4248-a74e-a8418f941dd9": {
             "id": "/users/2a1acb10-8d2b-4248-a74e-a8418f941dd9",
@@ -37,8 +37,8 @@ export default {
             "profileImageURL": "https://via.placeholder.com/150", 
             "schemaVersion": "0.0.1",
             "schemaURL": "/schemas/user/0.0.1/user.json",
-            "lastModifiedTimestamp": null,
-            "createdAtTimestamp": "2022-06-26T14:24:04.904Z"  
+            "lastModified": null,
+            "createdAt": "2022-06-26T14:24:04.904Z"  
         },
         "f50ef714-5a51-4a0b-a3e5-99529ba41fce": {
             "id": "/users/f50ef714-5a51-4a0b-a3e5-99529ba41fce",
@@ -49,8 +49,8 @@ export default {
             "profileImageURL": "https://via.placeholder.com/150", 
             "schemaVersion": "0.0.1",
             "schemaURL": "/schemas/user/0.0.1/user.json",
-            "lastModifiedTimestamp": null,
-            "createdAtTimestamp": "2022-06-26T14:24:04.904Z"  
+            "lastModified": null,
+            "createdAt": "2022-06-26T14:24:04.904Z"  
         },
         "b20cdf59-b121-4b00-9e43-d2c48e2cf98f": {
             "id": "/users/b20cdf59-b121-4b00-9e43-d2c48e2cf98f",
@@ -61,8 +61,8 @@ export default {
             "profileImageURL": "https://via.placeholder.com/150", 
             "schemaVersion": "0.0.1", 
             "schemaURL": "/schemas/user/0.0.1/user.json",
-            "lastModifiedTimestamp": null,
-            "createdAtTimestamp": "2022-06-26T14:24:04.904Z"  
+            "lastModified": null,
+            "createdAt": "2022-06-26T14:24:04.904Z"  
         }
     },
     "posts": {
@@ -76,8 +76,8 @@ export default {
             "body": "Hello world! Playboy Billionaire Genius here...",
             "comments": ["/comments/eda2b86b-0e38-4c83-b294-36c3d302127a"],
             "likes": [],
-            "lastModifiedTimestamp": null,
-            "createdAtTimestamp": "2022-06-26T14:24:04.904Z"  
+            "lastModified": null,
+            "createdAt": "2022-06-26T14:24:04.904Z"  
         }
     },
     "sessions": {
@@ -87,8 +87,18 @@ export default {
         "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
         "expiryDate": "2022-06-26T14:24:04.904Z", 
         "isExpired": false,
-        "lastModifiedTimestamp": null,
-        "createdAtTimestamp": "2022-06-26T14:24:04.904Z"  
+        "lastModified": null,
+        "createdAt": "2022-06-26T14:24:04.904Z"  
       }*/
-  }
+    },
+    "user_credentials":{
+      /*"/credentials/1a8d78d8-c48b-4b78-9eee-7c2c0feb99b4": {
+        "id": "/credentials/1a8d78d8-c48b-4b78-9eee-7c2c0feb99b4",
+        "userId": "/users/98417a8-d912-44e0-8d37-abe712ca840f",
+        "password": "$2y$12$VMp52ykXPMUJoubKQ9H0ru9oGpkXR6Cxrq.s3ddh.si9zS4A6VekC",
+        "emailAddress": "bwidow@avengers.org",
+        "createdDate": "2020-09-26T23:08:27.645Z",
+        "lastModified": null
+      }*/ 
+    }
 }

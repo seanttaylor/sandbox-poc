@@ -30,9 +30,12 @@ import PluginHTMLPost from './lib/plugins/html/post/index.js';
 import PluginSessionRouter from './lib/plugins/router/session/index.js';
 import UserAuthnService from './lib/plugins/user-authn/index.js';
 
+const expiresInOneHour = Math.floor(Date.now() / 1000) + (60 * 60);
 const SERVER_PORT = process.env.PORT || 3000;
 const APP_NAME = process.env.APP_NAME || 'sandbox';
 const APP_VERSION = process.env.APP_VERSION || '0.0.1';
+const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_TOKEN_EXPIRATION =  process.env.JWT_TOKEN_EXPIRATION_MILLIS || expiresInOneHour;
 
 // Resolves issue of `__dirname` environment variable being `undefined` in ES modules
 // See (https://bobbyhadz.com/blog/javascript-dirname-is-not-defined-in-es-module-scope)
@@ -108,7 +111,10 @@ Sandbox.of([
       textHTML: htmlPostService
     });
 
-    const pluginUserAuthn = sandbox.my.plugins['/plugins/user-authn'].load({ JWT_SECRET: process.env.JWT_SECRET },sessionService);
+    const pluginUserAuthn = sandbox.my.plugins['/plugins/user-authn'].load({ 
+      JWT_SECRET,
+      JWT_TOKEN_EXPIRATION, 
+    }, sessionService);
     const pluginChaos = sandbox.my.plugins['/plugins/chaos'].load({
       chaosEnabled: process.env.CHAOS_ENABLED,
       scheduleTimeoutMillis: process.env.CHAOS_SCHEDULE_TIMEOUT_MILLIS
@@ -131,6 +137,7 @@ Sandbox.of([
     events.on({ event: 'application.recovery.recoveryAttemptCompleted', handler: onModuleRecoveryAttemptCompleted, subscriberId });
     events.on({ event: 'application.chaos.experiment.registrationRequested', handler: onChaosExperimentRegistrationRequest, subscriberId });
     events.on({ event: 'application.postService.post.writeRequestReceived', handler: onPostServiceWriteRequest, subscriberId });
+    events.on({ event: 'application.authenticationCredentialIssued', handler: onAuthnCredentialIssued, subscriberId });
 
 
     /**************** SETTINGS *****************/
@@ -200,6 +207,21 @@ Sandbox.of([
      */
     function onGlobalModuleErrorThresholdExceeded(appEvent) {
       sandbox.my.recovery.onGlobalErrorThresholdExceeded(appEvent);
+    }
+
+    /**
+     * Schedules a task to burn the authentication credential and expire its associated session
+     * @param {AppEvent} appEvent - an instance of {AppEvent} interface
+     * @memberof module:ApplicationCore
+     */
+    function onAuthnCredentialIssued(appEvent) {
+      const { credential } = appEvent.payload();
+      const { sid: sessionId } = credential;
+
+      setTimeout(()=> {
+        pluginUserAuthn.expireAuthnCredential(credential);
+        sessionService.expire(sessionId);
+      }, JWT_TOKEN_EXPIRATION);
     }
 
     /**

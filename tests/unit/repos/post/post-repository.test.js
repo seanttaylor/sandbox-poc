@@ -1,4 +1,5 @@
 // For more info about the Jest mocking APIs see: https://jestjs.io/docs/mock-functions#mock-property
+
 import MockSandboxFactory from '../../../mocks/mock-sandbox-factory.js';
 import PostRepository from '../../../../lib/repos/post/index.js';
 

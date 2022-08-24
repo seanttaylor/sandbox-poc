@@ -34,6 +34,7 @@
         "GLOBAL_ERROR_COUNT_THRESHOLD": "1",
         "JWT_SECRET": "superSecret",
         "LOG_LEVEL": "debug",
+        "SCHEMA_BASE_URL": "/schemas"
       }
     }
   ]

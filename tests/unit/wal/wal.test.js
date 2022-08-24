@@ -1,3 +1,5 @@
+// For more info about the Jest mocking APIs see: https://jestjs.io/docs/mock-functions#mock-property
+
 import MockSandboxFacory from '../../mocks/mock-sandbox-factory.js';
 import WAL from '../../../lib/wal/index.js';
 

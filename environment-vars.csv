@@ -4,4 +4,6 @@ APP_NAME, String, application name
 CHAOS_ENABLED, Boolean, indicates whether to execute registered chaos experiments 
 CHAOS_SCHEDULED_TIMEOUT_MILLIS, Number, the number of milliseconds to wait before executing an experiment
 GLOBAL_ERROR_COUNT_THRESHOLD, Number, the maximum number of errors a module may report before the application core attempts to recover the module
+JWT_SECRET, String, the secret used to sign new JSON Web Tokens
+JWT_TOKEN_EXPIRATION_MILLIS, Number, time in milliseconds until a JSON Web Token expires
 LOG_LEVEL, Boolean, indicates whether to display `console` messages on stdout. Used to declutter console output during test runs

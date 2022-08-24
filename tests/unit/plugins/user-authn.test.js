@@ -1,4 +1,7 @@
+// For more info about the Jest mocking APIs see: https://jestjs.io/docs/mock-functions#mock-property
+
 import { faker } from '@faker-js/faker';
+import jwt from 'jsonwebtoken';
 import MockSandboxFactory from '../../mocks/mock-sandbox-factory.js';
 import PluginUserAuthn from '../../../lib/plugins/user-authn/index.js';
 
@@ -6,7 +9,7 @@ import PluginUserAuthn from '../../../lib/plugins/user-authn/index.js';
  * This test suite verifies the UserAuthn Plugin functionality.
  */
 describe('PluginUserAuthn', () => {
-  const evegreenSessionId =  "/sessions/2244428a-a945-4d4c-bf4d-a9d8ca6cbf09";
+  const expiresInOneHour = Math.floor(Date.now() / 1000) + (60 * 60);
   const mockSessionRepo = {
     create: jest.fn().mockImplementation(()=> ({
       "id": "/sessions/2244428a-a945-4d4c-bf4d-a9d8ca6cbf09",
@@ -32,6 +35,10 @@ describe('PluginUserAuthn', () => {
       expired: false
     }))
   };
+  const userAuthnConfig = {
+    JWT_SECRET: 'superSecret',
+    JWT_TOKEN_EXPIRATION: expiresInOneHour
+  };
 
   test('Should register the UserAuthn API on the sandbox', async () => {
     const mockSandbox = MockSandboxFactory();
@@ -50,7 +57,7 @@ describe('PluginUserAuthn', () => {
     PluginUserAuthn(mockSandbox);
 
     // Create an instance of the plugin
-    const testPlugin = mockSandbox.plugin.mock.calls[0][0]['fn']({ JWT_SECRET: 'superSecret '}, mockSessionRepo);
+    const testPlugin = mockSandbox.plugin.mock.calls[0][0]['fn'](userAuthnConfig, mockSessionRepo);
     const credential = await testPlugin.issueAuthnCredential(mockUser);
     expect(typeof(credential) === 'string').toBe(true);
   });
@@ -61,13 +68,13 @@ describe('PluginUserAuthn', () => {
     PluginUserAuthn(mockSandbox);
     
     // Create an instance of the plugin
-    const testPlugin = mockSandbox.plugin.mock.calls[0][0]['fn']({ JWT_SECRET: 'superSecret' }, mockSessionRepo);
+    const testPlugin = mockSandbox.plugin.mock.calls[0][0]['fn'](userAuthnConfig, mockSessionRepo);
     const credential = await testPlugin.issueAuthnCredential(mockUser);
     const credentialExpired = await testPlugin.expireAuthnCredential(credential);
+    const { sid: sessionId } = jwt.decode(credential);
 
     expect(credentialExpired).toBe(true);
-    // The call to `expireAuthnCredential` includes a call to sessionRepo to expire the session
-    expect(mockSessionRepo.expire.mock.calls[0][0] === evegreenSessionId).toBe(true);
+    expect(mockSessionRepo.expire.mock.calls[0][0] === sessionId).toBe(true);
   });
 
   test('Should be able to verify an existing user authentication credential is still valid', async () => {
@@ -76,7 +83,7 @@ describe('PluginUserAuthn', () => {
     PluginUserAuthn(mockSandbox);
 
     // Create an instance of the plugin
-    const testPlugin = mockSandbox.plugin.mock.calls[0][0]['fn']({ JWT_SECRET: 'superSecret' }, mockSessionRepo);
+    const testPlugin = mockSandbox.plugin.mock.calls[0][0]['fn'](userAuthnConfig, mockSessionRepo);
     const credential = await testPlugin.issueAuthnCredential(mockUser);
     const isValidCredential = await testPlugin.validateAuthnCredential(credential);
     
@@ -89,7 +96,7 @@ describe('PluginUserAuthn', () => {
     PluginUserAuthn(mockSandbox);
 
     // Create an instance of the plugin
-    const testPlugin = mockSandbox.plugin.mock.calls[0][0]['fn']({ JWT_SECRET: 'superSecret' }, mockSessionRepo);
+    const testPlugin = mockSandbox.plugin.mock.calls[0][0]['fn'](userAuthnConfig, mockSessionRepo);
     const isValidCredential = await testPlugin.validateAuthnCredential('fakeToken');
     
     expect(isValidCredential).toBe(false);
@@ -101,7 +108,7 @@ describe('PluginUserAuthn', () => {
     PluginUserAuthn(mockSandbox);
 
     // Create an instance of the plugin
-    const testPlugin = mockSandbox.plugin.mock.calls[0][0]['fn']({ JWT_SECRET: 'superSecret' }, mockSessionRepo);
+    const testPlugin = mockSandbox.plugin.mock.calls[0][0]['fn'](userAuthnConfig, mockSessionRepo);
     const credential = await testPlugin.issueAuthnCredential(mockUser);
     await testPlugin.expireAuthnCredential(credential);
     const isValidCredential = await testPlugin.validateAuthnCredential(credential);

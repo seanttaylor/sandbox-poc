@@ -1,3 +1,5 @@
+// For more info about the Jest mocking APIs see: https://jestjs.io/docs/mock-functions#mock-property
+
 import errors from '../../src/sandbox-controller/errors/index.js';
 
 const { ApplicationError } = errors;

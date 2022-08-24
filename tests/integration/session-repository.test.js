@@ -24,7 +24,7 @@ describe('SessionRepository API', () => {
       expect(session.id).toBeTruthy();
 
       expect(typeof(session.id)).toEqual('string');
-      expect(typeof(session.createdAtTimestamp)).toEqual('string');
+      expect(typeof(session.createdAt)).toEqual('string');
       expect(typeof(session.token)).toEqual('string');
     });
 

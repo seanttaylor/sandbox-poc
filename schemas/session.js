@@ -11,7 +11,7 @@ export default {
     "userId",
     "token",
     "expiryDate",
-    "createdAtTimestamp",
+    "createdAt",
   ],
   "properties": {
       "id": {
@@ -59,20 +59,20 @@ export default {
           "true"
         ]
       },
-      "createdAtTimestamp": {
+      "createdAt": {
         "type": "string",
         "default": "",
-        "title": "The createdAtTimestamp Schema",
+        "title": "The createdAt Schema",
         "description": "The date/time the session was created",
         "examples": [
           "2022-08-19T21:41:37.646Z"
         ]
       },
-      "lastModifiedTimestamp": {
+      "lastModified": {
         "type": "string",
         "default": "",
         "description": "The guid of the session",
-        "title": "The lastModifiedTimestamp Schema",
+        "title": "The lastModified Schema",
         "examples": [
           "2022-08-19T21:41:37.646Z"
         ]

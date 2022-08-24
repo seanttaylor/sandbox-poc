@@ -5,6 +5,8 @@ import Ajv from 'ajv';
 import dataTemplate from '../database.js';
 import posts from '../../../../schemas/post.js';
 import sessions from '../../../../schemas/session.js';
+import users from '../../../../schemas/user.js';
+import user_credentials from '../../../../schemas/user-credential.js';
 
 
 const ajv = new Ajv();
@@ -19,7 +21,9 @@ export default (function InMemoryDatabaseConnector() {
   const data = { ...dataTemplate };
   const schemaValidators = {
     posts,
-    sessions
+    sessions,
+    users,
+    user_credentials
   };
 
   /**
@@ -103,7 +107,7 @@ export default (function InMemoryDatabaseConnector() {
     try {
       const validate = ajv.compile(schemaValidators[collection]);
       const record = Object.assign(doc, {
-        lastModifiedTimestamp: new Date().toISOString(),
+        lastModified: new Date().toISOString(),
       });
 
       if (!validate(record)) {
