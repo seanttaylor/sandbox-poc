@@ -8,7 +8,6 @@ import sessions from '../../../../schemas/session.js';
 import users from '../../../../schemas/user.js';
 import user_credentials from '../../../../schemas/user-credential.js';
 
-
 const ajv = new Ajv();
 
 /**

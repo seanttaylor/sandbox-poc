@@ -10,14 +10,15 @@ import morgan from 'morgan';
 import Sandbox from './src/sandbox/index.js';
 
 /**************** SERVICES ****************/
+import RecoveryManager from './lib/recovery/index.js';
 import PostRepository from './lib/repos/post/index.js';
 import SessionRepository from './lib/repos/session/index.js';
+import Supervisor from './lib/supervisor/index.js';
 import WriteAheadLog from './lib/wal/index.js';
 import StatusService from './lib/services/status/index.js';
 import PostService from './lib/services/post/index.js';
-import Supervisor from './lib/supervisor/index.js';
-import RecoveryManager from './lib/recovery/index.js';
 import SessionService from './lib/services/session/index.js';
+import UserService from './lib/services/user/index.js';
 
 /**************** PLUGINS ****************/
 import PluginEventAuthz from './lib/plugins/event-authz/index.js';
@@ -49,22 +50,21 @@ const expressApp = express();
 Sandbox.module('/lib/repos/post', PostRepository);
 Sandbox.module('/lib/repos/session', SessionRepository);
 Sandbox.module('/lib/wal', WriteAheadLog);
-Sandbox.module('/lib/plugins/chaos', PluginChaos);
 Sandbox.module('/lib/supervisor', Supervisor);
+Sandbox.module('/lib/recovery', RecoveryManager);
+Sandbox.module('/lib/services/status', StatusService);
+Sandbox.module('/lib/services/session', SessionService);
+Sandbox.module('/lib/services/user', UserService);
+Sandbox.module('/lib/services/post', PostService);
 Sandbox.module('/lib/plugins/event-authz', PluginEventAuthz);
 Sandbox.module('/lib/plugins/status-router', PluginStatusRouter);
 Sandbox.module('/lib/plugins/post-router', PluginPostRouter);
-Sandbox.module('/lib/services/status', StatusService);
-Sandbox.module('/lib/services/session', SessionService);
-Sandbox.module('/lib/services/post', PostService);
-Sandbox.module('/lib/recovery', RecoveryManager);
-Sandbox.module('/lib/plugins/chaos', PluginChaos);
 Sandbox.module('/lib/plugins/session-router', PluginSessionRouter);
+Sandbox.module('/lib/plugins/chaos', PluginChaos);
 Sandbox.module('/lib/plugins/hypermedia-post', PluginHypermediaPost);
 Sandbox.module('/lib/plugins/http-media-strategy/post', PluginHTTPMediaStrategyPost);
 Sandbox.module('/lib/plugins/html/post', PluginHTMLPost);
 Sandbox.module('/lib/plugins/user-authn', UserAuthnService);
-
 
 Sandbox.of([
   '/lib/plugins/event-authz',
@@ -73,9 +73,11 @@ Sandbox.of([
   '/lib/supervisor',
   '/lib/repos/post',
   '/lib/repos/session',
+  '/lib/repos/user',
   '/lib/services/session',
   '/lib/services/post',
   '/lib/services/status',
+  '/lib/services/user',
   '/lib/plugins/chaos',
   '/lib/plugins/html/post',
   '/lib/plugins/http-media-strategy/post',
@@ -96,7 +98,9 @@ Sandbox.of([
 
     const postRepo = sandbox.my.postRepo;
     const sessionRepo = sandbox.my.sessionRepo;
+    const userRepo = sandbox.my.userRepo;
     const postService = sandbox.my.postService;
+    const userService = sandbox.my.userService;
     const sessionService = sandbox.my.sessionService;
     const subscriberId = 'myApp';
     const { AppEvent } = events;
@@ -122,12 +126,13 @@ Sandbox.of([
 
     const StatusAPI = sandbox.my.plugins['/plugins/status-router'].load(RouterFactory(), sandbox.my.statusService);
     const PostAPI = sandbox.my.plugins['/plugins/post-router'].load(RouterFactory(), strategyPostService);
-    const SessionAPI = sandbox.my.plugins['/plugins/session-router'].load(RouterFactory(), sessionService);
+    const SessionAPI = sandbox.my.plugins['/plugins/session-router'].load(RouterFactory(), { sessionService, userService });
 
 
     /**************** MODULE CONFIGURATION *****************/
     sandbox.my.postService.setRepository(postRepo);
     sandbox.my.sessionService.setRepository(sessionRepo);
+    sandbox.my.userService.setRepository(userRepo);
     sandbox.my.supervisor.setErrorThreshold(process.env.GLOBAL_ERROR_COUNT_THRESHOLD);
 
 
@@ -154,7 +159,7 @@ Sandbox.of([
     /**************** ROUTES ****************/
     expressApp.use('/status', StatusAPI);
     expressApp.use('/api/v1', PostAPI);
-    //expressApp.use('/api/v1', SessionAPI);
+    expressApp.use('/api/v1', SessionAPI);
 
     expressApp.use((req, res) => {
       // console.error(`Error 404 on ${req.url}.`);

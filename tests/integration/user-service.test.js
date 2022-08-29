@@ -389,5 +389,4 @@ describe('UserService API', () => {
     
     expect(record.isValid).toBe(true);
   });
-
 });
