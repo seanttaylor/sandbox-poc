@@ -10,6 +10,7 @@
  * @property {Function} editMotto
  * @property {Function} emailAddressExists
  * @property {Function} getUserByEmail
+ * @property {Function} getUserCredentialByEmail
  * @property {Function} getUserById
  */
 
@@ -33,6 +34,7 @@
     emailAddressExists: myImpl.emailAddressExists || required,
     exists: myImpl.exists || required,
     getUserByEmail: myImpl.getUserByEmail || required,
+    getUserCredentialByEmail: myImpl.getUserCredentialByEmail || required,
     getAllUsers: myImpl.getAllUsers || required,
     getUserById: myImpl.getUserById || required,
     resetUserPassword: myImpl.resetUserPassword || required

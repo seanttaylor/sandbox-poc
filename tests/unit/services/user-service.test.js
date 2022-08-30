@@ -25,8 +25,7 @@ describe('UserService', () => {
     expect(Object.keys(mockSandbox.put.mock.calls[0][1]).includes('getUserByEmail')).toBe(true);
     expect(Object.keys(mockSandbox.put.mock.calls[0][1]).includes('getAllUsers')).toBe(true);
     expect(Object.keys(mockSandbox.put.mock.calls[0][1]).includes('getUserById')).toBe(true);
-    expect(Object.keys(mockSandbox.put.mock.calls[0][1]).includes('getUserRole')).toBe(true);
-    expect(Object.keys(mockSandbox.put.mock.calls[0][1]).includes('isUserPasswordCorrect')).toBe(true);
+    expect(Object.keys(mockSandbox.put.mock.calls[0][1]).includes('validateUserPassword')).toBe(true);
     expect(Object.keys(mockSandbox.put.mock.calls[0][1]).includes('setRepository')).toBe(true);
     expect(Object.keys(mockSandbox.put.mock.calls[0][1]).includes('userExists')).toBe(true);
   });

@@ -350,10 +350,10 @@ describe('UserService API', () => {
     
     await userService.createUserPassword({ user: { id, emailAddress }, password: userPassword });
     
-    const response2 = await userService.isUserPasswordCorrect({ emailAddress, password: userPassword });
+    const response2 = await userService.validateUserPassword({ emailAddress, password: userPassword });
     const [record2] = response2.data; 
 
-    const response3 = await userService.isUserPasswordCorrect({ emailAddress, password: 'foo' });
+    const response3 = await userService.validateUserPassword({ emailAddress, password: 'foo' });
     const [record3] = response3.data; 
 
     expect(record2.isValid).toBe(true);
@@ -384,10 +384,9 @@ describe('UserService API', () => {
     await userService.createUserPassword({ user: { id, emailAddress }, password: userPassword }); 
     await userService.resetUserPassword({ user: { id, emailAddress }, password: newUserPassword });
     
-    const response = await userService.isUserPasswordCorrect({ emailAddress, password: newUserPassword });
+    const response = await userService.validateUserPassword({ emailAddress, password: newUserPassword });
     const [record] = response.data;
     
     expect(record.isValid).toBe(true);
   });
-
 });

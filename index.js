@@ -10,14 +10,16 @@ import morgan from 'morgan';
 import Sandbox from './src/sandbox/index.js';
 
 /**************** SERVICES ****************/
+import RecoveryManager from './lib/recovery/index.js';
 import PostRepository from './lib/repos/post/index.js';
 import SessionRepository from './lib/repos/session/index.js';
+import UserRepository from './lib/repos/user/index.js';
+import Supervisor from './lib/supervisor/index.js';
 import WriteAheadLog from './lib/wal/index.js';
 import StatusService from './lib/services/status/index.js';
 import PostService from './lib/services/post/index.js';
-import Supervisor from './lib/supervisor/index.js';
-import RecoveryManager from './lib/recovery/index.js';
 import SessionService from './lib/services/session/index.js';
+import UserService from './lib/services/user/index.js';
 
 /**************** PLUGINS ****************/
 import PluginEventAuthz from './lib/plugins/event-authz/index.js';
@@ -26,9 +28,11 @@ import PluginPostRouter from './lib/plugins/router/post/index.js';
 import PluginChaos from './lib/plugins/chaos/index.js';
 import PluginHypermediaPost from './lib/plugins/hypermedia/post/index.js';
 import PluginHTTPMediaStrategyPost from './lib/plugins/http-media-strategy/post/index.js';
+import PluginHTTPMediaStrategyUser from './lib/plugins/http-media-strategy/user/index.js';
 import PluginHTMLPost from './lib/plugins/html/post/index.js';
+import PluginHTMLUser from './lib/plugins/html/user/index.js';
 import PluginSessionRouter from './lib/plugins/router/session/index.js';
-import UserAuthnService from './lib/plugins/user-authn/index.js';
+import PluginUserAuthnService from './lib/plugins/user-authn/index.js';
 
 const expiresInOneHour = Math.floor(Date.now() / 1000) + (60 * 60);
 const SERVER_PORT = process.env.PORT || 3000;
@@ -48,23 +52,25 @@ const expressApp = express();
 /**************** MODULE DEFINITION ****************/
 Sandbox.module('/lib/repos/post', PostRepository);
 Sandbox.module('/lib/repos/session', SessionRepository);
+Sandbox.module('/lib/repos/user', UserRepository);
 Sandbox.module('/lib/wal', WriteAheadLog);
-Sandbox.module('/lib/plugins/chaos', PluginChaos);
 Sandbox.module('/lib/supervisor', Supervisor);
+Sandbox.module('/lib/recovery', RecoveryManager);
+Sandbox.module('/lib/services/status', StatusService);
+Sandbox.module('/lib/services/session', SessionService);
+Sandbox.module('/lib/services/user', UserService);
+Sandbox.module('/lib/services/post', PostService);
 Sandbox.module('/lib/plugins/event-authz', PluginEventAuthz);
 Sandbox.module('/lib/plugins/status-router', PluginStatusRouter);
 Sandbox.module('/lib/plugins/post-router', PluginPostRouter);
-Sandbox.module('/lib/services/status', StatusService);
-Sandbox.module('/lib/services/session', SessionService);
-Sandbox.module('/lib/services/post', PostService);
-Sandbox.module('/lib/recovery', RecoveryManager);
-Sandbox.module('/lib/plugins/chaos', PluginChaos);
 Sandbox.module('/lib/plugins/session-router', PluginSessionRouter);
+Sandbox.module('/lib/plugins/chaos', PluginChaos);
 Sandbox.module('/lib/plugins/hypermedia-post', PluginHypermediaPost);
 Sandbox.module('/lib/plugins/http-media-strategy/post', PluginHTTPMediaStrategyPost);
+Sandbox.module('/lib/plugins/http-media-strategy/user', PluginHTTPMediaStrategyUser);
 Sandbox.module('/lib/plugins/html/post', PluginHTMLPost);
-Sandbox.module('/lib/plugins/user-authn', UserAuthnService);
-
+Sandbox.module('/lib/plugins/html/user', PluginHTMLUser);
+Sandbox.module('/lib/plugins/user-authn', PluginUserAuthnService);
 
 Sandbox.of([
   '/lib/plugins/event-authz',
@@ -73,12 +79,16 @@ Sandbox.of([
   '/lib/supervisor',
   '/lib/repos/post',
   '/lib/repos/session',
+  '/lib/repos/user',
   '/lib/services/session',
   '/lib/services/post',
   '/lib/services/status',
+  '/lib/services/user',
   '/lib/plugins/chaos',
   '/lib/plugins/html/post',
+  '/lib/plugins/html/user',
   '/lib/plugins/http-media-strategy/post',
+  '/lib/plugins/http-media-strategy/user',
   '/lib/plugins/hypermedia-post',
   '/lib/plugins/post-router',
   '/lib/plugins/session-router',
@@ -93,24 +103,19 @@ Sandbox.of([
   async function myApp(sandbox) {
     const events = sandbox.get('/plugins/events-authz');
     const myConsole = sandbox.get('console');
+    const templateRootPath = path.join(__dirname, 'views');
+    const subscriberId = 'myApp';
 
     const postRepo = sandbox.my.postRepo;
     const sessionRepo = sandbox.my.sessionRepo;
+    const userRepo = sandbox.my.userRepo;
     const postService = sandbox.my.postService;
+    const userService = sandbox.my.userService;
     const sessionService = sandbox.my.sessionService;
-    const subscriberId = 'myApp';
     const { AppEvent } = events;
 
 
     /**************** PLUGIN CONFIGURATION ****************/
-    const htmlPostService = sandbox.my.plugins['/plugins/html/post'].load({ templateRootPath: path.join(__dirname, 'views')  }, postService);
-    const hypermediaPostService = sandbox.my.plugins['/plugins/hypermedia-post'].load(postService);
-    const strategyPostService = sandbox.my.plugins['/plugins/http-media-strategy/post'].load({
-      applicationJSON: postService,
-      applicationHAL: hypermediaPostService,
-      textHTML: htmlPostService
-    });
-
     const pluginUserAuthn = sandbox.my.plugins['/plugins/user-authn'].load({ 
       JWT_SECRET,
       JWT_TOKEN_EXPIRATION, 
@@ -120,14 +125,35 @@ Sandbox.of([
       scheduleTimeoutMillis: process.env.CHAOS_SCHEDULE_TIMEOUT_MILLIS
     });
 
+    /******** POSTS ********/
+    const htmlPostService = sandbox.my.plugins['/plugins/html/post'].load({ templateRootPath }, postService);
+    const hypermediaPostService = sandbox.my.plugins['/plugins/hypermedia-post'].load(postService);
+    const strategyPostService = sandbox.my.plugins['/plugins/http-media-strategy/post'].load({
+      applicationJSON: postService,
+      applicationHAL: hypermediaPostService,
+      textHTML: htmlPostService
+    });
+
+    /******** USERS ********/
+    const htmlUserService = sandbox.my.plugins['/plugins/html/user'].load({ templateRootPath },  userService);
+    const strategyUserService = sandbox.my.plugins['/plugins/http-media-strategy/user'].load({
+      //applicationJSON: postService,
+      //applicationHAL: hypermediaPostService,
+      textHTML: htmlUserService
+    });
+
     const StatusAPI = sandbox.my.plugins['/plugins/status-router'].load(RouterFactory(), sandbox.my.statusService);
     const PostAPI = sandbox.my.plugins['/plugins/post-router'].load(RouterFactory(), strategyPostService);
-    const SessionAPI = sandbox.my.plugins['/plugins/session-router'].load(RouterFactory(), sessionService);
+    const SessionAPI = sandbox.my.plugins['/plugins/session-router'].load(RouterFactory(), { 
+      userAuthn: pluginUserAuthn, 
+      userService: strategyUserService 
+    });
 
 
     /**************** MODULE CONFIGURATION *****************/
     sandbox.my.postService.setRepository(postRepo);
     sandbox.my.sessionService.setRepository(sessionRepo);
+    sandbox.my.userService.setRepository(userRepo);
     sandbox.my.supervisor.setErrorThreshold(process.env.GLOBAL_ERROR_COUNT_THRESHOLD);
 
 
@@ -154,7 +180,7 @@ Sandbox.of([
     /**************** ROUTES ****************/
     expressApp.use('/status', StatusAPI);
     expressApp.use('/api/v1', PostAPI);
-    //expressApp.use('/api/v1', SessionAPI);
+    expressApp.use('/api/v1', SessionAPI);
 
     expressApp.use((req, res) => {
       // console.error(`Error 404 on ${req.url}.`);

@@ -58,7 +58,7 @@ describe('PluginUserAuthn', () => {
 
     // Create an instance of the plugin
     const testPlugin = mockSandbox.plugin.mock.calls[0][0]['fn'](userAuthnConfig, mockSessionRepo);
-    const credential = await testPlugin.issueAuthnCredential(mockUser);
+    const credential = await testPlugin.issueAuthnCredential({ user: mockUser, role: 'user' });
     expect(typeof(credential) === 'string').toBe(true);
   });
 
@@ -69,7 +69,7 @@ describe('PluginUserAuthn', () => {
     
     // Create an instance of the plugin
     const testPlugin = mockSandbox.plugin.mock.calls[0][0]['fn'](userAuthnConfig, mockSessionRepo);
-    const credential = await testPlugin.issueAuthnCredential(mockUser);
+    const credential = await testPlugin.issueAuthnCredential({ user: mockUser, role: 'user' });
     const credentialExpired = await testPlugin.expireAuthnCredential(credential);
     const { sid: sessionId } = jwt.decode(credential);
 
@@ -84,7 +84,7 @@ describe('PluginUserAuthn', () => {
 
     // Create an instance of the plugin
     const testPlugin = mockSandbox.plugin.mock.calls[0][0]['fn'](userAuthnConfig, mockSessionRepo);
-    const credential = await testPlugin.issueAuthnCredential(mockUser);
+    const credential = await testPlugin.issueAuthnCredential({ user: mockUser, role: 'user' });
     const isValidCredential = await testPlugin.validateAuthnCredential(credential);
     
     expect(isValidCredential).toBe(true);
@@ -109,7 +109,7 @@ describe('PluginUserAuthn', () => {
 
     // Create an instance of the plugin
     const testPlugin = mockSandbox.plugin.mock.calls[0][0]['fn'](userAuthnConfig, mockSessionRepo);
-    const credential = await testPlugin.issueAuthnCredential(mockUser);
+    const credential = await testPlugin.issueAuthnCredential({ user: mockUser, role: 'user' });
     await testPlugin.expireAuthnCredential(credential);
     const isValidCredential = await testPlugin.validateAuthnCredential(credential);
     
