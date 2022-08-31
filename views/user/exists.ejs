@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Client Error</title>
-  </head>
+    <title>Nicely | Existence Result </title>
+</head>
   <body>
-    <h1>We couldn't complete your request. Check your request and try again or <a href="#">return to the index page</a>.</h1>
+    <section itemscope itemtype="/api/v1/schemas/user">
+      <a href="/api/v1/users/<%=data.user.id%>" rel="get-user"><%=data.user.id%></a>
+    </section>
   </body>
 </html>

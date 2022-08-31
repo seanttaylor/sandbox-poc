@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nicely | Your Account</title>
+</head>
+  <body>
+    <form action="" method="" itemscope itemtype="/api/v1/schemas/user">
+      <input type="hidden" value="<%=data.user.id%>">
+      <input type="text" name="first-name" itemprop="firstName" value="<%=data.user.firstName%>">
+      <input type="text" name="last-name" itemprop="lastName" value="<%=data.user.lastName%>">
+      <input type="email" name="email-address" itemprop="emailAddress" value="<%=data.user.emailAddress%>">
+      <input type="text" name="handle" itemprop="handle" value="<%=data.user.handle%>" disabled>
+      <input type="text" name="motto" itemprop="motto" value="<%=data.user.motto%>">  
+   </form>
+  </body>
+</html>

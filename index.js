@@ -5,11 +5,12 @@ import express from 'express';
 import http from 'http';
 import path from 'path';
 import bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 
 import Sandbox from './src/sandbox/index.js';
 
-/**************** SERVICES ****************/
+/** ************** SERVICES *************** */
 import RecoveryManager from './lib/recovery/index.js';
 import PostRepository from './lib/repos/post/index.js';
 import SessionRepository from './lib/repos/session/index.js';
@@ -21,7 +22,7 @@ import PostService from './lib/services/post/index.js';
 import SessionService from './lib/services/session/index.js';
 import UserService from './lib/services/user/index.js';
 
-/**************** PLUGINS ****************/
+/** ************** PLUGINS *************** */
 import PluginEventAuthz from './lib/plugins/event-authz/index.js';
 import PluginStatusRouter from './lib/plugins/router/status/index.js';
 import PluginPostRouter from './lib/plugins/router/post/index.js';
@@ -38,8 +39,8 @@ const expiresInOneHour = Math.floor(Date.now() / 1000) + (60 * 60);
 const SERVER_PORT = process.env.PORT || 3000;
 const APP_NAME = process.env.APP_NAME || 'sandbox';
 const APP_VERSION = process.env.APP_VERSION || '0.0.1';
-const JWT_SECRET = process.env.JWT_SECRET;
-const JWT_TOKEN_EXPIRATION =  process.env.JWT_TOKEN_EXPIRATION_MILLIS || expiresInOneHour;
+const { JWT_SECRET } = process.env;
+const JWT_TOKEN_EXPIRATION = process.env.JWT_TOKEN_EXPIRATION_MILLIS || expiresInOneHour;
 
 // Resolves issue of `__dirname` environment variable being `undefined` in ES modules
 // See (https://bobbyhadz.com/blog/javascript-dirname-is-not-defined-in-es-module-scope)
@@ -49,7 +50,7 @@ const __dirname = path.dirname(__filename);
 const figletize = promisify(figlet);
 const expressApp = express();
 
-/**************** MODULE DEFINITION ****************/
+/** ************** MODULE DEFINITION *************** */
 Sandbox.module('/lib/repos/post', PostRepository);
 Sandbox.module('/lib/repos/session', SessionRepository);
 Sandbox.module('/lib/repos/user', UserRepository);
@@ -72,92 +73,90 @@ Sandbox.module('/lib/plugins/html/post', PluginHTMLPost);
 Sandbox.module('/lib/plugins/html/user', PluginHTMLUser);
 Sandbox.module('/lib/plugins/user-authn', PluginUserAuthnService);
 
-Sandbox.of([
-  '/lib/plugins/event-authz',
-  '/lib/wal',
-  '/lib/recovery',
-  '/lib/supervisor',
-  '/lib/repos/post',
-  '/lib/repos/session',
-  '/lib/repos/user',
-  '/lib/services/session',
-  '/lib/services/post',
-  '/lib/services/status',
-  '/lib/services/user',
-  '/lib/plugins/chaos',
-  '/lib/plugins/html/post',
-  '/lib/plugins/html/user',
-  '/lib/plugins/http-media-strategy/post',
-  '/lib/plugins/http-media-strategy/user',
-  '/lib/plugins/hypermedia-post',
-  '/lib/plugins/post-router',
-  '/lib/plugins/session-router',
-  '/lib/plugins/status-router',
-  '/lib/plugins/user-authn'
-],
-  /***
+Sandbox.of(
+  [
+    '/lib/plugins/event-authz',
+    '/lib/wal',
+    '/lib/recovery',
+    '/lib/supervisor',
+    '/lib/repos/post',
+    '/lib/repos/session',
+    '/lib/repos/user',
+    '/lib/services/session',
+    '/lib/services/post',
+    '/lib/services/status',
+    '/lib/services/user',
+    '/lib/plugins/chaos',
+    '/lib/plugins/html/post',
+    '/lib/plugins/html/user',
+    '/lib/plugins/http-media-strategy/post',
+    '/lib/plugins/http-media-strategy/user',
+    '/lib/plugins/hypermedia-post',
+    '/lib/plugins/post-router',
+    '/lib/plugins/session-router',
+    '/lib/plugins/status-router',
+    '/lib/plugins/user-authn',
+  ],
+  /**
    * @module ApplicationCore
-   * The application core 
+   * The application core
    * @param {Object} sandbox - the sandboxed module APIs; this is where the registered client-defined module functionality lives
    */
-  async function myApp(sandbox) {
+  async (sandbox) => {
     const events = sandbox.get('/plugins/events-authz');
     const myConsole = sandbox.get('console');
     const templateRootPath = path.join(__dirname, 'views');
     const subscriberId = 'myApp';
 
-    const postRepo = sandbox.my.postRepo;
-    const sessionRepo = sandbox.my.sessionRepo;
-    const userRepo = sandbox.my.userRepo;
-    const postService = sandbox.my.postService;
-    const userService = sandbox.my.userService;
-    const sessionService = sandbox.my.sessionService;
+    const { postRepo } = sandbox.my;
+    const { sessionRepo } = sandbox.my;
+    const { userRepo } = sandbox.my;
+    const { postService } = sandbox.my;
+    const { userService } = sandbox.my;
+    const { sessionService } = sandbox.my;
     const { AppEvent } = events;
 
-
-    /**************** PLUGIN CONFIGURATION ****************/
-    const pluginUserAuthn = sandbox.my.plugins['/plugins/user-authn'].load({ 
+    /* *************** PLUGIN CONFIGURATION *************** */
+    const pluginUserAuthn = sandbox.my.plugins['/plugins/user-authn'].load({
       JWT_SECRET,
-      JWT_TOKEN_EXPIRATION, 
+      JWT_TOKEN_EXPIRATION,
     }, sessionService);
     const pluginChaos = sandbox.my.plugins['/plugins/chaos'].load({
       chaosEnabled: process.env.CHAOS_ENABLED,
-      scheduleTimeoutMillis: process.env.CHAOS_SCHEDULE_TIMEOUT_MILLIS
+      scheduleTimeoutMillis: process.env.CHAOS_SCHEDULE_TIMEOUT_MILLIS,
     });
 
-    /******** POSTS ********/
+    /* ******* POSTS ******* */
     const htmlPostService = sandbox.my.plugins['/plugins/html/post'].load({ templateRootPath }, postService);
     const hypermediaPostService = sandbox.my.plugins['/plugins/hypermedia-post'].load(postService);
     const strategyPostService = sandbox.my.plugins['/plugins/http-media-strategy/post'].load({
       applicationJSON: postService,
       applicationHAL: hypermediaPostService,
-      textHTML: htmlPostService
+      textHTML: htmlPostService,
     });
 
-    /******** USERS ********/
-    const htmlUserService = sandbox.my.plugins['/plugins/html/user'].load({ templateRootPath },  userService);
+    /* ******* USERS ******* */
+    const htmlUserService = sandbox.my.plugins['/plugins/html/user'].load({ templateRootPath }, userService);
     const strategyUserService = sandbox.my.plugins['/plugins/http-media-strategy/user'].load({
-      //applicationJSON: postService,
-      //applicationHAL: hypermediaPostService,
-      textHTML: htmlUserService
+    // applicationJSON: postService,
+    // applicationHAL: hypermediaPostService,
+      textHTML: htmlUserService,
     });
 
     const StatusAPI = sandbox.my.plugins['/plugins/status-router'].load(RouterFactory(), sandbox.my.statusService);
     const PostAPI = sandbox.my.plugins['/plugins/post-router'].load(RouterFactory(), strategyPostService);
-    const SessionAPI = sandbox.my.plugins['/plugins/session-router'].load(RouterFactory(), { 
-      userAuthn: pluginUserAuthn, 
-      userService: strategyUserService 
+    const SessionAPI = sandbox.my.plugins['/plugins/session-router'].load(RouterFactory(), {
+      userAuthn: pluginUserAuthn,
+      userService: strategyUserService,
     });
 
-
-    /**************** MODULE CONFIGURATION *****************/
+    /** ************** MODULE CONFIGURATION **************** */
     sandbox.my.postService.setRepository(postRepo);
     sandbox.my.sessionService.setRepository(sessionRepo);
     sandbox.my.userService.setRepository(userRepo);
     sandbox.my.supervisor.setErrorThreshold(process.env.GLOBAL_ERROR_COUNT_THRESHOLD);
 
-
-    /**************** EVENT REGISTRATION ****************/
+    /** ************** EVENT REGISTRATION *************** */
     events.on({ event: 'application.error', handler: onApplicationError, subscriberId });
     events.on({ event: 'application.error.globalErrorThresholdExceeded', handler: onGlobalModuleErrorThresholdExceeded, subscriberId });
     events.on({ event: 'application.recovery.recoveryAttemptCompleted', handler: onModuleRecoveryAttemptCompleted, subscriberId });
@@ -165,30 +164,29 @@ Sandbox.of([
     events.on({ event: 'application.postService.post.writeRequestReceived', handler: onPostServiceWriteRequest, subscriberId });
     events.on({ event: 'application.authenticationCredentialIssued', handler: onAuthnCredentialIssued, subscriberId });
 
-
-    /**************** SETTINGS *****************/
+    /* *************** SETTINGS **************** */
     expressApp.set('view engine', 'ejs');
 
-
-    /**************** MIDDLEWARE *****************/
+    /* *************** MIDDLEWARE **************** */
     expressApp.use(morgan('tiny'));
     expressApp.use(bodyParser.json());
     expressApp.use(bodyParser.urlencoded({ extended: false }));
+    expressApp.use(cookieParser());
     expressApp.use('/dist', express.static(path.join(__dirname, 'dist')));
 
-
-    /**************** ROUTES ****************/
+    /* ************** ROUTES *************** */
     expressApp.use('/status', StatusAPI);
     expressApp.use('/api/v1', PostAPI);
     expressApp.use('/api/v1', SessionAPI);
 
     expressApp.use((req, res) => {
-      // console.error(`Error 404 on ${req.url}.`);
+    // console.error(`Error 404 on ${req.url}.`);
       res.status(404).send({ status: 404, error: 'Not Found' });
     });
 
     // The `next` parameter here is required *even when not in use* per the ExpressJS documentation on error handling middleware
     // See (https://expressjs.com/en/guide/using-middleware.html#middleware.error-handling)
+    // eslint-disable-next-line
     expressApp.use((err, req, res, next) => {
       const status = err.status || 500;
       // const msg = err.error || err.message;
@@ -196,35 +194,32 @@ Sandbox.of([
       res.status(status).send({ status, error: 'There was an error.' });
     });
 
-
-    /**************** SERVER START ****************/
+    /* *************** SERVER START *************** */
     if (process.env.NODE_ENV !== 'ci/cd/test') {
       http.createServer(expressApp).listen(SERVER_PORT, () => {
         myConsole.info(`myApp listening on port ${SERVER_PORT} (http://localhost:${SERVER_PORT})`);
       });
     }
 
-
-    /**************** APPLICATION READY ****************/
+    /* *************** APPLICATION READY *************** */
     hello();
     events.notify('application.ready');
     sandbox.my.recovery.onRecoveryStrategyRegistered(
       AppEvent({
         serviceName: 'postService',
-        strategies: [{ name: 'resetRepository', fn: resetRepository }]
-      })
+        strategies: [{ name: 'resetRepository', fn: resetRepository }],
+      }),
     );
 
     /**
-     * Creates a router instance to enable registration of API routes 
+     * Creates a router instance to enable registration of API routes
      * @returns {Object}
      */
     function RouterFactory() {
       return new express.Router();
     }
 
-    
-    /**************** HANDLERS ****************/
+    /* *************** HANDLERS *************** */
 
     /**
      * Logic for handling the event the `GLOBAL_ERROR_COUNT_THRESHOLD` value is exceeded for *any* running module
@@ -244,7 +239,7 @@ Sandbox.of([
       const { credential } = appEvent.payload();
       const { sid: sessionId } = credential;
 
-      setTimeout(()=> {
+      setTimeout(() => {
         pluginUserAuthn.expireAuthnCredential(credential);
         sessionService.expire(sessionId);
       }, JWT_TOKEN_EXPIRATION);
@@ -252,7 +247,7 @@ Sandbox.of([
 
     /**
      * Receives an incoming request to setup a new chaos experiment; forwards the request to the chaos plugin
-     * @param {AppEvent} appEvent 
+     * @param {AppEvent} appEvent
      */
     function onChaosExperimentRegistrationRequest(appEvent) {
       pluginChaos.onExperimentRegistrationRequest(appEvent);
@@ -286,7 +281,7 @@ Sandbox.of([
         events.notify('application.writeAheadLogAvailable', {
           count: entries.length,
           entries,
-          serviceName
+          serviceName,
         });
       }
     }
@@ -307,5 +302,5 @@ Sandbox.of([
       const banner = await figletize(`${APP_NAME} v${APP_VERSION}`);
       myConsole.log(banner);
     }
-  }
+  },
 );

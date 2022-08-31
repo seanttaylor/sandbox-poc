@@ -1,11 +1,11 @@
-
+import { describe, expect, test } from '@jest/globals';
 import { faker } from '@faker-js/faker';
 import UserRepository from '../../lib/repos/user/index.js';
 import UserService from '../../lib/services/user/index.js';
 import SandboxController from '../../src/sandbox-controller/index.js';
 
 /**
- * This test suite tests the public methods the UserRepository API and client-defined Plugin intialization. 
+ * This test suite tests the public methods the UserRepository API and client-defined Plugin intialization.
  */
 describe('UserService API', () => {
   // SandboxController augments sandbox with a method for registering the public API of application modules (e.g. the UserRepository module)
@@ -16,7 +16,7 @@ describe('UserService API', () => {
   UserService(controller);
 
   test('Should be not be able to create a new `User` if repository has not been set', async () => {
-    try { 
+    try {
       const testUserData = {
         id: `/users/${faker.datatype.uuid()}`,
         emailAddress: faker.internet.email(),
@@ -24,18 +24,17 @@ describe('UserService API', () => {
         lastName: faker.name.lastName(),
         password: faker.random.alpha(10),
         handle: `@${faker.random.alpha(10)}`,
-        motto: `${faker.hacker.phrase()}`
+        motto: `${faker.hacker.phrase()}`,
       };
 
-      const userService = sandbox.my.userService;
-      const record = await userService.create(testUserData);
+      const { userService } = sandbox.my;
+      await userService.create(testUserData);
     } catch (e) {
       expect(e.message).toMatch('Missing implementation');
     }
   });
 
   test('Should be be able to create a new `User`', async () => {
-   
     const testUserData = {
       id: `/users/${faker.datatype.uuid()}`,
       emailAddress: faker.internet.email(),
@@ -43,11 +42,11 @@ describe('UserService API', () => {
       lastName: faker.name.lastName(),
       password: faker.random.alpha(10),
       handle: `@${faker.random.alpha(10)}`,
-      motto: `${faker.hacker.phrase()}`
+      motto: `${faker.hacker.phrase()}`,
     };
 
-    const userService = sandbox.my.userService;
-    const userRepo = sandbox.my.userRepo;
+    const { userService } = sandbox.my;
+    const { userRepo } = sandbox.my;
 
     userService.setRepository(userRepo);
 
@@ -55,8 +54,7 @@ describe('UserService API', () => {
     const [record] = response.data;
 
     expect(record.id).toBeTruthy();
-    expect(typeof(record.createdAt) === 'string').toBe(true);
-
+    expect(typeof (record.createdAt) === 'string').toBe(true);
   });
 
   test('Should be be able to find an existing `User`', async () => {
@@ -68,21 +66,20 @@ describe('UserService API', () => {
       lastName: faker.name.lastName(),
       password: faker.random.alpha(10),
       handle: `@${faker.random.alpha(10)}`,
-      motto: `${faker.hacker.phrase()}`
+      motto: `${faker.hacker.phrase()}`,
     };
 
-    const userService = sandbox.my.userService;
-    const userRepo = sandbox.my.userRepo;
+    const { userService } = sandbox.my;
+    const { userRepo } = sandbox.my;
 
     userService.setRepository(userRepo);
     await userService.create(testUserData);
-    
+
     const response = await userService.getUserById(id);
     const [record] = response.data;
 
     expect(record.id === id).toBe(true);
-    expect(typeof(record.createdAt) === 'string').toBe(true);
-
+    expect(typeof (record.createdAt) === 'string').toBe(true);
   });
 
   test('Should be be able to find an existing `User` by email', async () => {
@@ -94,20 +91,20 @@ describe('UserService API', () => {
       lastName: faker.name.lastName(),
       password: faker.random.alpha(10),
       handle: `@${faker.random.alpha(10)}`,
-      motto: `${faker.hacker.phrase()}`
+      motto: `${faker.hacker.phrase()}`,
     };
 
-    const userService = sandbox.my.userService;
-    const userRepo = sandbox.my.userRepo;
+    const { userService } = sandbox.my;
+    const { userRepo } = sandbox.my;
 
     userService.setRepository(userRepo);
     await userService.create(testUserData);
-    
+
     const response = await userService.getUserByEmail(emailAddress);
     const [record] = response.data;
 
     expect(record.emailAddress === emailAddress).toBe(true);
-    expect(typeof(record.createdAt) === 'string').toBe(true);
+    expect(typeof (record.createdAt) === 'string').toBe(true);
   });
 
   test('Should be be able to get a list of all existing `User` instances', async () => {
@@ -118,20 +115,20 @@ describe('UserService API', () => {
       lastName: faker.name.lastName(),
       password: faker.random.alpha(10),
       handle: `@${faker.random.alpha(10)}`,
-      motto: `${faker.hacker.phrase()}`
+      motto: `${faker.hacker.phrase()}`,
     };
 
-    const userService = sandbox.my.userService;
-    const userRepo = sandbox.my.userRepo;
+    const { userService } = sandbox.my;
+    const { userRepo } = sandbox.my;
 
     userService.setRepository(userRepo);
     await userService.create(testUserData);
-    
+
     const response = await userService.getAllUsers();
     const recordList = response.data;
 
     expect(Array.isArray(recordList)).toBe(true);
-    expect(recordList[0]['id']).toBeTruthy();
+    expect(recordList[0].id).toBeTruthy();
     expect(recordList.length > 1).toBe(true);
   });
 
@@ -144,19 +141,19 @@ describe('UserService API', () => {
       lastName: faker.name.lastName(),
       password: faker.random.alpha(10),
       handle: `@${faker.random.alpha(10)}`,
-      motto: `${faker.hacker.phrase()}`
+      motto: `${faker.hacker.phrase()}`,
     };
 
-    const userService = sandbox.my.userService;
-    const userRepo = sandbox.my.userRepo;
+    const { userService } = sandbox.my;
+    const { userRepo } = sandbox.my;
 
     userService.setRepository(userRepo);
     await userService.create(testUserData);
     await userService.deleteUser(id);
-    
+
     const response = await userService.getUserById(id);
     const [record] = response.data;
-    
+
     expect(record).toBeFalsy();
   });
 
@@ -169,15 +166,15 @@ describe('UserService API', () => {
       lastName: faker.name.lastName(),
       password: faker.random.alpha(10),
       handle: `@${faker.random.alpha(10)}`,
-      motto: `${faker.hacker.phrase()}`
+      motto: `${faker.hacker.phrase()}`,
     };
 
-    const userService = sandbox.my.userService;
-    const userRepo = sandbox.my.userRepo;
+    const { userService } = sandbox.my;
+    const { userRepo } = sandbox.my;
 
     userService.setRepository(userRepo);
     await userService.create(testUserData);
-    
+
     const response1 = await userService.userExists(id);
     const [record1] = response1.data;
 
@@ -197,16 +194,16 @@ describe('UserService API', () => {
       lastName: faker.name.lastName(),
       password: faker.random.alpha(10),
       handle: `@${faker.random.alpha(10)}`,
-      motto: `${faker.hacker.phrase()}`
+      motto: `${faker.hacker.phrase()}`,
     };
 
-    const userService = sandbox.my.userService;
-    const userRepo = sandbox.my.userRepo;
+    const { userService } = sandbox.my;
+    const { userRepo } = sandbox.my;
 
     userService.setRepository(userRepo);
 
     await userService.create(testUserData);
-    
+
     const response1 = await userService.emailAddressExists(emailAddress);
     const [record1] = response1.data;
 
@@ -227,16 +224,16 @@ describe('UserService API', () => {
       lastName: faker.name.lastName(),
       password: faker.random.alpha(10),
       handle: `@${faker.random.alpha(10)}`,
-      motto: `${faker.hacker.phrase()}`
+      motto: `${faker.hacker.phrase()}`,
     };
 
-    const userService = sandbox.my.userService;
-    const userRepo = sandbox.my.userRepo;
+    const { userService } = sandbox.my;
+    const { userRepo } = sandbox.my;
 
     userService.setRepository(userRepo);
     await userService.create(testUserData);
     await userService.editEmailAddress({ id, emailAddress: updatedEmailAddress });
-    
+
     const response = await userService.getUserById(id);
     const [record] = response.data;
 
@@ -254,16 +251,16 @@ describe('UserService API', () => {
       lastName: faker.name.lastName(),
       password: faker.random.alpha(10),
       handle: `@${faker.random.alpha(10)}`,
-      motto: `${faker.hacker.phrase()}`
+      motto: `${faker.hacker.phrase()}`,
     };
 
-    const userService = sandbox.my.userService;
-    const userRepo = sandbox.my.userRepo;
+    const { userService } = sandbox.my;
+    const { userRepo } = sandbox.my;
 
     userService.setRepository(userRepo);
     await userService.create(testUserData);
-    await userService.editName({ id, name: { firstName: updatedFirstname, lastName: updatedLastname }});
-    
+    await userService.editName({ id, name: { firstName: updatedFirstname, lastName: updatedLastname } });
+
     const response = await userService.getUserById(id);
     const [record] = response.data;
 
@@ -281,16 +278,16 @@ describe('UserService API', () => {
       lastName: faker.name.lastName(),
       password: faker.random.alpha(10),
       handle: `@${faker.random.alpha(10)}`,
-      motto: `${faker.hacker.phrase()}`
+      motto: `${faker.hacker.phrase()}`,
     };
 
-    const userService = sandbox.my.userService;
-    const userRepo = sandbox.my.userRepo;
+    const { userService } = sandbox.my;
+    const { userRepo } = sandbox.my;
 
     userService.setRepository(userRepo);
     await userService.create(testUserData);
     await userService.editMotto({ id, motto: updatedMotto });
-    
+
     const response = await userService.getUserById(id);
     const [record] = response.data;
 
@@ -308,21 +305,20 @@ describe('UserService API', () => {
       lastName: faker.name.lastName(),
       password: faker.random.alpha(10),
       handle: `@${faker.random.alpha(10)}`,
-      motto: `${faker.hacker.phrase()}`
+      motto: `${faker.hacker.phrase()}`,
     };
 
-    const userService = sandbox.my.userService;
-    const userRepo = sandbox.my.userRepo;
+    const { userService } = sandbox.my;
+    const { userRepo } = sandbox.my;
 
     userService.setRepository(userRepo);
-    
-    const response1 = await userService.create(testUserData);
-    const [user] = response1.data;
+
+    await userService.create(testUserData);
     const response2 = await userService.createUserPassword({ user: { id, emailAddress }, password: userPassword });
-  
+
     const [record] = response2.data;
 
-    expect(typeof(record.password) === 'string').toBe(true);
+    expect(typeof (record.password) === 'string').toBe(true);
     expect(record.userId === id).toBe(true);
   });
 
@@ -337,24 +333,22 @@ describe('UserService API', () => {
       lastName: faker.name.lastName(),
       password: faker.random.alpha(10),
       handle: `@${faker.random.alpha(10)}`,
-      motto: `${faker.hacker.phrase()}`
+      motto: `${faker.hacker.phrase()}`,
     };
 
-    const userService = sandbox.my.userService;
-    const userRepo = sandbox.my.userRepo;
+    const { userService } = sandbox.my;
+    const { userRepo } = sandbox.my;
 
     userService.setRepository(userRepo);
-    
-    const response1 = await userService.create(testUserData);
-    const [user] = response1.data;
-    
+
+    await userService.create(testUserData);
     await userService.createUserPassword({ user: { id, emailAddress }, password: userPassword });
-    
+
     const response2 = await userService.validateUserPassword({ emailAddress, password: userPassword });
-    const [record2] = response2.data; 
+    const [record2] = response2.data;
 
     const response3 = await userService.validateUserPassword({ emailAddress, password: 'foo' });
-    const [record3] = response3.data; 
+    const [record3] = response3.data;
 
     expect(record2.isValid).toBe(true);
     expect(record3.isValid).toBe(false);
@@ -372,21 +366,21 @@ describe('UserService API', () => {
       lastName: faker.name.lastName(),
       password: faker.random.alpha(10),
       handle: `@${faker.random.alpha(10)}`,
-      motto: `${faker.hacker.phrase()}`
+      motto: `${faker.hacker.phrase()}`,
     };
 
-    const userService = sandbox.my.userService;
-    const userRepo = sandbox.my.userRepo;
+    const { userService } = sandbox.my;
+    const { userRepo } = sandbox.my;
 
     userService.setRepository(userRepo);
-    
+
     await userService.create(testUserData);
-    await userService.createUserPassword({ user: { id, emailAddress }, password: userPassword }); 
+    await userService.createUserPassword({ user: { id, emailAddress }, password: userPassword });
     await userService.resetUserPassword({ user: { id, emailAddress }, password: newUserPassword });
-    
+
     const response = await userService.validateUserPassword({ emailAddress, password: newUserPassword });
     const [record] = response.data;
-    
+
     expect(record.isValid).toBe(true);
   });
 });

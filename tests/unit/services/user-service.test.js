@@ -1,5 +1,6 @@
 // For more info about the Jest mocking APIs see: https://jestjs.io/docs/mock-functions#mock-property
 
+import { describe, expect, test } from '@jest/globals';
 import MockSandboxFactory from '../../mocks/mock-sandbox-factory.js';
 import UserService from '../../../lib/services/user/index.js';
 
