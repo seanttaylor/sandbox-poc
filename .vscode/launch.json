@@ -1,39 +1,42 @@
 {
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Launch Program",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
-            "program": "${workspaceFolder}/index.js",
-            //This option set per (https://stackoverflow.com/questions/35904450/express-morgan-not-writing-logs-to-file-or-stdout)
-            "console": "integratedTerminal",
-            "env": {
-                "APP_VERSION": "0.0.3",
-                "CHAOS_SCHEDULE_TIMEOUT_MILLIS": "10000",
-                "CHAOS_ENABLED": "false",
-                "GLOBAL_ERROR_COUNT_THRESHOLD": "1",
-                "LOG_LEVEL": "debug",
-                "PORT": "9000",
-                "SCHEMA_BASE_URL": "/schemas"
-            }
-        },
-        {
-            "type": "node-terminal",
-            "name": "Run Script: test(2)",
-            "request": "launch",
-            "command": "npm run test",
-            "cwd": "${workspaceFolder}",
-            "env": {
-                "APP_VERSION": "0.0.3",
-                "CHAOS_SCHEDULE_TIMEOUT_MILLIS": "10000",
-                "CHAOS_ENABLED": "true",
-                "GLOBAL_ERROR_COUNT_THRESHOLD": "1",
-                "LOG_LEVEL": "debug",
-            }
-        }
-    ]
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch Program",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "program": "${workspaceFolder}/index.js",
+      //This option set per (https://stackoverflow.com/questions/35904450/express-morgan-not-writing-logs-to-file-or-stdout)
+      "console": "integratedTerminal",
+      "env": {
+        "APP_VERSION": "0.0.3",
+        "CHAOS_SCHEDULE_TIMEOUT_MILLIS": "10000",
+        "CHAOS_ENABLED": "false",
+        "GLOBAL_ERROR_COUNT_THRESHOLD": "1",
+        "JWT_SECRET": "superSecret",
+        "LOG_LEVEL": "debug",
+        "PORT": "9000",
+        "SCHEMA_BASE_URL": "/schemas"
+      }
+    },
+    {
+      "type": "node-terminal",
+      "name": "Run Script: test",
+      "request": "launch",
+      "command": "npm run test",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "APP_VERSION": "0.0.3",
+        "CHAOS_SCHEDULE_TIMEOUT_MILLIS": "10000",
+        "CHAOS_ENABLED": "true",
+        "GLOBAL_ERROR_COUNT_THRESHOLD": "1",
+        "JWT_SECRET": "superSecret",
+        "LOG_LEVEL": "debug",
+        "SCHEMA_BASE_URL": "/schemas"
+      }
+    }
+  ]
 }

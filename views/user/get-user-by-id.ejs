@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nicely | Get User By Id</title>
+</head>
+  <body>
+    <section itemscope itemtype="/api/v1/schemas/user">
+      <span itemprop="id" data-id="<%=data.user.id%>"></span>
+      <p itemprop="firstName"><%=data.user.firstName%></p>
+      <p itemprop="lastName"><%=data.user.lastName%></p>
+      <p itemprop="emailAddress"><%=data.user.emailAddress%></p>
+      <p itemprop="handle"><%=data.user.handle%></p>
+      <p itemprop="motto"><%=data.user.motto%></p>
+    </section>
+  </body>
+</html>
