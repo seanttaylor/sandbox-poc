@@ -178,6 +178,6 @@ describe('PluginHTMLUser', () => {
     const HTMLResponse = await testPlugin.getErrorResponse(401);
 
     expect(typeof (HTMLResponse) === 'string').toBe(true);
-    expect(HTMLResponse.includes('<title> Nicely | Unauthorized Error</title>')).toBe(true);
+    expect(HTMLResponse.includes('data-name="unauthorized-error"')).toBe(true);
   });
 });

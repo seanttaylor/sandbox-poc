@@ -1,29 +1,66 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Nicely | Unauthorized Error</title>
-  </head>
-  <body>
-    <h3>We couldn't find that username or password. Try again.</h3>
-    <form>
-      <label for="email-address" rel="login">Email:</label><br>
-      <input type="text" name="email-address"><br>
-      <label for="password">Password:</label><br>
-      <input type="text" name="password"><br>
-      <button type="submit" value="Login">Login</button>
-    </form>
-    <!--<form action="/api/v1/sessions" hx-method="PUT" rel="login">
+<div class="norender-metadata">
+  <span data-name="unauthorized-error"></span> 
+  <span data-class="htmx-partial client-error"></span>
+</div>
+<div class="topnav">
+  <a class="active" href="#home">Nicely</a>
+  <!--<a href="#news">News</a>
+  <a href="#contact">Contact</a>
+  <a href="#about">About</a>-->
+</div>
+<div class="container">
+  <section class="hero">
+    <div class="hero-body">
+      <p class="title">
+        Nicely
+      </p>
+      <p class="subtitle">
+        A nice social network for nice people.
+      </p>
+    </div>
+  </section>
+  <form action="">
+    <div class="row">
+      <h2 style="text-align:center">We coudn't find that email address or password. Try again.</h2>
+      <div class="vl">
+        <span class="vl-innertext">or</span>
+      </div>
 
-      <label for="username">Email</label><br>
-      <input type="email" name="email-address">
+      <div class="col">
+        <a href="#" rel="login-facebook" class="fb btn">
+          <i class="fa fa-facebook fa-fw"></i> Login with Facebook
+         </a>
+        <a href="#" rel="login-twitter" class="twitter btn">
+          <i class="fa fa-twitter fa-fw"></i> Login with Twitter
+        </a>
+        <a href="#" rel="login-google" class="google btn"><i class="fa fa-google fa-fw">
+          </i> Login with Google+
+        </a>
+      </div>
+
+      <div class="col">
+        <div class="hide-md-lg">
+          <p>Or sign in manually:</p>
+        </div>
+
+        <input type="text" class="email-password-login" name="emailAddress" placeholder="Email" required>
+        <input type="password" class="email-password-login" name="password" placeholder="Password" required>
+        <input type="submit" hx-target="#app" hx-swap="innerHTML" hx-trigger="click" hx-put="/api/v1/sessions" hx-ext="json-enc" hx-include=".email-password-login" value="Login">
+      </div>
       
-      <label for="password">Password</label><br>
-      <input type="password" name="password"><br>
+    </div>
+  </form>
+</div>
 
-      <button type="submit">Login</button>-->
-    </form>
-  </body>
-</html>
+<div class="bottom-container">
+  <div class="row">
+    <div class="btn-group" style="width:100%">
+      <a href="" rel="create-account">
+        <button style="width:50%">Create a New Account</button>
+      </a>
+      <a href="" rel="reset-password">
+        <button style="width:50%">Forgot Password?</button>
+      </a>  
+    </div>
+  </div>
+</div>

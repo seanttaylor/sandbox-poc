@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css" integrity="sha512-HqxHUkJM0SYcbvxUw5P60SzdOTy/QVwA1JJrvaXJv4q7lmbDZCmZaqz01UPOaQveoxfYRv1tHozWGPMcuTBuvQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css" integrity="sha512-q3eWabyZPc1XTCmF+8/LuE1ozpg5xxn7iO89yfSOd5/oKvyqLngoNGsx8jq92Y8eXJ/IRxQbEC+FGSYxtk2oiw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="/dist/css/components/nav/top-nav.css">
+  <link rel="stylesheet" href="/dist/css/components/buttons/button-group-justified.css">
+  <link rel="stylesheet" href="/dist/css/components/forms/login-social.css">
+  <title>Nicely | A social network for nice people | Login</title>
+</head>
+  <body id="app">
+    <!--<div class="topnav">
+      <a class="active" href="#home">AcmeCo</a>
+      <a href="#news">News</a>
+      <a href="#contact">Contact</a>
+      <a href="#about">About</a>
+    </div>-->
+    <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
+      <div class="navbar-brand">
+        <a class="navbar-item" href="https://bulma.io">
+          <h3 class="subtitle is-4">Nicely</h3>
+        </a>
+    
+        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+    
+      <div id="navbarBasicExample" class="navbar-menu">
+        <!--<div class="navbar-start">
+          <a class="navbar-item">
+            Home
+          </a>
+    
+          <a class="navbar-item">
+            Documentation
+          </a>
+    
+          <div class="navbar-item has-dropdown is-hoverable">
+            <a class="navbar-link">
+              More
+            </a>
+    
+            <div class="navbar-dropdown">
+              <a class="navbar-item">
+                About
+              </a>
+              <a class="navbar-item">
+                Jobs
+              </a>
+              <a class="navbar-item">
+                Contact
+              </a>
+              <hr class="navbar-divider">
+              <a class="navbar-item">
+                Report an issue
+              </a>
+            </div>
+          </div>
+        </div>-->
+    
+        <!--<div class="navbar-end">
+          <div class="navbar-item">
+            <div class="buttons">
+              <a class="button is-primary">
+                <strong>Sign up</strong>
+              </a>
+              <a class="button is-light">
+                Log in
+              </a>
+            </div>
+          </div>
+        </div>-->
+      </div>
+    </nav>
+    <!-- Login Form -->
+    <div class="container">
+      <section class="hero">
+        <div class="hero-body">
+          <p class="title">
+            Nicely
+          </p>
+          <p class="subtitle">
+            A nice social network for nice people
+          </p>
+        </div>
+      </section>
+      <form action="">
+        <div class="row">
+          <h2 style="text-align:center">Login with Social Media or Email & Password</h2>
+          <div class="vl">
+            <span class="vl-innertext">or</span>
+          </div>
+    
+          <div class="col">
+            <a href="#" rel="login-facebook" class="button is-fullwidth">
+              <i class="fa fa-facebook fa-fw"></i> Login with Facebook
+             </a>
+             <br>
+            <a href="#" rel="login-twitter" class="button is-fullwidth">
+              <i class="fa fa-twitter fa-fw"></i> Login with Twitter
+            </a>
+            <br>
+            <a href="#" rel="login-google" class="button is-fullwidth"><i class="fa fa-google fa-fw">
+              </i> Login with Google+
+            </a>
+          </div>
+    
+          <div class="col">
+            <div class="hide-md-lg">
+              <p>Or sign in manually:</p>
+            </div>
+    
+            <input type="text" class="email-password-login" name="emailAddress" placeholder="Email" required>
+            <input type="password" class="email-password-login" name="password" placeholder="Password" required>
+            <input type="submit" hx-target="#app" hx-swap="innerHTML" hx-trigger="click" hx-put="/api/v1/sessions" hx-ext="json-enc" hx-include=".email-password-login" value="Login" class="button is-fullwidth">
+          </div>
+          
+        </div>
+      </form>
+    </div>
+    
+    <div class="bottom-container">
+      <div class="row">
+        <div class="btn-group" style="width:100%">
+          <a href="" rel="create-account">
+            <button class="button is-inverted" style="width:50%">Create a New Account</button>
+          </a>
+          <a href="" rel="reset-password">
+            <button class="button is-inverted" style="width:50%">Forgot Password?</button>
+          </a>  
+        </div>
+      </div>
+    </div>
+   <script src="https://unpkg.com/htmx.org@1.8.0"></script>
+   <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
+  </body>
+</html>

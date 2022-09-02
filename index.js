@@ -10,7 +10,7 @@ import morgan from 'morgan';
 
 import Sandbox from './src/sandbox/index.js';
 
-/** ************** SERVICES *************** */
+/* *************** SERVICES *************** */
 import RecoveryManager from './lib/recovery/index.js';
 import PostRepository from './lib/repos/post/index.js';
 import SessionRepository from './lib/repos/session/index.js';
@@ -50,7 +50,7 @@ const __dirname = path.dirname(__filename);
 const figletize = promisify(figlet);
 const expressApp = express();
 
-/** ************** MODULE DEFINITION *************** */
+/* *************** MODULE DEFINITION *************** */
 Sandbox.module('/lib/repos/post', PostRepository);
 Sandbox.module('/lib/repos/session', SessionRepository);
 Sandbox.module('/lib/repos/user', UserRepository);
@@ -150,13 +150,13 @@ Sandbox.of(
       userService: strategyUserService,
     });
 
-    /** ************** MODULE CONFIGURATION **************** */
+    /* *************** MODULE CONFIGURATION **************** */
     sandbox.my.postService.setRepository(postRepo);
     sandbox.my.sessionService.setRepository(sessionRepo);
     sandbox.my.userService.setRepository(userRepo);
     sandbox.my.supervisor.setErrorThreshold(process.env.GLOBAL_ERROR_COUNT_THRESHOLD);
 
-    /** ************** EVENT REGISTRATION *************** */
+    /* *************** EVENT REGISTRATION *************** */
     events.on({ event: 'application.error', handler: onApplicationError, subscriberId });
     events.on({ event: 'application.error.globalErrorThresholdExceeded', handler: onGlobalModuleErrorThresholdExceeded, subscriberId });
     events.on({ event: 'application.recovery.recoveryAttemptCompleted', handler: onModuleRecoveryAttemptCompleted, subscriberId });
