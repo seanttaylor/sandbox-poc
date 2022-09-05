@@ -1,3 +1,6 @@
+import {
+  describe, expect, jest, test,
+} from '@jest/globals';
 import { faker } from '@faker-js/faker';
 import PostService from '../../lib/services/post/index.js';
 import PostRepository from '../../lib/repos/post/index.js';
@@ -17,207 +20,204 @@ describe('PostService', () => {
       PluginEventAuthz(controller);
       PostService(controller);
 
-      const postService = sandbox.my.postService;
+      const { postService } = sandbox.my;
       await postService.create({ author: faker.datatype.uuid(), body: faker.hacker.phrase() });
     } catch (e) {
       expect(e.message).toMatch('Missing implementation');
     }
   });
 
-    test('Should be able to create a new `Post`', async () => {
-        const authorId = `/users/${faker.datatype.uuid()}`;
-        const body = faker.hacker.phrase();
-        const sandbox = {};
-        const { controller } = SandboxController(sandbox);
+  test('Should be able to create a new `Post`', async () => {
+    const authorId = `/users/${faker.datatype.uuid()}`;
+    const body = faker.hacker.phrase();
+    const sandbox = {};
+    const { controller } = SandboxController(sandbox);
 
-        PluginEventAuthz(controller);
-        PostRepository(controller);
-        PostService(controller);
+    PluginEventAuthz(controller);
+    PostRepository(controller);
+    PostService(controller);
 
-        const postService = sandbox.my.postService;
-        const postRepo = sandbox.my.postRepo;
+    const { postService } = sandbox.my;
+    const { postRepo } = sandbox.my;
 
-        postService.setRepository(postRepo);
+    postService.setRepository(postRepo);
 
-        const createdPost = await postService.create({ authorId, body });
-        const result = createdPost.data[0];
+    const createdPost = await postService.create({ authorId, body });
+    const result = createdPost.data[0];
 
-        expect(Object.keys(result).includes('id')).toBe(true);
-        expect(result.body === body).toBe(true);
-        expect(result.authorId === authorId).toBe(true);
-    });
+    expect(Object.keys(result).includes('id')).toBe(true);
+    expect(result.body === body).toBe(true);
+    expect(result.authorId === authorId).toBe(true);
+  });
 
-    test('Should be able to edit an existing `Post`', async () => {
-        const authorId = `/users/${faker.datatype.uuid()}`;
-        const body = faker.hacker.phrase();
-        const newBody = faker.hacker.phrase();
-        const sandbox = {};
-        const { controller } = SandboxController(sandbox);
+  test('Should be able to edit an existing `Post`', async () => {
+    const authorId = `/users/${faker.datatype.uuid()}`;
+    const body = faker.hacker.phrase();
+    const newBody = faker.hacker.phrase();
+    const sandbox = {};
+    const { controller } = SandboxController(sandbox);
 
-        PluginEventAuthz(controller);
-        PostRepository(controller);
-        PostService(controller);
+    PluginEventAuthz(controller);
+    PostRepository(controller);
+    PostService(controller);
 
-        const postService = sandbox.my.postService;
-        const postRepo = sandbox.my.postRepo;
+    const { postService } = sandbox.my;
+    const { postRepo } = sandbox.my;
 
-        postService.setRepository(postRepo);
+    postService.setRepository(postRepo);
 
-        const createdPost = await postService.create({ authorId, body });
-        const { id } = createdPost.data[0];
-        
-        const result = await postService.editPost({ id, body: newBody });
-        const [updatedPost] = result.data;
+    const createdPost = await postService.create({ authorId, body });
+    const { id } = createdPost.data[0];
 
-        expect(updatedPost.body === newBody).toBe(true);
-        expect(updatedPost.id === id).toBe(true);
-        expect(updatedPost.authorId === authorId).toBe(true);
-    });
+    const result = await postService.editPost({ id, body: newBody });
+    const [updatedPost] = result.data;
 
-    test('Should be able to delete an existing `Post`', async () => {
-        const authorId = `/users/${faker.datatype.uuid()}`;
-        const body = faker.hacker.phrase();
-        const newBody = faker.hacker.phrase();
-        const sandbox = {};
-        const { controller } = SandboxController(sandbox);
+    expect(updatedPost.body === newBody).toBe(true);
+    expect(updatedPost.id === id).toBe(true);
+    expect(updatedPost.authorId === authorId).toBe(true);
+  });
 
-        PluginEventAuthz(controller);
-        PostRepository(controller);
-        PostService(controller);
+  test('Should be able to delete an existing `Post`', async () => {
+    const authorId = `/users/${faker.datatype.uuid()}`;
+    const body = faker.hacker.phrase();
+    const sandbox = {};
+    const { controller } = SandboxController(sandbox);
 
-        const postService = sandbox.my.postService;
-        const postRepo = sandbox.my.postRepo;
+    PluginEventAuthz(controller);
+    PostRepository(controller);
+    PostService(controller);
 
-        postService.setRepository(postRepo);
+    const { postService } = sandbox.my;
+    const { postRepo } = sandbox.my;
 
-        const { id } = await postService.create({ authorId, body });
-        const result = await postService.deletePost(id);
+    postService.setRepository(postRepo);
 
-        expect(Array.isArray(result.data)).toBe(true);
-        expect(result.data.length === 0).toBe(true);
-    });
+    const { id } = await postService.create({ authorId, body });
+    const result = await postService.deletePost(id);
 
-    test('Should be able to determine the existence of a `Post` using an id', async () => {
-        const authorId = `/users/${faker.datatype.uuid()}`;
-        const body = faker.hacker.phrase();
-        const sandbox = {};
-        const { controller } = SandboxController(sandbox);
+    expect(Array.isArray(result.data)).toBe(true);
+    expect(result.data.length === 0).toBe(true);
+  });
 
-        PluginEventAuthz(controller);
-        PostRepository(controller);
-        PostService(controller);
+  test('Should be able to determine the existence of a `Post` using an id', async () => {
+    const authorId = `/users/${faker.datatype.uuid()}`;
+    const body = faker.hacker.phrase();
+    const sandbox = {};
+    const { controller } = SandboxController(sandbox);
 
-        const postService = sandbox.my.postService;
-        const postRepo = sandbox.my.postRepo;
+    PluginEventAuthz(controller);
+    PostRepository(controller);
+    PostService(controller);
 
-        postService.setRepository(postRepo);
+    const { postService } = sandbox.my;
+    const { postRepo } = sandbox.my;
 
-        const createdPost = await postService.create({ authorId, body });
-        const { id } = createdPost.data[0];
-        const result = await postService.exists(id);
+    postService.setRepository(postRepo);
 
-        expect(result.exists).toBe(true);
-        
-        const result2 = await postService.exists('foo');
-        expect(result2.exists).toBe(false);
-    });
+    const createdPost = await postService.create({ authorId, body });
+    const { id } = createdPost.data[0];
+    const result = await postService.exists(id);
 
-    
+    expect(result.exists).toBe(true);
 
-    test('Should be able to get all instances of `Post` in the datastore', async () => {
-        const authorId = `/users/${faker.datatype.uuid()}`;
-        const body = faker.hacker.phrase();
-        const sandbox = {};
-        const { controller } = SandboxController(sandbox);
+    const result2 = await postService.exists('foo');
+    expect(result2.exists).toBe(false);
+  });
 
-        PluginEventAuthz(controller);
-        PostRepository(controller);
-        PostService(controller);
+  test('Should be able to get all instances of `Post` in the datastore', async () => {
+    const authorId = `/users/${faker.datatype.uuid()}`;
+    const body = faker.hacker.phrase();
+    const sandbox = {};
+    const { controller } = SandboxController(sandbox);
 
-        const postService = sandbox.my.postService;
-        const postRepo = sandbox.my.postRepo;
+    PluginEventAuthz(controller);
+    PostRepository(controller);
+    PostService(controller);
 
-        postService.setRepository(postRepo);
+    const { postService } = sandbox.my;
+    const { postRepo } = sandbox.my;
 
-        await postService.create({ authorId, body });
-        const result = await postService.getAllPosts();
+    postService.setRepository(postRepo);
 
-        expect(Array.isArray(result.data)).toBe(true);
-        expect(result.data.length > 0).toBe(true);
-    });
+    await postService.create({ authorId, body });
+    const result = await postService.getAllPosts();
 
-    test('Should be able to get an instance of `Post` by id from the data store', async () => {
-        const authorId = `/users/${faker.datatype.uuid()}`;
-        const body = faker.hacker.phrase();
-        const sandbox = {};
-        const { controller } = SandboxController(sandbox);
+    expect(Array.isArray(result.data)).toBe(true);
+    expect(result.data.length > 0).toBe(true);
+  });
 
-        PluginEventAuthz(controller);
-        PostRepository(controller);
-        PostService(controller);
+  test('Should be able to get an instance of `Post` by id from the data store', async () => {
+    const authorId = `/users/${faker.datatype.uuid()}`;
+    const body = faker.hacker.phrase();
+    const sandbox = {};
+    const { controller } = SandboxController(sandbox);
 
-        const postService = sandbox.my.postService;
-        const postRepo = sandbox.my.postRepo;
+    PluginEventAuthz(controller);
+    PostRepository(controller);
+    PostService(controller);
 
-        postService.setRepository(postRepo);
+    const { postService } = sandbox.my;
+    const { postRepo } = sandbox.my;
 
-        const createdPost = await postService.create({ authorId, body });
-        const { id } = createdPost.data[0];
-        const result = await postService.getPostById(id);
-        const [post] = result.data;
+    postService.setRepository(postRepo);
 
-        expect(post.id === id).toBe(true);
-        expect(post.body === body).toBe(true);
-    });
+    const createdPost = await postService.create({ authorId, body });
+    const { id } = createdPost.data[0];
+    const result = await postService.getPostById(id);
+    const [post] = result.data;
 
-    test('Setting no repository should do nothing and return undefined', async () => {
-        const sandbox = {};
-        const { controller } = SandboxController(sandbox);
+    expect(post.id === id).toBe(true);
+    expect(post.body === body).toBe(true);
+  });
 
-        PluginEventAuthz(controller);
-        PostRepository(controller);
-        PostService(controller);
+  test('Setting no repository should do nothing and return undefined', async () => {
+    const sandbox = {};
+    const { controller } = SandboxController(sandbox);
 
-        const postService = sandbox.my.postService;
-        const result = postService.setRepository();
+    PluginEventAuthz(controller);
+    PostRepository(controller);
+    PostService(controller);
 
-        expect(result).toBeUndefined();
-    });
+    const { postService } = sandbox.my;
+    const result = postService.setRepository();
 
-    test('Setting no repository should do nothing and return undefined', async () => {
-        const sandbox = {};
-        const { controller } = SandboxController(sandbox);
+    expect(result).toBeUndefined();
+  });
 
-        PluginEventAuthz(controller);
-        PostRepository(controller);
-        PostService(controller);
+  test('Setting no repository should do nothing and return undefined', async () => {
+    const sandbox = {};
+    const { controller } = SandboxController(sandbox);
 
-        const postService = sandbox.my.postService;
-        const result = postService.setRepository();
+    PluginEventAuthz(controller);
+    PostRepository(controller);
+    PostService(controller);
 
-        expect(result).toBeUndefined();
-    });
+    const { postService } = sandbox.my;
+    const result = postService.setRepository();
 
-    test('Should be able to launch logic to process any outstanding work on the `application.writeAheadLogAvailable` event', async () => {
-        const sandbox = {};
-        const { controller } = SandboxController(sandbox);
-        const mockSandbox = MockSandboxFactory();
-        const fakeLogHandler = jest.fn();
-        const subscriberId = 'testRunner';
+    expect(result).toBeUndefined();
+  });
 
-        PluginEventAuthz(controller);
-        PostRepository(controller);
-        PostService(controller);
+  test('Should be able to launch logic to process any outstanding work on the `application.writeAheadLogAvailable` event', async () => {
+    const sandbox = {};
+    const { controller } = SandboxController(sandbox);
+    const mockSandbox = MockSandboxFactory();
+    const fakeLogHandler = jest.fn();
+    const subscriberId = 'testRunner';
 
-        const events = mockSandbox.get('/plugins/events-authz');
-        events.on({ event: 'application.writeAheadLogAvailable', handler: fakeLogHandler, subscriberId });
-        // This event triggers side-effects only; since we don't need to write anything to the PostService we just provide an empty array
-        events.notify('application.writeAheadLogAvailable', { entries: [], serviceName: 'postService' });
+    PluginEventAuthz(controller);
+    PostRepository(controller);
+    PostService(controller);
 
-        // We validate that the handler for the `application.writeAheadLogAvailable` is called when the event fires.
-        expect(events.notify.mock.calls.length === 1).toBe(true);
-        expect(typeof events.notify.mock.calls[0][1] === 'object').toBe(true);
-        expect(Object.keys(events.notify.mock.calls[0][1]).includes('entries')).toBe(true);
-        expect(Object.keys(events.notify.mock.calls[0][1]).includes('serviceName')).toBe(true);
-    });
+    const events = mockSandbox.get('/plugins/events-authz');
+    events.on({ event: 'application.writeAheadLogAvailable', handler: fakeLogHandler, subscriberId });
+    // This event triggers side-effects only; since we don't need to write anything to the PostService we just provide an empty array
+    events.notify('application.writeAheadLogAvailable', { entries: [], serviceName: 'postService' });
+
+    // We validate that the handler for the `application.writeAheadLogAvailable` is called when the event fires.
+    expect(events.notify.mock.calls.length === 1).toBe(true);
+    expect(typeof events.notify.mock.calls[0][1] === 'object').toBe(true);
+    expect(Object.keys(events.notify.mock.calls[0][1]).includes('entries')).toBe(true);
+    expect(Object.keys(events.notify.mock.calls[0][1]).includes('serviceName')).toBe(true);
+  });
 });
