@@ -1,5 +1,6 @@
 // For more info about the Jest mocking APIs see: https://jestjs.io/docs/mock-functions#mock-property
 
+import { describe, expect, test } from '@jest/globals';
 import { faker } from '@faker-js/faker';
 import PluginHypermediaPost from '../../../lib/plugins/hypermedia/post/index.js';
 import MockSandBoxFactory from '../../mocks/mock-sandbox-factory.js';
@@ -9,10 +10,9 @@ import MockPostService from '../../mocks/services/mock-post-service.js';
  * This test suite verifies Hypermedia Post plugin API.
  */
 describe('HypermediaPostPlugin', () => {
-
   test('Should call the `plugin` method defined on the sandbox to register the plugin', async () => {
     const mockSandbox = MockSandBoxFactory();
-    
+
     PluginHypermediaPost(mockSandbox);
 
     expect(mockSandbox.plugin.mock.calls.length).toBe(1);
@@ -39,7 +39,7 @@ describe('HypermediaPostPlugin', () => {
     PluginHypermediaPost(mockSandbox);
 
     // Create a test plugin instance and provide it with dependencies
-    const testPlugin = mockSandbox.plugin.mock.calls[0][0]['fn'](mockPostService);
+    const testPlugin = mockSandbox.plugin.mock.calls[0][0].fn(mockPostService);
 
     // Validate the plugin returns the correct API
     expect(typeof (testPlugin)).toBe('object');
@@ -57,18 +57,18 @@ describe('HypermediaPostPlugin', () => {
     PluginHypermediaPost(mockSandbox);
 
     // Create a test plugin instance and provide it with dependencies
-    const testPlugin = mockSandbox.plugin.mock.calls[0][0]['fn'](mockPostService);
+    const testPlugin = mockSandbox.plugin.mock.calls[0][0].fn(mockPostService);
     await testPlugin.create({
-        authorId: faker.datatype.uuid(),
-        body: faker.hacker.phrase()
+      authorId: faker.datatype.uuid(),
+      body: faker.hacker.phrase(),
     });
     const posts = await testPlugin.getAllPosts();
 
     // Validate the plugin returns the correct API
-    expect(typeof(testPlugin)).toBe('object');
+    expect(typeof (testPlugin)).toBe('object');
     expect(Object.keys(posts).includes('_links')).toBe(true);
-    expect(Object.keys(posts).includes('_embedded')).toBe(true)
-    expect(Array.isArray(posts['_embedded']['sandbox:posts'])).toBe(true);
+    expect(Object.keys(posts).includes('_embedded')).toBe(true);
+    expect(Array.isArray(posts._embedded['sandbox:posts'])).toBe(true);
   });
 
   test('Should return `Post` resource for `getPostById` in HAL format', async () => {
@@ -78,16 +78,16 @@ describe('HypermediaPostPlugin', () => {
     PluginHypermediaPost(mockSandbox);
 
     // Create a test plugin instance and provide it with dependencies
-    const testPlugin = mockSandbox.plugin.mock.calls[0][0]['fn'](mockPostService);
+    const testPlugin = mockSandbox.plugin.mock.calls[0][0].fn(mockPostService);
     const result = await testPlugin.create({
-        authorId: faker.datatype.uuid(),
-        body: faker.hacker.phrase()
+      authorId: faker.datatype.uuid(),
+      body: faker.hacker.phrase(),
     });
-    
+
     const post = await testPlugin.getPostById(result.id);
 
     // Validate the plugin returns the correct API
-    expect(typeof(testPlugin)).toBe('object');
+    expect(typeof (testPlugin)).toBe('object');
     expect(Object.keys(post).includes('_links')).toBe(true);
     expect(Object.keys(post._links).includes('self')).toBe(true);
     expect(Object.keys(post._links).includes('curies')).toBe(true);
@@ -105,16 +105,16 @@ describe('HypermediaPostPlugin', () => {
 
     // Create a test plugin instance and provide it with dependencies
     const testUpdate = faker.hacker.phrase();
-    const testPlugin = mockSandbox.plugin.mock.calls[0][0]['fn'](mockPostService);
+    const testPlugin = mockSandbox.plugin.mock.calls[0][0].fn(mockPostService);
     const result = await testPlugin.create({
-        authorId: faker.datatype.uuid(),
-        body: faker.hacker.phrase()
+      authorId: faker.datatype.uuid(),
+      body: faker.hacker.phrase(),
     });
     const post = await testPlugin.editPost({ id: result.id, body: testUpdate });
 
     // Validate the plugin returns the correct API
     expect(post.body === testUpdate).toBe(true);
-    expect(typeof(testPlugin)).toBe('object');
+    expect(typeof (testPlugin)).toBe('object');
     expect(Object.keys(post).includes('_links')).toBe(true);
     expect(Object.keys(post._links).includes('self')).toBe(true);
     expect(Object.keys(post._links).includes('curies')).toBe(true);
@@ -124,82 +124,81 @@ describe('HypermediaPostPlugin', () => {
     expect(Object.keys(post._links).includes('sandbox:user-posts')).toBe(true);
   });
 
-    test('Should return `Post` resource for `deletePost` in HAL format', async () => {
-        const mockSandbox = MockSandBoxFactory();
-        const mockPostService = MockPostService();
+  test('Should return `Post` resource for `deletePost` in HAL format', async () => {
+    const mockSandbox = MockSandBoxFactory();
+    const mockPostService = MockPostService();
 
-        PluginHypermediaPost(mockSandbox);
+    PluginHypermediaPost(mockSandbox);
 
-        // Create a test plugin instance and provide it with dependencies
-        const testPlugin = mockSandbox.plugin.mock.calls[0][0]['fn'](mockPostService);
-        const result = await testPlugin.create({
-            authorId: faker.datatype.uuid(),
-            body: faker.hacker.phrase()
-        });
-        const post = await testPlugin.deletePost(result.id);
+    // Create a test plugin instance and provide it with dependencies
+    const testPlugin = mockSandbox.plugin.mock.calls[0][0].fn(mockPostService);
+    const result = await testPlugin.create({
+      authorId: faker.datatype.uuid(),
+      body: faker.hacker.phrase(),
+    });
+    const post = await testPlugin.deletePost(result.id);
 
-        // Validate the plugin returns the correct API
-        expect(typeof(testPlugin)).toBe('object');
-        expect(Object.keys(post).includes('_links')).toBe(true);
-        expect(Object.keys(post._links).includes('self')).toBe(true);
-        expect(Object.keys(post._links).includes('curies')).toBe(true);
-        expect(Object.keys(post._links).includes('sandbox:index')).toBe(true);
-        expect(Object.keys(post._links).includes('sandbox:posts')).toBe(true);
-        expect(Object.keys(post._links).includes('sandbox:users')).toBe(true);
-        expect(Object.keys(post._links).includes('sandbox:user-posts')).toBe(true);
+    // Validate the plugin returns the correct API
+    expect(typeof (testPlugin)).toBe('object');
+    expect(Object.keys(post).includes('_links')).toBe(true);
+    expect(Object.keys(post._links).includes('self')).toBe(true);
+    expect(Object.keys(post._links).includes('curies')).toBe(true);
+    expect(Object.keys(post._links).includes('sandbox:index')).toBe(true);
+    expect(Object.keys(post._links).includes('sandbox:posts')).toBe(true);
+    expect(Object.keys(post._links).includes('sandbox:users')).toBe(true);
+    expect(Object.keys(post._links).includes('sandbox:user-posts')).toBe(true);
+  });
+
+  test('Should be able to return a representation for a *non-existent* `Post` in HAL format', async () => {
+    const mockSandbox = MockSandBoxFactory();
+    const mockPostService = MockPostService();
+
+    PluginHypermediaPost(mockSandbox);
+
+    // Create a test plugin instance and provide it with dependencies
+    const testPlugin = mockSandbox.plugin.mock.calls[0][0].fn(mockPostService);
+    const createdPost = await testPlugin.create({
+      authorId: faker.datatype.uuid(),
+      body: faker.hacker.phrase(),
+    });
+    await testPlugin.deletePost(createdPost.id);
+
+    const HAL = await testPlugin.exists(createdPost.id);
+
+    // Validate the plugin returns the correct API
+    expect(typeof (testPlugin)).toBe('object');
+    expect(Object.keys(HAL.response).includes('_links')).toBe(true);
+    expect(Object.keys(HAL.response._links).includes('self')).toBe(true);
+    expect(Object.keys(HAL.response._links).includes('curies')).toBe(true);
+    expect(Object.keys(HAL.response._links).includes('sandbox:index')).toBe(true);
+    expect(Object.keys(HAL.response._links).includes('sandbox:posts')).toBe(true);
+    expect(Object.keys(HAL.response._links).includes('sandbox:users')).toBe(true);
+    expect(Object.keys(HAL.response._links).includes('sandbox:user-posts')).toBe(true);
+  });
+
+  test('Should return a representation for an existing `Post` in HAL format', async () => {
+    const mockSandbox = MockSandBoxFactory();
+    const mockPostService = MockPostService();
+
+    PluginHypermediaPost(mockSandbox);
+
+    // Create a test plugin instance and provide it with dependencies
+    const testPlugin = mockSandbox.plugin.mock.calls[0][0].fn(mockPostService);
+    const createdPost = await testPlugin.create({
+      authorId: faker.datatype.uuid(),
+      body: faker.hacker.phrase(),
     });
 
-    test('Should be able to return a representation for a *non-existent* `Post` in HAL format', async () => {
-        const mockSandbox = MockSandBoxFactory();
-        const mockPostService = MockPostService();
+    const HAL = await testPlugin.exists(createdPost.id);
 
-        PluginHypermediaPost(mockSandbox);
-
-        // Create a test plugin instance and provide it with dependencies
-        const testPlugin = mockSandbox.plugin.mock.calls[0][0]['fn'](mockPostService);
-        const createdPost = await testPlugin.create({
-            authorId: faker.datatype.uuid(),
-            body: faker.hacker.phrase()
-        });
-        await testPlugin.deletePost(createdPost.id);
-
-        const HAL = await testPlugin.exists(createdPost.id);
-
-        // Validate the plugin returns the correct API
-        expect(typeof(testPlugin)).toBe('object');
-        expect(Object.keys(HAL.response).includes('_links')).toBe(true);
-        expect(Object.keys(HAL.response._links).includes('self')).toBe(true);
-        expect(Object.keys(HAL.response._links).includes('curies')).toBe(true);
-        expect(Object.keys(HAL.response._links).includes('sandbox:index')).toBe(true);
-        expect(Object.keys(HAL.response._links).includes('sandbox:posts')).toBe(true);
-        expect(Object.keys(HAL.response._links).includes('sandbox:users')).toBe(true);
-        expect(Object.keys(HAL.response._links).includes('sandbox:user-posts')).toBe(true);
-    });
-
-    test('Should return a representation for an existing `Post` in HAL format', async () => {
-        const mockSandbox = MockSandBoxFactory();
-        const mockPostService = MockPostService();
-
-        PluginHypermediaPost(mockSandbox);
-
-        // Create a test plugin instance and provide it with dependencies
-        const testPlugin = mockSandbox.plugin.mock.calls[0][0]['fn'](mockPostService);
-        const createdPost = await testPlugin.create({
-            authorId: faker.datatype.uuid(),
-            body: faker.hacker.phrase()
-        });
-
-        const HAL = await testPlugin.exists(createdPost.id);
-
-        // Validate the plugin returns the correct API
-        expect(typeof(testPlugin)).toBe('object');
-        expect(Object.keys(HAL.response).includes('_links')).toBe(true);
-        expect(Object.keys(HAL.response._links).includes('self')).toBe(true);
-        expect(Object.keys(HAL.response._links).includes('curies')).toBe(true);
-        expect(Object.keys(HAL.response._links).includes('sandbox:index')).toBe(true);
-        expect(Object.keys(HAL.response._links).includes('sandbox:posts')).toBe(true);
-        expect(Object.keys(HAL.response._links).includes('sandbox:users')).toBe(true);
-        expect(Object.keys(HAL.response._links).includes('sandbox:user-posts')).toBe(true);
-    });
-
+    // Validate the plugin returns the correct API
+    expect(typeof (testPlugin)).toBe('object');
+    expect(Object.keys(HAL.response).includes('_links')).toBe(true);
+    expect(Object.keys(HAL.response._links).includes('self')).toBe(true);
+    expect(Object.keys(HAL.response._links).includes('curies')).toBe(true);
+    expect(Object.keys(HAL.response._links).includes('sandbox:index')).toBe(true);
+    expect(Object.keys(HAL.response._links).includes('sandbox:posts')).toBe(true);
+    expect(Object.keys(HAL.response._links).includes('sandbox:users')).toBe(true);
+    expect(Object.keys(HAL.response._links).includes('sandbox:user-posts')).toBe(true);
+  });
 });

@@ -34,6 +34,7 @@ import PluginHTMLPost from './lib/plugins/html/post/index.js';
 import PluginHTMLUser from './lib/plugins/html/user/index.js';
 import PluginSessionRouter from './lib/plugins/router/session/index.js';
 import PluginUserAuthnService from './lib/plugins/user-authn/index.js';
+import PluginMiddlewarePost from './lib/plugins/middleware/post/index.js';
 
 const expiresInOneHour = Math.floor(Date.now() / 1000) + (60 * 60);
 const SERVER_PORT = process.env.PORT || 3000;
@@ -72,6 +73,7 @@ Sandbox.module('/lib/plugins/http-media-strategy/user', PluginHTTPMediaStrategyU
 Sandbox.module('/lib/plugins/html/post', PluginHTMLPost);
 Sandbox.module('/lib/plugins/html/user', PluginHTMLUser);
 Sandbox.module('/lib/plugins/user-authn', PluginUserAuthnService);
+Sandbox.module('/lib/plugins/middleware-post', PluginMiddlewarePost);
 
 Sandbox.of(
   [
@@ -96,6 +98,7 @@ Sandbox.of(
     '/lib/plugins/session-router',
     '/lib/plugins/status-router',
     '/lib/plugins/user-authn',
+    '/lib/plugins/middleware-post',
   ],
   /**
    * @module ApplicationCore
@@ -127,6 +130,7 @@ Sandbox.of(
     });
 
     /* ******* POSTS ******* */
+    const pluginMiddlewarePost = sandbox.my.plugins['/plugins/middleware-post'].load();
     const htmlPostService = sandbox.my.plugins['/plugins/html/post'].load({ templateRootPath }, postService);
     const hypermediaPostService = sandbox.my.plugins['/plugins/hypermedia-post'].load(postService);
     const strategyPostService = sandbox.my.plugins['/plugins/http-media-strategy/post'].load({
@@ -144,7 +148,11 @@ Sandbox.of(
     });
 
     const StatusAPI = sandbox.my.plugins['/plugins/status-router'].load(RouterFactory(), sandbox.my.statusService);
-    const PostAPI = sandbox.my.plugins['/plugins/post-router'].load(RouterFactory(), strategyPostService);
+    const PostAPI = sandbox.my.plugins['/plugins/post-router'].load(RouterFactory(), {
+      middleware: pluginMiddlewarePost,
+      postService: strategyPostService,
+      userAuthn: pluginUserAuthn,
+    });
     const SessionAPI = sandbox.my.plugins['/plugins/session-router'].load(RouterFactory(), {
       userAuthn: pluginUserAuthn,
       userService: strategyUserService,
