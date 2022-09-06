@@ -145,4 +145,32 @@ describe('PluginHTMLPost', () => {
     expect(typeof (HTML) === 'string').toBe(true);
     expect(HTML.includes("I'm a preview!")).toBe(true);
   });
+
+  test('Should be able to render an HTML view containing ONLY DOM elements for authenticated users', async () => {
+    const mockSandbox = MockSandBoxFactory();
+    const mockPostService = MockPostService();
+    PluginHTMLPost(mockSandbox);
+
+    // Create a test plugin instance and provide it with dependencies
+    const testPlugin = mockSandbox.plugin.mock.calls[0][0].fn({ templateRootPath: templateDirectory }, mockPostService);
+    await testPlugin.setViewAuthnLevel({ isAuthenticated: true });
+    const HTML = await testPlugin.getAllPosts();
+
+    expect(typeof (HTML) === 'string').toBe(true);
+    expect(HTML.includes('data-authn-status="authenticated"')).toBe(true);
+  });
+
+  test('Should be able to render an HTML view containing ONLY DOM elements for unauthenticated users', async () => {
+    const mockSandbox = MockSandBoxFactory();
+    const mockPostService = MockPostService();
+    PluginHTMLPost(mockSandbox);
+
+    // Create a test plugin instance and provide it with dependencies
+    const testPlugin = mockSandbox.plugin.mock.calls[0][0].fn({ templateRootPath: templateDirectory }, mockPostService);
+    await testPlugin.setViewAuthnLevel({ isAuthenticated: false });
+    const HTML = await testPlugin.getAllPosts();
+
+    expect(typeof (HTML) === 'string').toBe(true);
+    expect(HTML.includes('data-authn-status="not-authenticated"')).toBe(true);
+  });
 });

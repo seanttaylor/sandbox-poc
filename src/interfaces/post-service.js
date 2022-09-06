@@ -1,14 +1,14 @@
 /* istanbul ignore file */
 
 /**
- * An object having the IPostService API; a set of methods for managing Posts 
+ * An object having the IPostService API; a set of methods for managing Posts
  * @typedef {Object} IPostService
- * @property {Function} create - creates a new Post 
+ * @property {Function} create - creates a new Post
  * @property {Function} deletePost - deletes a Post by its uuid
- * @property {Function} editPost - edits the Post title or body 
- * @property {Function} exists - verifies a Post exists 
+ * @property {Function} editPost - edits the Post title or body
+ * @property {Function} exists - verifies a Post exists
  * @property {Function} getPostById - finds a Post by uuid
- * @property {Function} getAllPosts - finds all Posts 
+ * @property {Function} getAllPosts - finds all Posts
  * @property {Function} getPostsByAuthorId - finds a list of all unique
  * @property {Function} getPostPreview - generates an HTML preview of a `Post`
  * Posts by a specified author
@@ -19,23 +19,23 @@
  * @param {IPostService} myImpl - object defining concrete implementations for interface methods
  */
 
- function IPostService(myImpl = {}) {
-    function required() {
-      throw Error('Missing implementation');
-    }
+function IPostService(myImpl = {}) {
+  function required() {
+    throw Error('Missing implementation');
+  }
 
-    return {
-      create: myImpl.create || required,
-      deletePost: myImpl.deletePost || required,
-      editPost: myImpl.editPost || required,
-      exists: myImpl.exists || required,
-      getPostById: myImpl.getPostById || required,
-      getAllPosts: myImpl.getAllPosts || required,
-      getErrorResponse: myImpl.getErrorResponse || required,
-      getPostsByAuthorId: myImpl.getPostsByAuthorId || required,
-      getPostPreview: myImpl.getPostPreview || required,
-      setRepository: myImpl.setRepository || required
-    };
+  return {
+    create: myImpl.create || required,
+    deletePost: myImpl.deletePost || required,
+    editPost: myImpl.editPost || required,
+    exists: myImpl.exists || required,
+    getPostById: myImpl.getPostById || required,
+    getAllPosts: myImpl.getAllPosts || required,
+    getErrorResponse: myImpl.getErrorResponse || required,
+    getPostsByAuthorId: myImpl.getPostsByAuthorId || required,
+    getPostPreview: myImpl.getPostPreview || required,
+    setRepository: myImpl.setRepository || required,
+  };
 }
 
 export default IPostService;

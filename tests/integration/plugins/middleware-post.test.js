@@ -32,7 +32,7 @@ describe('PluginMiddlewarePost', () => {
     middlewareFunction({
       headers: {},
       cookies: {},
-    }, {}, next);
+    }, { locals: {} }, next);
 
     expect(events.notify.mock.calls.length === 1).toBe(true);
     expect(events.notify.mock.calls[0][0] === 'application.error').toBe(true);
@@ -61,7 +61,7 @@ describe('PluginMiddlewarePost', () => {
         authorization: fakeToken,
       },
       cookies: {},
-    }, {}, next);
+    }, { locals: {} }, next);
 
     expect(userAuthn.validateAuthnCredential.mock.calls.length === 1).toBe(true);
     expect(userAuthn.validateAuthnCredential.mock.calls[0][0] === fakeToken).toBe(true);
@@ -89,7 +89,7 @@ describe('PluginMiddlewarePost', () => {
       cookies: {
         'auth-cred': fakeCookie,
       },
-    }, {}, next);
+    }, { locals: {} }, next);
 
     expect(userAuthn.validateAuthnCredential.mock.calls.length === 1).toBe(true);
     expect(userAuthn.validateAuthnCredential.mock.calls[0][0] === fakeCookie).toBe(true);
