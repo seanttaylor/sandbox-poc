@@ -158,7 +158,9 @@ describe('PluginPostRouter', () => {
         headers: { accept: '*/*' },
         url: evergreenPostId,
       },
-      { send, set, status },
+      {
+        send, set, status, locals: { authn: { isAuthenticated: true } },
+      },
       jest.fn(),
     );
 

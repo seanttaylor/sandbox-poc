@@ -81,6 +81,11 @@ export default function MockPostService() {
     // Not supposed to do anything
   }
 
+  function setViewAuthnLevel() {
+    // Just here to conform to the interface in during test
+    // Not supposed to do anything
+  }
+
   return {
     create,
     deletePost,
@@ -90,5 +95,6 @@ export default function MockPostService() {
     getPostById,
     getMediaType,
     setMediaType,
+    setViewAuthnLevel,
   };
 }
