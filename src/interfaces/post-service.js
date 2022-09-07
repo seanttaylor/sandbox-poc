@@ -35,6 +35,7 @@ function IPostService(myImpl = {}) {
     getPostsByAuthorId: myImpl.getPostsByAuthorId || required,
     getPostPreview: myImpl.getPostPreview || required,
     setRepository: myImpl.setRepository || required,
+    setViewAuthnLevel: myImpl.setViewAuthnLevel || required,
   };
 }
 

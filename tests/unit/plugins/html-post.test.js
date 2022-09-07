@@ -130,7 +130,7 @@ describe('PluginHTMLPost', () => {
     const HTML = await testPlugin.getErrorResponse(400);
 
     expect(typeof (HTML) === 'string').toBe(true);
-    expect(HTML.includes('Client Error')).toBe(true);
+    expect(HTML.includes('Bad Request')).toBe(true);
   });
 
   test('Should be able to render a preview of a draft post as HTML', async () => {

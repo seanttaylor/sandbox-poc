@@ -9,7 +9,10 @@
     <title>Get All Posts</title>
 </head>
 <body>
-  <span data-authn-status="<%=data.authn%>"></span>
+  <div class="norender">
+    <span data-authn-status="<%=data.authn%>"></span>
+  </div>
+  
     <nav class="navbar" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
           <a class="navbar-item" href="https://bulma.io">
@@ -69,7 +72,7 @@
             </div>
           </div>
         </div>
-    </nav>
+    </nav><!-- navbar -->
 
     <div class="block"></div>
 
@@ -78,15 +81,22 @@
           <form action="">
             <div class="field is-grouped">
                 <p class="control is-expanded">
-                  <input name="body" class="input is-rounded" type="text" placeholder="Just say it...">
+                  <input name="body" class="input is-rounded" type="text" placeholder="Just say it..." <%=data.authn === "authenticated" ? "" : "disabled"%> />
                 </p>
                 <p class="control">
-                  <a class="button is-info" id="create-post-button" hx-get="/api/v1/posts/preview" hx-target=".modal-content" hx-include="[name='body']">
-                    Post
-                  </a>
+                  <% if (data.authn === "authenticated") {%>
+                    <a class="button is-info" id="create-post-button" hx-get="/api/v1/posts/preview" hx-target=".modal-content" hx-include="[name='body']">
+                      Post
+                    </a>
+                  <%} else {%>
+                    <a class="button is-info" id="create-post-button" disabled>
+                      Post
+                    </a>
+                  <%}%>
                 </p>
             </div>
-          </form>
+          </form><!-- message input form -->
+
               <div class="block"></div>
 
               <ul class="post-list">

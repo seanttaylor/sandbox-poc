@@ -189,7 +189,9 @@ Sandbox.of(
 
     expressApp.use((req, res) => {
     // console.error(`Error 404 on ${req.url}.`);
-      res.status(404).send({ status: 404, error: 'Not Found' });
+    // res.status(404).send({ status: 404, error: 'Not Found' });
+      res.status(404);
+      res.render('not-found-error');
     });
 
     // The `next` parameter here is required *even when not in use* per the ExpressJS documentation on error handling middleware
@@ -199,7 +201,9 @@ Sandbox.of(
       const status = err.status || 500;
       // const msg = err.error || err.message;
       myConsole.error(err);
-      res.status(status).send({ status, error: 'There was an error.' });
+      // res.status(status).send({ status, error: 'There was an error.' });
+      res.status(status);
+      res.render('internal-error');
     });
 
     /* *************** SERVER START *************** */

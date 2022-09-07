@@ -165,7 +165,7 @@ describe('PluginHTMLUser', () => {
     const HTML = await testPlugin.getErrorResponse(400);
 
     expect(typeof (HTML) === 'string').toBe(true);
-    expect(HTML.includes('Client Error')).toBe(true);
+    expect(HTML.includes('Bad Request')).toBe(true);
   });
 
   test('Should be able to render a generic HTML page on 401 HTTP status', async () => {
