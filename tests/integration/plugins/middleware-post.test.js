@@ -36,7 +36,7 @@ describe('PluginMiddlewarePost', () => {
 
     expect(events.notify.mock.calls.length === 1).toBe(true);
     expect(events.notify.mock.calls[0][0] === 'application.error').toBe(true);
-    expect(events.notify.mock.calls[0][1].code === 'service.error').toBe(true);
+    expect(events.notify.mock.calls[0][1].code === 'plugin.error').toBe(true);
   });
 
   test('Should be to authenticate an incoming request with authorization token', async () => {

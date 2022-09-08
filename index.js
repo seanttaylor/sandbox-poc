@@ -7,6 +7,8 @@ import path from 'path';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
+import session from 'express-session';
+import connectSQLite3 from 'connect-sqlite3';
 
 import Sandbox from './src/sandbox/index.js';
 
@@ -35,13 +37,16 @@ import PluginHTMLUser from './lib/plugins/html/user/index.js';
 import PluginSessionRouter from './lib/plugins/router/session/index.js';
 import PluginUserAuthnService from './lib/plugins/user-authn/index.js';
 import PluginMiddlewarePost from './lib/plugins/middleware/post/index.js';
+import PluginPassport from './lib/plugins/vendor/passport/index.js';
 
 const expiresInOneHour = Math.floor(Date.now() / 1000) + (60 * 60);
+const SessionStore = connectSQLite3(session);
 const SERVER_PORT = process.env.PORT || 3000;
 const APP_NAME = process.env.APP_NAME || 'sandbox';
 const APP_VERSION = process.env.APP_VERSION || '0.0.1';
-const { JWT_SECRET } = process.env;
+const JWT_SECRET = process.env.JWT_SECRET || 'superSecret';
 const JWT_TOKEN_EXPIRATION = process.env.JWT_TOKEN_EXPIRATION_MILLIS || expiresInOneHour;
+const SESSION_SECRET = process.env.SESSION_SECRET || 'superSessionSecret';
 
 // Resolves issue of `__dirname` environment variable being `undefined` in ES modules
 // See (https://bobbyhadz.com/blog/javascript-dirname-is-not-defined-in-es-module-scope)
@@ -74,6 +79,7 @@ Sandbox.module('/lib/plugins/html/post', PluginHTMLPost);
 Sandbox.module('/lib/plugins/html/user', PluginHTMLUser);
 Sandbox.module('/lib/plugins/user-authn', PluginUserAuthnService);
 Sandbox.module('/lib/plugins/middleware-post', PluginMiddlewarePost);
+Sandbox.module('/lib/plugins/vendor/passport/local', PluginPassport);
 
 Sandbox.of(
   [
@@ -99,6 +105,7 @@ Sandbox.of(
     '/lib/plugins/status-router',
     '/lib/plugins/user-authn',
     '/lib/plugins/middleware-post',
+    '/lib/plugins/vendor/passport/local',
   ],
   /**
    * @module ApplicationCore
@@ -147,6 +154,12 @@ Sandbox.of(
       textHTML: htmlUserService,
     });
 
+    const pluginPassport = sandbox.my.plugins['/plugins/vendor/passport/local'].load({
+      userAuthn: pluginUserAuthn,
+      userService: strategyUserService,
+    });
+
+    /* ******* APIS ******* */
     const StatusAPI = sandbox.my.plugins['/plugins/status-router'].load(RouterFactory(), sandbox.my.statusService);
     const PostAPI = sandbox.my.plugins['/plugins/post-router'].load(RouterFactory(), {
       middleware: pluginMiddlewarePost,
@@ -154,8 +167,9 @@ Sandbox.of(
       userAuthn: pluginUserAuthn,
     });
     const SessionAPI = sandbox.my.plugins['/plugins/session-router'].load(RouterFactory(), {
-      userAuthn: pluginUserAuthn,
-      userService: strategyUserService,
+      // userAuthn: pluginUserAuthn,
+      // userService: strategyUserService,
+      passport: pluginPassport,
     });
 
     /* *************** MODULE CONFIGURATION **************** */
@@ -181,6 +195,13 @@ Sandbox.of(
     expressApp.use(bodyParser.urlencoded({ extended: false }));
     expressApp.use(cookieParser());
     expressApp.use('/dist', express.static(path.join(__dirname, 'dist')));
+    expressApp.use(session({
+      secret: SESSION_SECRET,
+      resave: false,
+      saveUninitialized: false,
+      store: new SessionStore({ db: 'sessions.db', dir: './var/db' }),
+    }));
+    expressApp.use(pluginPassport.authenticate('session'));
 
     /* ************** ROUTES *************** */
     expressApp.use('/status', StatusAPI);

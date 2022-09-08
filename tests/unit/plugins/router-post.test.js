@@ -87,16 +87,17 @@ describe('PluginPostRouter', () => {
 
     // Validate the mocked router `get` method is called to register the '/' route with a handler
     expect(mockRouter.get.mock.calls[0][0] === '/posts').toBe(true);
-    expect(typeof (mockRouter.get.mock.calls[0][2]) === 'function').toBe(true);
+    expect(typeof (mockRouter.get.mock.calls[0][1]) === 'function').toBe(true);
 
     // Call the registered route handler with bogus request and response objects
     // The route handler is async so we have to `await` here
-    await mockRouter.get.mock.calls[0][2](
+    await mockRouter.get.mock.calls[0][1](
       {
         headers: { accept: '*/*' },
         cookies: {
           'auth-cred': evergreenJWT,
         },
+        isAuthenticated: jest.fn().mockImplementation(() => true),
       },
       { send, set, status },
       jest.fn(),
@@ -148,8 +149,7 @@ describe('PluginPostRouter', () => {
 
     // Validate the mocked router `get` method is called to register the '/posts/:id' route with a handler
     expect(mockRouter.get.mock.calls[2][0] === '/posts/:id').toBe(true);
-    expect(typeof (mockRouter.get.mock.calls[0][1]) === 'function').toBe(true);
-    expect(typeof (mockRouter.get.mock.calls[0][2]) === 'function').toBe(true);
+    expect(typeof (mockRouter.get.mock.calls[2][1]) === 'function').toBe(true);
 
     // Call the registered route handler with bogus request and response objects
     // The route handler is async so we have to `await` here
