@@ -161,11 +161,7 @@ Sandbox.of(
 
     /* ******* APIS ******* */
     const StatusAPI = sandbox.my.plugins['/plugins/status-router'].load(RouterFactory(), sandbox.my.statusService);
-    const PostAPI = sandbox.my.plugins['/plugins/post-router'].load(RouterFactory(), {
-      middleware: pluginMiddlewarePost,
-      postService: strategyPostService,
-      userAuthn: pluginUserAuthn,
-    });
+    const PostAPI = sandbox.my.plugins['/plugins/post-router'].load(RouterFactory(), strategyPostService);
     const SessionAPI = sandbox.my.plugins['/plugins/session-router'].load(RouterFactory(), {
       // userAuthn: pluginUserAuthn,
       // userService: strategyUserService,
